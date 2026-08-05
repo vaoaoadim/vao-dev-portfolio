@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="vao.dev developer portfolio visual preview"
+    />
+    <meta name="theme-color" content="#fcfcfc" />
+    <script>
+      try {
+        const savedTheme = localStorage.getItem("vao.theme");
+        document.documentElement.dataset.theme =
+          savedTheme === "dark" || savedTheme === "light"
+            ? savedTheme
+            : "light";
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <title>vao.dev</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <style>
+        html,
+        body {
+          min-width: 320px;
+          min-height: 100%;
+          margin: 0;
+          overflow: hidden;
+          background: #fcfcfc;
+        }
+
+        .noscript-scene,
+        .noscript-scene img {
+          position: fixed;
+          inset: 0;
+          display: block;
+          width: 100%;
+          height: 100%;
+        }
+
+        .noscript-scene img {
+          object-fit: contain;
+        }
+      </style>
+      <picture class="noscript-scene">
+        <source
+          media="(orientation: portrait)"
+          srcset="/assets/office-light-portrait.png"
+        />
+        <img
+          src="/assets/office-light-landscape.png"
+          width="1672"
+          height="941"
+          alt=""
+        />
+      </picture>
+    </noscript>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

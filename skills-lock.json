@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "skills": {
+    "agents-md": {
+      "source": "getsentry/skills",
+      "sourceType": "github",
+      "commit": "e7a87fa72645158f9b5e722cbb1c7e09266f48f1",
+      "license": "Apache-2.0",
+      "skillPath": "skills/agents-md/SKILL.md",
+      "computedHash": "8a91ada35068f43ef7ee03e38937863bac4f407878b06f0a4f1ddb4af24bec7e"
+    },
+    "gsap-react": {
+      "source": "greensock/gsap-skills",
+      "sourceType": "github",
+      "commit": "aed9cfd3277740755f6bfc1155c7aa645403b760",
+      "license": "MIT",
+      "skillPath": "skills/gsap-react/SKILL.md",
+      "computedHash": "88e2a5312b45e8cc7b3c496637ff5bc9af2ae9c925b555c8b235b34cbc989d74"
+    }
+  }
+}
