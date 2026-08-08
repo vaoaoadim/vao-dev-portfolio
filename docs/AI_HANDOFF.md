@@ -3,39 +3,33 @@
 ## Start here
 
 1. Read `AGENTS.md` and `site/AGENTS.md`.
-2. Inspect only the components and styles affected by the request.
-3. Preserve owner-supplied images, current composition, copy, and interactions unless the request explicitly changes them.
-4. Make the smallest complete change. Do not deploy, publish, or create external links without explicit approval.
+2. Inspect only the source and styles relevant to the request.
+3. Preserve the established visual composition and owner-supplied images unless the request is explicit.
+4. Make the smallest complete change, then run the narrowest useful check.
 
-## Project map
+## Current site
 
-| Area | Source |
-| --- | --- |
-| App state, themes, scene layers, bottom controls | `site/src/App.jsx` |
-| Glass header and mobile menu | `site/src/PortfolioHeader.jsx` |
-| `V.BUILD` and reusable Three.js wordmarks | `site/src/BuildMark3D.jsx` |
-| Layout, responsive rules, themes, visual tokens | `site/src/styles.css` |
-| Source images | `site/assets-source/` |
-| Runtime assets | `site/public/assets/` |
+- `site/src/App.jsx` assembles a single portfolio experience: header, hero, scroll scene and services.
+- `HeroIntro.jsx` is the opening screen with animated cards inside coloured brackets.
+- `MascotScrollScene.jsx` controls the scroll-timed mascot movement between the intro and `WhatIBuild.jsx`.
+- `WhatIBuild.jsx` renders the services list and title scrambling; `InteractiveBuildScene.jsx` maps drawing and paper-ball interactions to the flattened mascot illustration with normalized anchors.
+- `PixelCursor.jsx` is the desktop-only custom cursor. Interactive controls opt in with `data-cursor="interactive"`.
+- `styles.css` owns responsive layout, stacking and motion. Check its related desktop and mobile rules before changing scene geometry.
 
-## Current visual contract
+## Visual and interaction constraints
 
-- The portfolio is a single full-viewport scene with light and dark image sources.
-- The theme switcher is fixed in the top-right corner and persists the selected theme locally.
-- `V.BUILD` is a transparent Three.js overlay in the lower-left corner.
-- The social icons sit on the same baseline as `V.BUILD` and remain placeholders until the owner supplies links.
-- The header is a compact glass layer with a `PORTFOLIO` Three.js mark, placeholder navigation, and a mobile drawer.
-- The header, `V.BUILD`, and social group share the left layout variable `--frame-left`.
-- The header currently has no animated border or gradient.
+- Runtime images in `site/public/assets/` are the visual source of truth. Do not crop, regenerate, replace or reposition them without owner approval.
+- The mascot illustration is a flattened image. Keep any overlays aligned through its normalized anchors and recalculate geometry when its container resizes.
+- Do not add per-frame React state, global event listeners without cleanup, or permanent animation loops.
+- Keep the custom cursor hidden on touch/coarse-pointer devices and preserve reduced-motion behavior.
+- Do not add placeholder links, analytics, forms or deployment configuration without an explicit request.
 
-## Engineering rules
+## Verification
 
-- Keep Three.js isolated in `BuildMark3D.jsx`; do not add per-frame React state.
-- Keep scene imagery as `object-fit: contain`; do not alter source images for responsive layouts.
-- Use CSS for ordinary layout and motion. Add dependencies only when explicitly needed.
-- Respect `prefers-reduced-motion`, keyboard focus, touch input, and safe-area insets when changing interactive UI.
-- Do not commit `node_modules`, local editor settings, temporary audits, logs, or environment files.
+- Feature or style change: inspect the affected view and run the narrowest relevant command.
+- Build, hosting or dependency change: `cd site; npm run build`.
+- Hosting package change: `cd site; npm run test:sites`.
 
-## Handoff format
+## Do not commit
 
-Report changed files, the smallest verification actually performed, and the local URL when the dev server is already running. Ask the owner before a visual redesign, dependency addition, deployment, or real contact/social URL.
+- `node_modules/`, `dist/`, logs, editor folders, temporary previews or local test artefacts.

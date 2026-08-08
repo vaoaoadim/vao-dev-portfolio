@@ -22,6 +22,10 @@ npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
 
+# Local image experiments
+site/tmp/
+site/public/assets/ui/cursor/arrow-fill.png.tmp.png
+
 # Impeccable ephemeral output
 .impeccable/config.local.json
 .impeccable/hook.cache.json
