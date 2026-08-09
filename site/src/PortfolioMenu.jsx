@@ -3,7 +3,7 @@ import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 
 const MENU_ITEMS = [
-  { id: "work", label: "WORK", targetId: null, accent: "green" },
+  { id: "work", label: "WORK", targetId: "work", accent: "green" },
   { id: "services", label: "SERVICES", targetId: "build", accent: "yellow" },
   { id: "about", label: "ABOUT", targetId: null, accent: "red" },
   { id: "stack", label: "STACK", targetId: null, accent: "orange" },

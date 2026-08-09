@@ -1,0 +1,460 @@
+import { useEffect, useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+const CASES = [
+  {
+    id: "signal",
+    title: "SIGNAL",
+    type: "TELEGRAM AUTOMATION / 2026",
+    description:
+      "Telegram-система для заявок, уведомлений и автоматизации небольших команд.",
+    color: "green",
+  },
+  {
+    id: "localhost",
+    title: "LOCALHOST",
+    type: "DEVELOPER PORTFOLIO / 2026",
+    description:
+      "Экспериментальное портфолио разработчика с интерактивными сценами и scroll-based механиками.",
+    color: "yellow",
+  },
+  {
+    id: "cache",
+    title: "CACHE",
+    type: "BROWSER EXTENSION / 2026",
+    description:
+      "Расширение браузера для быстрого сохранения и организации материалов из сети.",
+    color: "red",
+  },
+  {
+    id: "room-404",
+    title: "ROOM 404",
+    type: "INTERACTIVE MINI-GAME / 2026",
+    description:
+      "Небольшая browser-game, построенная вокруг исследования цифрового пространства.",
+    color: "orange",
+  },
+  {
+    id: "trace",
+    title: "TRACE",
+    type: "AI WORKFLOW TOOL / 2026",
+    description:
+      "Инструмент для сборки и контроля многошаговых AI-процессов.",
+    color: "green",
+  },
+  {
+    id: "patch",
+    title: "PATCH",
+    type: "DESKTOP UTILITY / 2026",
+    description:
+      "Минималистичная desktop-утилита для автоматизации повторяющихся действий.",
+    color: "yellow",
+  },
+  {
+    id: "ping",
+    title: "PING",
+    type: "NOTIFICATION SYSTEM / 2026",
+    description:
+      "Система уведомлений и событий для небольших digital-продуктов.",
+    color: "red",
+  },
+  {
+    id: "frame",
+    title: "FRAME",
+    type: "INTERACTIVE WEBSITE / 2026",
+    description:
+      "Экспериментальный промосайт с responsive motion и интерактивной графикой.",
+    color: "orange",
+  },
+];
+
+const SCRAMBLE_SYMBOLS = "[]{}<>/\\|!@#$%^&*+=-~?:;";
+
+const clamp = (value, minimum, maximum) =>
+  Math.min(maximum, Math.max(minimum, value));
+
+function formatCase(index) {
+  return `CASE ${String(index + 1).padStart(2, "0")}`;
+}
+
+function previewLabel(index) {
+  return `preview_${String(index + 1).padStart(2, "0")}.png`;
+}
+
+export function SelectedWorks() {
+  const sectionRef = useRef(null);
+  const galleryRef = useRef(null);
+  const viewportRef = useRef(null);
+  const trackRef = useRef(null);
+  const caseLabelRef = useRef(null);
+  const activeCaseRef = useRef(0);
+  const nativeProgressFrameRef = useRef(0);
+
+  const handleNativeScroll = (event) => {
+    if (
+      window.matchMedia(
+        "(min-width: 761px) and (prefers-reduced-motion: no-preference)",
+      ).matches
+    ) {
+      return;
+    }
+
+    const viewport = event.currentTarget;
+
+    if (nativeProgressFrameRef.current) {
+      window.cancelAnimationFrame(nativeProgressFrameRef.current);
+    }
+
+    nativeProgressFrameRef.current = window.requestAnimationFrame(() => {
+      nativeProgressFrameRef.current = 0;
+
+      const maximumScroll = Math.max(
+        1,
+        viewport.scrollWidth - viewport.clientWidth,
+      );
+      const progress = viewport.scrollLeft / maximumScroll;
+      const index = Math.round(progress * (CASES.length - 1));
+
+      sectionRef.current?.style.setProperty(
+        "--works-progress",
+        clamp(progress, 0, 1).toFixed(4),
+      );
+      activeCaseRef.current = index;
+
+      if (caseLabelRef.current) {
+        caseLabelRef.current.textContent = formatCase(index);
+      }
+    });
+  };
+
+  useEffect(
+    () => () => {
+      if (nativeProgressFrameRef.current) {
+        window.cancelAnimationFrame(nativeProgressFrameRef.current);
+      }
+    },
+    [],
+  );
+
+  useGSAP(
+    (context, contextSafe) => {
+      const section = sectionRef.current;
+      const gallery = galleryRef.current;
+      const viewport = viewportRef.current;
+      const track = trackRef.current;
+      const caseLabel = caseLabelRef.current;
+
+      if (!section || !gallery || !viewport || !track || !caseLabel) {
+        return undefined;
+      }
+
+      const panels = gsap.utils.toArray(".work-case");
+      const setProgress = (progress) => {
+        section.style.setProperty("--works-progress", clamp(progress, 0, 1).toFixed(4));
+      };
+
+      const setCaseLabel = (index, shouldScramble = false) => {
+        const nextIndex = clamp(index, 0, CASES.length - 1);
+        const nextLabel = formatCase(nextIndex);
+
+        if (activeCaseRef.current === nextIndex && caseLabel.textContent === nextLabel) {
+          return;
+        }
+
+        activeCaseRef.current = nextIndex;
+        gsap.killTweensOf(caseLabel);
+
+        if (
+          !shouldScramble ||
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ) {
+          caseLabel.textContent = nextLabel;
+          return;
+        }
+
+        const state = { progress: 0 };
+        gsap.to(state, {
+          progress: 1,
+          duration: 0.22,
+          ease: "none",
+          overwrite: true,
+          onUpdate: () => {
+            const revealedDigits = Math.floor(state.progress * 2);
+            const digits = nextLabel.slice(-2)
+              .split("")
+              .map((digit, digitIndex) => {
+                if (digitIndex < revealedDigits) return digit;
+                return SCRAMBLE_SYMBOLS[
+                  Math.floor(Math.random() * SCRAMBLE_SYMBOLS.length)
+                ];
+              })
+              .join("");
+            caseLabel.textContent = `CASE ${digits}`;
+          },
+          onComplete: () => {
+            caseLabel.textContent = nextLabel;
+          },
+        });
+      };
+
+      const media = gsap.matchMedia();
+
+      const playMobileSwipeHint = contextSafe(() => {
+        if (viewport.scrollLeft > 2) return;
+
+        const peekDistance = Math.round(
+          Math.min(56, viewport.clientWidth * 0.16),
+        );
+
+        gsap.timeline({
+          delay: 0.55,
+          onStart: () => {
+            viewport.dataset.swipeHint = "true";
+          },
+          onComplete: () => {
+            delete viewport.dataset.swipeHint;
+          },
+        })
+          .to(viewport, {
+            scrollLeft: peekDistance,
+            duration: 0.72,
+            ease: "power1.inOut",
+          })
+          .to(viewport, {
+            scrollLeft: peekDistance * 0.62,
+            duration: 0.28,
+            ease: "power1.inOut",
+          })
+          .to(viewport, {
+            scrollLeft: peekDistance,
+            duration: 0.32,
+            ease: "power1.inOut",
+          })
+          .to(viewport, {
+            scrollLeft: 0,
+            duration: 0.72,
+            ease: "power2.inOut",
+          });
+      });
+
+      const cancelMobileSwipeHint = contextSafe(() => {
+        gsap.killTweensOf(viewport, "scrollLeft");
+        delete viewport.dataset.swipeHint;
+      });
+
+      media.add(
+        {
+          desktop: "(min-width: 761px)",
+          reduced: "(prefers-reduced-motion: reduce)",
+        },
+        (context) => {
+          const { desktop, reduced } = context.conditions;
+          activeCaseRef.current = 0;
+          caseLabel.textContent = formatCase(0);
+          setProgress(0);
+
+          if (!desktop || reduced) {
+            return undefined;
+          }
+
+          gsap.set(track, { x: 0 });
+          const travelDistance = () =>
+            Math.max(0, track.scrollWidth - gallery.clientWidth);
+
+          const horizontalTween = gsap.to(track, {
+            x: () => -travelDistance(),
+            ease: "none",
+            scrollTrigger: {
+              trigger: gallery,
+              start: "top top",
+              end: () => `+=${travelDistance()}`,
+              pin: true,
+              scrub: 0.32,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+              fastScrollEnd: true,
+              onUpdate: (trigger) => setProgress(trigger.progress),
+            },
+          });
+
+          panels.forEach((panel, index) => {
+            const visual = panel.querySelector(".work-case__visual");
+            const direction = index % 2 === 0 ? 1 : -1;
+
+            gsap.fromTo(
+              visual,
+              {
+                x: direction * 28,
+                scale: 0.9,
+                rotation: direction * 0.8,
+              },
+              {
+                x: -direction * 18,
+                scale: 0.96,
+                rotation: -direction * 0.45,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: panel,
+                  containerAnimation: horizontalTween,
+                  start: "left right",
+                  end: "right left",
+                  scrub: true,
+                },
+              },
+            );
+
+            ScrollTrigger.create({
+              trigger: panel,
+              containerAnimation: horizontalTween,
+              start: "left 58%",
+              end: "right 42%",
+              onEnter: () => setCaseLabel(index, index !== 0),
+              onEnterBack: () => setCaseLabel(index, true),
+            });
+          });
+
+          return () => {
+            gsap.set(track, { clearProps: "transform" });
+          };
+        },
+      );
+
+      media.add(
+        {
+          mobile: "(max-width: 760px)",
+          motion: "(prefers-reduced-motion: no-preference)",
+        },
+        (mobileContext) => {
+          const { mobile, motion } = mobileContext.conditions;
+
+          if (!mobile || !motion) return undefined;
+
+          let userHasInteracted = false;
+          const stopHintForInteraction = () => {
+            userHasInteracted = true;
+            section.dataset.swipeHintDismissed = "true";
+            cancelMobileSwipeHint();
+          };
+
+          const hintTrigger = ScrollTrigger.create({
+            trigger: gallery,
+            start: "top 74%",
+            once: true,
+            onEnter: () => {
+              if (!userHasInteracted) {
+                playMobileSwipeHint();
+              }
+            },
+          });
+
+          viewport.addEventListener("pointerdown", stopHintForInteraction, {
+            passive: true,
+          });
+          viewport.addEventListener("wheel", stopHintForInteraction, {
+            passive: true,
+          });
+
+          return () => {
+            hintTrigger.kill();
+            viewport.removeEventListener("pointerdown", stopHintForInteraction);
+            viewport.removeEventListener("wheel", stopHintForInteraction);
+            cancelMobileSwipeHint();
+          };
+        },
+      );
+
+      return () => {
+        media.revert();
+      };
+    },
+    { scope: sectionRef },
+  );
+
+  return (
+    <section ref={sectionRef} className="selected-works" id="work" aria-labelledby="works-title">
+      <div className="selected-works__intro">
+        <p className="selected-works__kicker">
+          <span>02</span>
+          <span>// ИЗБРАННЫЕ РАБОТЫ</span>
+        </p>
+        <h2 id="works-title">
+          SELECTED
+          <br />
+          WORK
+        </h2>
+      </div>
+
+      <div ref={galleryRef} className="works-gallery" aria-label="Избранные работы">
+        <div className="works-gallery__status" aria-live="polite">
+          <span ref={caseLabelRef}>CASE 01</span>
+        </div>
+        <span className="works-gallery__swipe-label" aria-hidden="true">
+          листай →
+        </span>
+
+        <div
+          ref={viewportRef}
+          className="works-gallery__viewport"
+          onScroll={handleNativeScroll}
+        >
+          <div ref={trackRef} className="works-gallery__track">
+            {CASES.map((project, index) => (
+              <article
+                key={project.id}
+                className={`work-case work-case--${project.color}`}
+                aria-label={`${formatCase(index)}: ${project.title}`}
+              >
+                <div className="work-case__visual">
+                  <button
+                    className="work-case__preview"
+                    type="button"
+                    data-cursor="interactive"
+                    aria-label={`${project.title}: превью кейса появится позже`}
+                  >
+                    <span className="work-case__corner work-case__corner--top-left" aria-hidden="true" />
+                    <span className="work-case__corner work-case__corner--top-right" aria-hidden="true" />
+                    <span className="work-case__corner work-case__corner--bottom-left" aria-hidden="true" />
+                    <span className="work-case__corner work-case__corner--bottom-right" aria-hidden="true" />
+                    <span className="work-case__preview-canvas" aria-hidden="true">
+                      <span className="work-case__preview-file">{previewLabel(index)}</span>
+                      <span className="work-case__preview-window">
+                        <span />
+                        <span />
+                        <span />
+                      </span>
+                      <span className="work-case__preview-title">PROJECT SCREENSHOT</span>
+                      <span className="work-case__preview-note">COMING SOON</span>
+                    </span>
+                    <span className="work-case__open-label" aria-hidden="true">
+                      [ открыть кейс ↗ ]
+                    </span>
+                  </button>
+                </div>
+
+                <div className="work-case__meta">
+                  <div>
+                    <h3>{project.title}</h3>
+                    <p>{project.type}</p>
+                  </div>
+                  <p className="work-case__description">{project.description}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div className="works-gallery__progress" aria-hidden="true">
+          <span>01</span>
+          <div className="works-gallery__progress-line">
+            <i />
+          </div>
+          <span>08</span>
+        </div>
+      </div>
+    </section>
+  );
+}

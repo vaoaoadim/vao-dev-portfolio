@@ -2,6 +2,7 @@ import { HeroIntro } from "./HeroIntro";
 import { MascotScrollScene } from "./MascotScrollScene";
 import { PixelCursor } from "./PixelCursor";
 import { PortfolioHeader } from "./PortfolioHeader";
+import { SelectedWorks } from "./SelectedWorks";
 import { WhatIBuild } from "./WhatIBuild";
 
 export function App() {
@@ -13,6 +14,7 @@ export function App() {
         <HeroIntro />
         <WhatIBuild />
       </MascotScrollScene>
+      <SelectedWorks />
     </main>
   );
 }
