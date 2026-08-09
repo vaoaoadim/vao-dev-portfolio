@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { InteractiveBuildScene } from "./InteractiveBuildScene";
@@ -43,7 +43,7 @@ const buildItems = [
 
 const SCRAMBLE_SYMBOLS = "<>{}[]()|&!@#$%^*+=-~?:;.,/\\\\'\"";
 
-function getScrambledTitle(characters, revealedCharacters = 0) {
+function getScrambledWord(characters, revealedCharacters = 0) {
   return characters
     .map((character, index) => {
       if (character === " " || index < revealedCharacters) {
@@ -73,16 +73,34 @@ export function WhatIBuild() {
       const timelines = [];
 
       const revealHeading = contextSafe((heading) => {
-        const title = heading.dataset.scrambleTitle ?? heading.textContent ?? "";
-        const characters = [...title];
+        const wordLayers = [...heading.querySelectorAll(".build-name__word-scramble")];
+        const words = wordLayers.map((layer) => layer.dataset.scrambleWord ?? "");
+        const characterCount = words.reduce((total, word) => total + [...word].length, 0);
         const state = { reveal: 0, scramble: 0 };
 
-        heading.textContent = getScrambledTitle(characters);
+        const renderTitle = (revealedCharacters = 0) => {
+          let remainingRevealedCharacters = revealedCharacters;
+
+          wordLayers.forEach((layer, index) => {
+            const characters = [...words[index]];
+            const revealedInWord = Math.min(
+              characters.length,
+              Math.max(0, remainingRevealedCharacters),
+            );
+
+            layer.textContent = getScrambledWord(characters, revealedInWord);
+            remainingRevealedCharacters -= characters.length;
+          });
+        };
+
+        renderTitle();
 
         const timeline = gsap
           .timeline({
             onComplete: () => {
-              heading.textContent = title;
+              wordLayers.forEach((layer, index) => {
+                layer.textContent = words[index];
+              });
             },
           })
           .to(state, {
@@ -90,7 +108,7 @@ export function WhatIBuild() {
             duration: 1.5,
             ease: "none",
             onUpdate: () => {
-              heading.textContent = getScrambledTitle(characters);
+              renderTitle();
             },
           })
           .to(state, {
@@ -98,8 +116,8 @@ export function WhatIBuild() {
             duration: 0.75,
             ease: "none",
             onUpdate: () => {
-              const revealedCharacters = Math.floor(state.reveal * characters.length);
-              heading.textContent = getScrambledTitle(characters, revealedCharacters);
+              const revealedCharacters = Math.floor(state.reveal * characterCount);
+              renderTitle(revealedCharacters);
             },
           });
 
@@ -188,7 +206,17 @@ export function WhatIBuild() {
             <div className="build-name">
               <span>{symbol}</span>
               <h3 data-scramble-title={title} aria-label={title}>
-                {title}
+                {title.split(" ").map((word, wordIndex) => (
+                  <Fragment key={`${word}-${wordIndex}`}>
+                    {wordIndex > 0 ? " " : null}
+                    <span className="build-name__word" aria-hidden="true">
+                      <span className="build-name__word-layout">{word}</span>
+                      <span className="build-name__word-scramble" data-scramble-word={word}>
+                        {word}
+                      </span>
+                    </span>
+                  </Fragment>
+                ))}
               </h3>
             </div>
             <p>{description}</p>

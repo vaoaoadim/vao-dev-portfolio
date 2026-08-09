@@ -205,7 +205,7 @@ a {
 
 .portfolio-menu__main-item,
 .portfolio-menu__item-clip {
-  overflow: hidden;
+  overflow: visible;
 }
 
 .portfolio-menu__item-clip {
@@ -251,8 +251,10 @@ a {
   position: relative;
   display: inline-flex;
   align-items: baseline;
+  opacity: 0;
+  visibility: hidden;
   transform-origin: left center;
-  will-change: transform;
+  will-change: transform, opacity;
 }
 
 .portfolio-menu__bracket {
@@ -900,6 +902,24 @@ a {
   font-weight: 400;
   letter-spacing: -0.06em;
   line-height: 0.92;
+}
+
+.build-name__word {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.build-name__word-layout {
+  visibility: hidden;
+}
+
+.build-name__word-scramble {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .build-list li > p {

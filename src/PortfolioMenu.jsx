@@ -61,14 +61,14 @@ export function PortfolioMenu({
       if (isOpen) {
         hasOpenedRef.current = true;
         setActiveItemId(null);
-        gsap.set(menu, {
-          autoAlpha: 1,
-          pointerEvents: "auto",
-          scaleY: 0,
-          transformOrigin: "top center",
-        });
 
         if (reducedMotion) {
+          gsap.set(menu, {
+            autoAlpha: 1,
+            pointerEvents: "auto",
+            scaleY: 0,
+            transformOrigin: "top center",
+          });
           gsap.set([itemLabels, supportingContent], { yPercent: 0, autoAlpha: 1 });
           gsap.to(menu, {
             scaleY: 1,
@@ -78,8 +78,14 @@ export function PortfolioMenu({
           return undefined;
         }
 
-        gsap.set(itemLabels, { yPercent: 110, autoAlpha: 1 });
+        gsap.set(itemLabels, { yPercent: 0, y: 30, autoAlpha: 0 });
         gsap.set(supportingContent, { autoAlpha: 0, y: 8 });
+        gsap.set(menu, {
+          autoAlpha: 1,
+          pointerEvents: "auto",
+          scaleY: 0,
+          transformOrigin: "top center",
+        });
 
         return gsap
           .timeline()
@@ -91,10 +97,11 @@ export function PortfolioMenu({
           .to(
             itemLabels,
             {
-              yPercent: 0,
+              y: 0,
+              autoAlpha: 1,
               duration: 0.48,
               stagger: 0.065,
-              ease: "power4.out",
+              ease: "power3.out",
             },
             "-=0.14",
           )
@@ -142,7 +149,7 @@ export function PortfolioMenu({
 
     const focusDelay = window.setTimeout(
       () => menuRef.current?.querySelector(".portfolio-menu__main-link")?.focus(),
-      reducedMotion ? 0 : 520,
+      reducedMotion ? 0 : 760,
     );
 
     const handleKeyDown = (event) => {
