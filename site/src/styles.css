@@ -978,6 +978,89 @@ a {
   transform: translateY(-3svh);
 }
 
+.selected-works__o {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+}
+
+.work-pendants {
+  position: absolute;
+  z-index: 2;
+  top: 84%;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 0;
+  font-size: 1rem;
+  letter-spacing: 0;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.work-pendant {
+  --object-width: 4rem;
+  --wire-length: 4rem;
+  position: absolute;
+  top: 0;
+  display: block;
+  width: var(--object-width);
+  margin-left: calc(var(--object-width) / -2);
+  transform-origin: 50% 0;
+  will-change: transform;
+}
+
+.work-pendant::before {
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--color-ink);
+  content: "";
+  transform: translateX(-50%);
+}
+
+.work-pendant--floppy {
+  --object-width: clamp(2.9rem, 4vw, 4.8rem);
+  --wire-length: clamp(2.8rem, 7svh, 4.8rem);
+  left: 28%;
+}
+
+.work-pendant--mouse {
+  --object-width: clamp(2.6rem, 3.6vw, 4.3rem);
+  --wire-length: clamp(3.75rem, 10svh, 6.6rem);
+  left: 72%;
+}
+
+.work-pendant__wire {
+  display: block;
+  width: 1px;
+  height: var(--wire-length);
+  margin: 0 auto;
+  background: var(--color-ink);
+}
+
+.work-pendant--mouse .work-pendant__wire {
+  width: 2px;
+}
+
+.work-pendant__object {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: -1px;
+  user-select: none;
+  filter: drop-shadow(0 0.08rem 0.08rem rgb(0 0 0 / 16%));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .work-pendant__object {
+    pointer-events: auto;
+  }
+}
+
 .works-gallery {
   position: relative;
   width: 100%;
@@ -1422,6 +1505,18 @@ a {
     transform: translateY(-2svh);
   }
 
+  .work-pendant--floppy {
+    --object-width: clamp(2.2rem, 10vw, 2.8rem);
+    --wire-length: clamp(2.2rem, 8svh, 3.6rem);
+    left: 25%;
+  }
+
+  .work-pendant--mouse {
+    --object-width: clamp(2rem, 9vw, 2.55rem);
+    --wire-length: clamp(2.9rem, 11svh, 4.8rem);
+    left: 82%;
+  }
+
   .works-gallery {
     height: 100svh;
     overflow: hidden;
@@ -1594,6 +1689,14 @@ a {
   .work-case__meta h3 {
     font-size: clamp(1.8rem, 3vw, 2.75rem);
   }
+
+  .work-pendant--floppy {
+    --wire-length: clamp(1.8rem, 7svh, 2.4rem);
+  }
+
+  .work-pendant--mouse {
+    --wire-length: clamp(2.3rem, 9svh, 3.1rem);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1660,6 +1763,11 @@ a {
   }
 
   .work-case__visual {
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .work-pendant {
     transform: none !important;
     will-change: auto;
   }

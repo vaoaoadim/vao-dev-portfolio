@@ -85,6 +85,210 @@ function previewLabel(index) {
   return `preview_${String(index + 1).padStart(2, "0")}.png`;
 }
 
+function WorkPendants() {
+  const rootRef = useRef(null);
+  const floppyRef = useRef(null);
+  const mouseRef = useRef(null);
+
+  useGSAP(
+    () => {
+      const root = rootRef.current;
+      const floppy = floppyRef.current;
+      const mouse = mouseRef.current;
+
+      if (!root || !floppy || !mouse) return undefined;
+
+      const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      if (reducedMotion) {
+        gsap.set([floppy, mouse], { rotation: 0 });
+        return undefined;
+      }
+
+      const pendulums = [
+        {
+          node: floppy,
+          angle: 0.078,
+          velocity: 0,
+          gravity: 8.2,
+          damping: 0.34,
+          idleAmplitude: 0.026,
+          idleRate: 0.69,
+          phase: 0.4,
+          pointerForce: 0,
+        },
+        {
+          node: mouse,
+          angle: -0.061,
+          velocity: 0,
+          gravity: 6.7,
+          damping: 0.3,
+          idleAmplitude: 0.022,
+          idleRate: 0.57,
+          phase: 2.1,
+          pointerForce: 0,
+        },
+      ].map((pendulum) => ({
+        ...pendulum,
+        setRotation: gsap.quickSetter(pendulum.node, "rotation", "deg"),
+      }));
+
+      let isVisible = true;
+
+      const visibilityObserver = new IntersectionObserver(
+        ([entry]) => {
+          isVisible = entry.isIntersecting;
+        },
+        { rootMargin: "12% 0px" },
+      );
+
+      visibilityObserver.observe(root);
+
+      const tick = (time, deltaTime) => {
+        if (!isVisible) return;
+
+        const delta = Math.min(deltaTime / 1000, 1 / 30);
+
+        pendulums.forEach((pendulum) => {
+          const idleAngle =
+            pendulum.idleAmplitude *
+            (Math.sin(time * pendulum.idleRate + pendulum.phase) +
+              Math.sin(
+                time * pendulum.idleRate * 0.43 + pendulum.phase * 1.7,
+              ) *
+                0.32);
+          const acceleration =
+            -pendulum.gravity * Math.sin(pendulum.angle - idleAngle) -
+            pendulum.damping * pendulum.velocity +
+            pendulum.pointerForce;
+
+          pendulum.velocity += acceleration * delta;
+          pendulum.angle += pendulum.velocity * delta;
+          pendulum.pointerForce *= Math.exp(-4.2 * delta);
+
+          if (Math.abs(pendulum.angle) > 0.22) {
+            pendulum.angle = Math.sign(pendulum.angle) * 0.22;
+            pendulum.velocity *= -0.24;
+          }
+
+          pendulum.setRotation((pendulum.angle * 180) / Math.PI);
+        });
+      };
+
+      const pointerCleanups = [];
+
+      if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        pendulums.forEach((pendulum) => {
+          const target = pendulum.node.querySelector(
+            ".work-pendant__object",
+          );
+
+          if (!target) return;
+
+          let previousPointerX = null;
+          let previousPointerTime = 0;
+
+          const applyPointerImpulse = (event) => {
+            const bounds = target.getBoundingClientRect();
+            const halfWidth = Math.max(1, bounds.width / 2);
+            const pointerOffset = clamp(
+              (event.clientX - (bounds.left + halfWidth)) / halfWidth,
+              -1,
+              1,
+            );
+            const elapsed = previousPointerTime
+              ? Math.max(8, event.timeStamp - previousPointerTime)
+              : 16;
+            const pointerVelocity =
+              previousPointerX === null
+                ? 0
+                : ((event.clientX - previousPointerX) / elapsed) * 1000;
+            const fallbackDirection =
+              Math.sign(pointerVelocity) || (pendulum.angle <= 0 ? 1 : -1);
+            const direction =
+              Math.abs(pointerOffset) > 0.08
+                ? pointerOffset
+                : fallbackDirection;
+            const speedBoost = clamp(
+              Math.abs(pointerVelocity) / 1800,
+              0,
+              0.2,
+            );
+
+            pendulum.pointerForce = clamp(
+              pendulum.pointerForce + direction * (0.2 + speedBoost),
+              -0.56,
+              0.56,
+            );
+            previousPointerX = event.clientX;
+            previousPointerTime = event.timeStamp;
+          };
+
+          const resetPointerSample = () => {
+            previousPointerX = null;
+            previousPointerTime = 0;
+          };
+
+          target.addEventListener("pointerenter", applyPointerImpulse, {
+            passive: true,
+          });
+          target.addEventListener("pointermove", applyPointerImpulse, {
+            passive: true,
+          });
+          target.addEventListener("pointerleave", resetPointerSample);
+
+          pointerCleanups.push(() => {
+            target.removeEventListener("pointerenter", applyPointerImpulse);
+            target.removeEventListener("pointermove", applyPointerImpulse);
+            target.removeEventListener("pointerleave", resetPointerSample);
+          });
+        });
+      }
+
+      gsap.ticker.add(tick);
+
+      return () => {
+        gsap.ticker.remove(tick);
+        visibilityObserver.disconnect();
+        pointerCleanups.forEach((cleanup) => cleanup());
+      };
+    },
+    { scope: rootRef },
+  );
+
+  return (
+    <span ref={rootRef} className="work-pendants" aria-hidden="true">
+      <span
+        ref={floppyRef}
+        className="work-pendant work-pendant--floppy"
+      >
+        <span className="work-pendant__wire" />
+        <img
+          className="work-pendant__object"
+          src="/assets/work-pendants/floppy-disk.png"
+          alt=""
+          draggable="false"
+          loading="lazy"
+          decoding="async"
+        />
+      </span>
+      <span ref={mouseRef} className="work-pendant work-pendant--mouse">
+        <span className="work-pendant__wire" />
+        <img
+          className="work-pendant__object"
+          src="/assets/work-pendants/ball-mouse.png"
+          alt=""
+          draggable="false"
+          loading="lazy"
+          decoding="async"
+        />
+      </span>
+    </span>
+  );
+}
+
 export function SelectedWorks() {
   const sectionRef = useRef(null);
   const galleryRef = useRef(null);
@@ -379,12 +583,12 @@ export function SelectedWorks() {
       <div className="selected-works__intro">
         <p className="selected-works__kicker">
           <span>02</span>
-          <span>// ИЗБРАННЫЕ РАБОТЫ</span>
+          <span>// мои работы</span>
         </p>
         <h2 id="works-title">
           SELECTED
           <br />
-          WORK
+          W<span className="selected-works__o">O<WorkPendants /></span>RK
         </h2>
       </div>
 

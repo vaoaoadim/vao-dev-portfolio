@@ -190,7 +190,7 @@ export function HeroIntro() {
         </h1>
 
         <div className="hero-meta" aria-label="Статус портфолио">
-          <span data-hero-meta>// избранные работы</span>
+          <span data-hero-meta>// портфолио</span>
           <span data-hero-meta>открыт для проектов</span>
           <span data-hero-meta>листайте вниз ↓</span>
         </div>
