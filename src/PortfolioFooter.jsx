@@ -48,28 +48,30 @@ export function PortfolioFooter() {
       <h2 className="portfolio-footer__visually-hidden">Контакты и реквизиты</h2>
 
       <div className="portfolio-footer__info">
+        <p className="portfolio-footer__label">03&nbsp;&nbsp; // контакты</p>
+
         <div className="portfolio-footer__contact">
-          <p className="portfolio-footer__label">03&nbsp;&nbsp; // контакты</p>
           <a className="portfolio-footer__email" href="mailto:vbednov921@gmail.com">
             vbednov921@gmail.com
           </a>
+
+          <nav className="portfolio-footer__socials" aria-label="Социальные сети">
+            {SOCIAL_LINKS.map(({ label, Icon }) => (
+              <PlaceholderButton
+                className="portfolio-footer__social"
+                key={label}
+                label={label}
+              >
+                <Icon aria-hidden="true" size="1em" weight="regular" />
+                <span className="portfolio-footer__visually-hidden">{label}</span>
+              </PlaceholderButton>
+            ))}
+          </nav>
         </div>
 
-        <nav className="portfolio-footer__socials" aria-label="Социальные сети">
-          {SOCIAL_LINKS.map(({ label, Icon }) => (
-            <PlaceholderButton
-              className="portfolio-footer__social"
-              key={label}
-              label={label}
-            >
-              <Icon aria-hidden="true" size="1em" weight="regular" />
-              <span className="portfolio-footer__visually-hidden">{label}</span>
-            </PlaceholderButton>
-          ))}
-        </nav>
-
         <div className="portfolio-footer__details">
-          <p>самозанятый Беднов Вадим Дмитриевич</p>
+          <p>самозанятый</p>
+          <p>Беднов Вадим Дмитриевич</p>
           <p>ИНН 524711417910</p>
         </div>
 

@@ -153,6 +153,9 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       return undefined;
     }
 
+    delete layer.dataset.drawingActive;
+    clearButton.hidden = true;
+
     const reducedMotionQuery = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     );
@@ -552,6 +555,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         drawingCanvas.dataset.active = "true";
         drawingCanvas.tabIndex = 0;
         markerButton.setAttribute("aria-pressed", "true");
+        layer.dataset.drawingActive = "true";
         clearButton.hidden = false;
         markerHint.classList.add("is-hidden");
       }
@@ -793,6 +797,8 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       paperGeometry?.dispose();
       paperMaterial?.dispose();
       renderer?.dispose();
+      delete layer.dataset.drawingActive;
+      clearButton.hidden = true;
     };
   }, [imageRef, sectionRef]);
 
