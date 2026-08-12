@@ -3,20 +3,51 @@ import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 
 const HERO_MEDIA = [
-  { src: "/assets/hero/hero-file-manager.png", label: "File manager" },
-  { src: "/assets/hero/hero-retro-computer.png", label: "Retro computer" },
-  { src: "/assets/hero/hero-cursor.png", label: "Cursor" },
-  { src: "/assets/hero/hero-floppy.png", label: "Floppy disk" },
-  { src: "/assets/hero/hero-microchip.png", label: "Microchip" },
+  { asset: "hero-file-manager", label: "File manager" },
+  { asset: "hero-retro-computer", label: "Retro computer" },
+  { asset: "hero-cursor", label: "Cursor" },
+  { asset: "hero-floppy", label: "Floppy disk" },
+  { asset: "hero-microchip", label: "Microchip" },
 ];
 
 const MEDIA_INTERVAL_MS = 960;
+const FONT_READY_TIMEOUT_MS = 900;
 
 export function HeroIntro() {
   const heroRef = useRef(null);
   const backgroundImageRef = useRef(null);
   const [activeMedia, setActiveMedia] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [heroReady, setHeroReady] = useState(false);
+
+  useEffect(() => {
+    let isCurrent = true;
+    const fontSet = document.fonts;
+    let timeoutId = 0;
+
+    const revealHero = () => {
+      if (!isCurrent) return;
+      window.requestAnimationFrame(() => {
+        if (isCurrent) setHeroReady(true);
+      });
+    };
+
+    if (!fontSet) {
+      revealHero();
+      return undefined;
+    }
+
+    timeoutId = window.setTimeout(revealHero, FONT_READY_TIMEOUT_MS);
+    Promise.allSettled([
+      fontSet.load('500 1em "Onest Variable"', "HELLO THIS IS MY DEVELOPMENT PORTFOLIO"),
+      fontSet.load('400 1em "IBM Plex Mono"', "портфолио открыт для проектов"),
+    ]).then(revealHero);
+
+    return () => {
+      isCurrent = false;
+      window.clearTimeout(timeoutId);
+    };
+  }, []);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -28,13 +59,6 @@ export function HeroIntro() {
   }, []);
 
   useEffect(() => {
-    HERO_MEDIA.forEach(({ src }) => {
-      const image = new Image();
-      image.src = src;
-    });
-  }, []);
-
-  useEffect(() => {
     if (reducedMotion) return undefined;
 
     const interval = window.setInterval(() => {
@@ -43,31 +67,6 @@ export function HeroIntro() {
 
     return () => window.clearInterval(interval);
   }, [reducedMotion]);
-
-  useGSAP(
-    () => {
-      if (reducedMotion) return undefined;
-
-      return gsap
-        .timeline({ defaults: { ease: "power3.out" } })
-        .from("[data-hero-line]", {
-          yPercent: 108,
-          duration: 0.72,
-          stagger: 0.09,
-        })
-        .from(
-          "[data-hero-meta]",
-          {
-            autoAlpha: 0,
-            y: 10,
-            duration: 0.38,
-            stagger: 0.06,
-          },
-          "-=0.28",
-        );
-    },
-    { scope: heroRef, dependencies: [reducedMotion], revertOnUpdate: true },
-  );
 
   useGSAP(
     () => {
@@ -128,20 +127,27 @@ export function HeroIntro() {
     <section className="hero" ref={heroRef} aria-labelledby="hero-title">
       <div className="hero-background" aria-hidden="true">
         <div className="hero-background-drift">
-          <img
-            ref={backgroundImageRef}
-            src="/assets/backgrounds/pixel-block-haze.png"
-            alt=""
-            width="1672"
-            height="941"
-            fetchPriority="high"
-            decoding="async"
-          />
+          <picture>
+            <source srcSet="/assets/backgrounds/pixel-block-haze.avif" type="image/avif" />
+            <source srcSet="/assets/backgrounds/pixel-block-haze.webp" type="image/webp" />
+            <img
+              ref={backgroundImageRef}
+              src="/assets/backgrounds/pixel-block-haze.png"
+              alt=""
+              width="1672"
+              height="941"
+              fetchPriority="high"
+              decoding="async"
+            />
+          </picture>
         </div>
         <div className="hero-background-veil" />
       </div>
 
-      <div className="hero-content">
+      <div
+        className={`hero-content ${heroReady ? "is-ready" : ""}`}
+        data-reduced-motion={reducedMotion || undefined}
+      >
         <h1 className="hero-title" id="hero-title">
           <span className="hero-line-clip">
             <span className="hero-line" data-hero-line>
@@ -155,20 +161,26 @@ export function HeroIntro() {
                 <span className="hero-code-glyph--yellow">[</span>
               </span>
               <span className="hero-media" aria-hidden="true">
-                {HERO_MEDIA.map(({ src, label }, index) => (
-                  <img
-                    key={src}
+                {HERO_MEDIA.map(({ asset, label }, index) => (
+                  <picture
+                    key={asset}
                     className={index === activeMedia ? "is-active" : ""}
                     data-hero-media-index={index}
-                    src={src}
-                    alt=""
-                    width="1440"
-                    height="1088"
-                    loading="eager"
-                    decoding="async"
-                    draggable="false"
-                    title={label}
-                  />
+                  >
+                    <source srcSet={`/assets/hero/${asset}.avif`} type="image/avif" />
+                    <source srcSet={`/assets/hero/${asset}.webp`} type="image/webp" />
+                    <img
+                      src={`/assets/hero/${asset}.png`}
+                      alt=""
+                      width="1440"
+                      height="1088"
+                      loading={index === 0 ? "eager" : "lazy"}
+                      fetchPriority={index === 0 ? "high" : "low"}
+                      decoding="async"
+                      draggable="false"
+                      title={label}
+                    />
+                  </picture>
                 ))}
               </span>
               <span className="hero-code-glyph" aria-label="] ]">

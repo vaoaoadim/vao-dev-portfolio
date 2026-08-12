@@ -4,6 +4,7 @@ import {
   TelegramLogo,
   ThreadsLogo,
 } from "@phosphor-icons/react";
+import { usePortfolioOverlay } from "./PortfolioOverlayContext";
 
 const SOCIAL_LINKS = [
   { label: "Telegram", Icon: TelegramLogo },
@@ -12,7 +13,10 @@ const SOCIAL_LINKS = [
   { label: "GitHub", Icon: GithubLogo },
 ];
 
-const LEGAL_LINKS = ["политика конфиденциальности", "публичная оферта"];
+const LEGAL_LINKS = [
+  { label: "политика конфиденциальности", overlay: "privacy-policy" },
+  { label: "публичная оферта", overlay: "public-offer" },
+];
 const MARQUEE_ITEMS = Array.from({ length: 5 }, (_, index) => index);
 
 function PlaceholderButton({ children, className = "", label }) {
@@ -43,6 +47,8 @@ function MarqueeGroup() {
 }
 
 export function PortfolioFooter() {
+  const { openInfo } = usePortfolioOverlay();
+
   return (
     <footer className="portfolio-footer" id="contacts">
       <h2 className="portfolio-footer__visually-hidden">Контакты и реквизиты</h2>
@@ -76,14 +82,15 @@ export function PortfolioFooter() {
         </div>
 
         <nav className="portfolio-footer__legal" aria-label="Юридическая информация">
-          {LEGAL_LINKS.map((label) => (
-            <PlaceholderButton
+          {LEGAL_LINKS.map((item) => (
+            <button
               className="portfolio-footer__legal-link"
-              key={label}
-              label={label}
+              key={item.overlay}
+              type="button"
+              onClick={(event) => openInfo(item.overlay, event.currentTarget)}
             >
-              {label}
-            </PlaceholderButton>
+              {item.label}
+            </button>
           ))}
           <span>© 2026 v.build</span>
         </nav>

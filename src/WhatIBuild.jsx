@@ -105,7 +105,7 @@ export function WhatIBuild() {
           })
           .to(state, {
             scramble: 1,
-            duration: 1.5,
+            duration: 0.35,
             ease: "none",
             onUpdate: () => {
               renderTitle();
@@ -113,7 +113,7 @@ export function WhatIBuild() {
           })
           .to(state, {
             reveal: 1,
-            duration: 0.75,
+            duration: 0.35,
             ease: "none",
             onUpdate: () => {
               const revealedCharacters = Math.floor(state.reveal * characterCount);
@@ -162,18 +162,22 @@ export function WhatIBuild() {
       <div className="mascot-scroll-track" aria-hidden="true">
         <div className="mascot-scroll-sticky">
           <div className="mascot-scroll-motion">
-            <img
-              ref={mascotImageRef}
-              className="mascot-scroll-image"
-              src="/assets/mascot/scroll-mascot.png"
-              alt=""
-              width="1117"
-              height="941"
-              loading="eager"
-              fetchPriority="high"
-              decoding="async"
-              draggable="false"
-            />
+            <picture>
+              <source srcSet="/assets/mascot/scroll-mascot.avif" type="image/avif" />
+              <source srcSet="/assets/mascot/scroll-mascot.webp" type="image/webp" />
+              <img
+                ref={mascotImageRef}
+                className="mascot-scroll-image"
+                src="/assets/mascot/scroll-mascot.png"
+                alt=""
+                width="1117"
+                height="941"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                draggable="false"
+              />
+            </picture>
           </div>
         </div>
       </div>

@@ -5,11 +5,15 @@ import { gsap } from "gsap";
 const MENU_ITEMS = [
   { id: "work", label: "WORK", targetId: "work", accent: "green" },
   { id: "services", label: "SERVICES", targetId: "build", accent: "yellow" },
-  { id: "about", label: "ABOUT", targetId: null, accent: "red" },
-  { id: "stack", label: "STACK", targetId: null, accent: "orange" },
+  { id: "about", label: "ABOUT", overlay: "about", accent: "red" },
+  { id: "stack", label: "STACK", overlay: "stack", accent: "orange" },
 ];
 
-const AUXILIARY_LINKS = ["PRIVACY POLICY", "PUBLIC OFFER", "CONTACTS"];
+const AUXILIARY_LINKS = [
+  { id: "privacy-policy", label: "PRIVACY POLICY", overlay: "privacy-policy" },
+  { id: "public-offer", label: "PUBLIC OFFER", overlay: "public-offer" },
+  { id: "contacts", label: "CONTACTS", targetId: "contacts" },
+];
 
 function getFocusableElements(menu, brand, trigger) {
   if (!menu) return [];
@@ -29,8 +33,12 @@ function getFocusableElements(menu, brand, trigger) {
 
 export function PortfolioMenu({
   isOpen,
+  isInteractive,
+  isClosing,
   onClose,
+  onClosed,
   onNavigate,
+  onOpenInfo,
   brandRef,
   triggerRef,
 }) {
@@ -58,34 +66,36 @@ export function PortfolioMenu({
 
       gsap.killTweensOf([menu, itemLabels, supportingContent]);
 
-      if (isOpen) {
+      if (isOpen && !isClosing && hasOpenedRef.current) {
+        gsap.set(menu, {
+          autoAlpha: 1,
+          pointerEvents: isInteractive ? "auto" : "none",
+          scaleY: 1,
+        });
+        return undefined;
+      }
+
+      if (isOpen && !isClosing) {
         hasOpenedRef.current = true;
         setActiveItemId(null);
 
-        if (reducedMotion) {
-          gsap.set(menu, {
-            autoAlpha: 1,
-            pointerEvents: "auto",
-            scaleY: 0,
-            transformOrigin: "top center",
-          });
-          gsap.set([itemLabels, supportingContent], { yPercent: 0, autoAlpha: 1 });
-          gsap.to(menu, {
-            scaleY: 1,
-            duration: 0.16,
-            ease: "power1.out",
-          });
-          return undefined;
-        }
-
-        gsap.set(itemLabels, { yPercent: 0, y: 30, autoAlpha: 0 });
-        gsap.set(supportingContent, { autoAlpha: 0, y: 8 });
         gsap.set(menu, {
           autoAlpha: 1,
           pointerEvents: "auto",
           scaleY: 0,
           transformOrigin: "top center",
         });
+        gsap.set(itemLabels, { yPercent: 0, y: reducedMotion ? 0 : 30, autoAlpha: 0 });
+        gsap.set(supportingContent, { autoAlpha: 0, y: reducedMotion ? 0 : 8 });
+
+        if (reducedMotion) {
+          gsap.set([itemLabels, supportingContent], { y: 0, autoAlpha: 1 });
+          return gsap.to(menu, {
+            scaleY: 1,
+            duration: 0.16,
+            ease: "power1.out",
+          });
+        }
 
         return gsap
           .timeline()
@@ -123,12 +133,19 @@ export function PortfolioMenu({
         return undefined;
       }
 
-      if (reducedMotion) {
+      if (!isClosing) {
         gsap.set(menu, { autoAlpha: 0, pointerEvents: "none", scaleY: 0 });
         return undefined;
       }
 
       gsap.set(menu, { pointerEvents: "none" });
+      if (reducedMotion) {
+        gsap.set(menu, { autoAlpha: 0, pointerEvents: "none", scaleY: 0 });
+        hasOpenedRef.current = false;
+        onClosed();
+        return undefined;
+      }
+
       return gsap
         .timeline()
         .to(menu, {
@@ -136,21 +153,20 @@ export function PortfolioMenu({
           duration: 0.62,
           ease: "power4.inOut",
         })
-        .set(menu, { autoAlpha: 0, pointerEvents: "none" });
+        .set(menu, { autoAlpha: 0, pointerEvents: "none" })
+        .call(() => {
+          hasOpenedRef.current = false;
+          onClosed();
+        });
     },
     {
       scope: menuRef,
-      dependencies: [isOpen, reducedMotion],
+      dependencies: [isClosing, isInteractive, isOpen, onClosed, reducedMotion],
     },
   );
 
   useEffect(() => {
-    if (!isOpen) return undefined;
-
-    const focusDelay = window.setTimeout(
-      () => menuRef.current?.querySelector(".portfolio-menu__main-link")?.focus(),
-      reducedMotion ? 0 : 760,
-    );
+    if (!isInteractive || isClosing) return undefined;
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -183,14 +199,19 @@ export function PortfolioMenu({
 
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.clearTimeout(focusDelay);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [brandRef, isOpen, onClose, reducedMotion, triggerRef]);
+  }, [brandRef, isClosing, isInteractive, onClose, reducedMotion, triggerRef]);
 
-  const handlePrimaryItemClick = (item) => {
+  const handlePrimaryItemClick = (item, origin) => {
     setActiveItemId(item.id);
-    if (item.targetId) onNavigate(item.targetId);
+    if (item.targetId) onNavigate(item.targetId, origin);
+    if (item.overlay) onOpenInfo(item.overlay, origin);
+  };
+
+  const handleAuxiliaryClick = (item, origin) => {
+    if (item.targetId) onNavigate(item.targetId, origin);
+    if (item.overlay) onOpenInfo(item.overlay, origin);
   };
 
   return (
@@ -199,7 +220,7 @@ export function PortfolioMenu({
       className="portfolio-menu"
       id="portfolio-menu"
       aria-label="Основная навигация"
-      aria-hidden={!isOpen}
+      aria-hidden={!isInteractive}
     >
       <div className="portfolio-menu__main">
         <ul
@@ -217,7 +238,7 @@ export function PortfolioMenu({
                 <button
                   className={`portfolio-menu__main-link portfolio-menu__main-link--${item.accent}`}
                   type="button"
-                  onClick={() => handlePrimaryItemClick(item)}
+                  onClick={(event) => handlePrimaryItemClick(item, event.currentTarget)}
                   onFocus={() => setActiveItemId(item.id)}
                   onBlur={() => setActiveItemId(null)}
                   onPointerEnter={() => setActiveItemId(item.id)}
@@ -226,7 +247,7 @@ export function PortfolioMenu({
                   aria-label={
                     item.targetId
                       ? `Перейти к разделу ${item.label}`
-                      : `${item.label} — раздел скоро появится`
+                      : `Открыть раздел ${item.label}`
                   }
                 >
                   <span className="portfolio-menu__item-inner">
@@ -246,15 +267,15 @@ export function PortfolioMenu({
       </div>
 
       <div className="portfolio-menu__footer">
-        {AUXILIARY_LINKS.map((label) => (
-          <a
-            key={label}
+        {AUXILIARY_LINKS.map((item) => (
+          <button
+            key={item.id}
             className="portfolio-menu__aux-link"
-            href="#"
-            onClick={(event) => event.preventDefault()}
+            type="button"
+            onClick={(event) => handleAuxiliaryClick(item, event.currentTarget)}
           >
-            {label}
-          </a>
+            {item.label}
+          </button>
         ))}
       </div>
     </nav>
