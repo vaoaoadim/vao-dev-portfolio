@@ -43,7 +43,7 @@ export function PortfolioHeader() {
           }
           aria-label={isOverlayOpen ? "Закрыть" : "Открыть меню"}
         >
-          {isOverlayOpen ? "close" : "menu"}
+          {isOverlayOpen ? "close" : "more"}
         </button>
       </header>
 

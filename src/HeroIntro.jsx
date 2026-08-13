@@ -3,11 +3,11 @@ import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 
 const HERO_MEDIA = [
-  { asset: "hero-file-manager", label: "File manager" },
-  { asset: "hero-retro-computer", label: "Retro computer" },
-  { asset: "hero-cursor", label: "Cursor" },
-  { asset: "hero-floppy", label: "Floppy disk" },
-  { asset: "hero-microchip", label: "Microchip" },
+  { asset: "hero-crt-monitor-v1", label: "CRT monitor" },
+  { asset: "hero-palette-v3", label: "Palette and brushes" },
+  { asset: "hero-controller-v1", label: "Retro controller" },
+  { asset: "hero-pushpins-v1", label: "Push pins" },
+  { asset: "hero-rainbow-disc-v1", label: "Iridescent compact disc" },
 ];
 
 const MEDIA_INTERVAL_MS = 960;
@@ -15,7 +15,6 @@ const FONT_READY_TIMEOUT_MS = 900;
 
 export function HeroIntro() {
   const heroRef = useRef(null);
-  const backgroundImageRef = useRef(null);
   const [activeMedia, setActiveMedia] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [heroReady, setHeroReady] = useState(false);
@@ -93,55 +92,10 @@ export function HeroIntro() {
     },
   );
 
-  useGSAP(
-    (context, contextSafe) => {
-      if (reducedMotion) return undefined;
-
-      const moveBackground = contextSafe((event) => {
-        const bounds = heroRef.current?.getBoundingClientRect();
-        if (!bounds) return;
-
-        const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 16;
-        const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 16;
-
-        gsap.to(backgroundImageRef.current, {
-          x,
-          y,
-          duration: 0.8,
-          ease: "power3.out",
-          overwrite: "auto",
-        });
-      });
-
-      const hero = heroRef.current;
-      hero?.addEventListener("pointermove", moveBackground);
-
-      return () => {
-        hero?.removeEventListener("pointermove", moveBackground);
-      };
-    },
-    { scope: heroRef, dependencies: [reducedMotion], revertOnUpdate: true },
-  );
-
   return (
     <section className="hero" ref={heroRef} aria-labelledby="hero-title">
       <div className="hero-background" aria-hidden="true">
-        <div className="hero-background-drift">
-          <picture>
-            <source srcSet="/assets/backgrounds/pixel-block-haze.avif" type="image/avif" />
-            <source srcSet="/assets/backgrounds/pixel-block-haze.webp" type="image/webp" />
-            <img
-              ref={backgroundImageRef}
-              src="/assets/backgrounds/pixel-block-haze.png"
-              alt=""
-              width="1672"
-              height="941"
-              fetchPriority="high"
-              decoding="async"
-            />
-          </picture>
-        </div>
-        <div className="hero-background-veil" />
+        <div className="hero-background-mist" />
       </div>
 
       <div
@@ -166,14 +120,15 @@ export function HeroIntro() {
                     key={asset}
                     className={index === activeMedia ? "is-active" : ""}
                     data-hero-media-index={index}
+                    data-hero-media-asset={asset}
                   >
                     <source srcSet={`/assets/hero/${asset}.avif`} type="image/avif" />
                     <source srcSet={`/assets/hero/${asset}.webp`} type="image/webp" />
                     <img
                       src={`/assets/hero/${asset}.png`}
                       alt=""
-                      width="1440"
-                      height="1088"
+                      width="1448"
+                      height="1086"
                       loading={index === 0 ? "eager" : "lazy"}
                       fetchPriority={index === 0 ? "high" : "low"}
                       decoding="async"
@@ -203,7 +158,6 @@ export function HeroIntro() {
 
         <div className="hero-meta" aria-label="Статус портфолио">
           <span data-hero-meta>// портфолио</span>
-          <span data-hero-meta>открыт для проектов</span>
           <span data-hero-meta>листайте вниз ↓</span>
         </div>
       </div>
