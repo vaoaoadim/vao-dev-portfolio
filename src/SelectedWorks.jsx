@@ -137,14 +137,17 @@ function WorkPendants() {
 
       let isVisible = true;
 
-      const visibilityObserver = new IntersectionObserver(
-        ([entry]) => {
-          isVisible = entry.isIntersecting;
-        },
-        { rootMargin: "12% 0px" },
-      );
+      const visibilityObserver =
+        "IntersectionObserver" in window
+          ? new IntersectionObserver(
+              ([entry]) => {
+                isVisible = entry.isIntersecting;
+              },
+              { rootMargin: "12% 0px" },
+            )
+          : null;
 
-      visibilityObserver.observe(root);
+      visibilityObserver?.observe(root);
 
       const tick = (time, deltaTime) => {
         if (!isVisible) return;
@@ -251,7 +254,7 @@ function WorkPendants() {
 
       return () => {
         gsap.ticker.remove(tick);
-        visibilityObserver.disconnect();
+        visibilityObserver?.disconnect();
         pointerCleanups.forEach((cleanup) => cleanup());
       };
     },
@@ -270,8 +273,11 @@ function WorkPendants() {
           src="/assets/work-pendants/floppy-disk.png"
           alt=""
           draggable="false"
-          loading="lazy"
+          width="880"
+          height="1028"
+          loading="eager"
           decoding="async"
+          fetchPriority="high"
         />
       </span>
       <span ref={mouseRef} className="work-pendant work-pendant--mouse">
@@ -281,8 +287,11 @@ function WorkPendants() {
           src="/assets/work-pendants/ball-mouse.png"
           alt=""
           draggable="false"
-          loading="lazy"
+          width="533"
+          height="930"
+          loading="eager"
           decoding="async"
+          fetchPriority="high"
         />
       </span>
     </span>
@@ -345,7 +354,7 @@ export function SelectedWorks() {
   );
 
   useGSAP(
-    (context, contextSafe) => {
+    () => {
       const section = sectionRef.current;
       const gallery = galleryRef.current;
       const viewport = viewportRef.current;
@@ -406,49 +415,6 @@ export function SelectedWorks() {
       };
 
       const media = gsap.matchMedia();
-
-      const playMobileSwipeHint = contextSafe(() => {
-        if (viewport.scrollLeft > 2) return;
-
-        const peekDistance = Math.round(
-          Math.min(56, viewport.clientWidth * 0.16),
-        );
-
-        gsap.timeline({
-          delay: 0.55,
-          onStart: () => {
-            viewport.dataset.swipeHint = "true";
-          },
-          onComplete: () => {
-            delete viewport.dataset.swipeHint;
-          },
-        })
-          .to(viewport, {
-            scrollLeft: peekDistance,
-            duration: 0.72,
-            ease: "power1.inOut",
-          })
-          .to(viewport, {
-            scrollLeft: peekDistance * 0.62,
-            duration: 0.28,
-            ease: "power1.inOut",
-          })
-          .to(viewport, {
-            scrollLeft: peekDistance,
-            duration: 0.32,
-            ease: "power1.inOut",
-          })
-          .to(viewport, {
-            scrollLeft: 0,
-            duration: 0.72,
-            ease: "power2.inOut",
-          });
-      });
-
-      const cancelMobileSwipeHint = contextSafe(() => {
-        gsap.killTweensOf(viewport, "scrollLeft");
-        delete viewport.dataset.swipeHint;
-      });
 
       media.add(
         {
@@ -537,9 +503,86 @@ export function SelectedWorks() {
 
           if (!mobile || !motion) return undefined;
 
-          let userHasInteracted = false;
-          const stopHintForInteraction = () => {
-            userHasInteracted = true;
+          let isGalleryVisible = false;
+          let userHasSwiped = false;
+          let repeatTimer = 0;
+          let hintTimeline = null;
+
+          const clearHintTimer = () => {
+            if (repeatTimer) {
+              window.clearTimeout(repeatTimer);
+              repeatTimer = 0;
+            }
+          };
+
+          const cancelMobileSwipeHint = () => {
+            clearHintTimer();
+            hintTimeline?.kill();
+            hintTimeline = null;
+            gsap.killTweensOf(viewport, "scrollLeft");
+            delete viewport.dataset.swipeHint;
+          };
+
+          const scheduleMobileSwipeHint = (delay = 550) => {
+            clearHintTimer();
+
+            if (!isGalleryVisible || userHasSwiped || viewport.scrollLeft > 2) {
+              return;
+            }
+
+            repeatTimer = window.setTimeout(() => {
+              repeatTimer = 0;
+
+              if (!isGalleryVisible || userHasSwiped || viewport.scrollLeft > 2) {
+                return;
+              }
+
+              const peekDistance = Math.round(
+                Math.min(56, viewport.clientWidth * 0.16),
+              );
+
+              hintTimeline = gsap
+                .timeline({
+                  onStart: () => {
+                    viewport.dataset.swipeHint = "true";
+                  },
+                  onComplete: () => {
+                    delete viewport.dataset.swipeHint;
+                    hintTimeline = null;
+                    scheduleMobileSwipeHint(2300);
+                  },
+                })
+                .to(viewport, {
+                  scrollLeft: peekDistance,
+                  duration: 0.72,
+                  ease: "power1.inOut",
+                })
+                .to(viewport, {
+                  scrollLeft: peekDistance * 0.62,
+                  duration: 0.28,
+                  ease: "power1.inOut",
+                })
+                .to(viewport, {
+                  scrollLeft: peekDistance,
+                  duration: 0.32,
+                  ease: "power1.inOut",
+                })
+                .to(viewport, {
+                  scrollLeft: 0,
+                  duration: 0.72,
+                  ease: "power2.inOut",
+                });
+            }, delay);
+          };
+
+          const stopHintAfterHorizontalSwipe = () => {
+            if (viewport.dataset.swipeHint === "true") return;
+
+            const swipeThreshold = Math.max(18, viewport.clientWidth * 0.06);
+
+            if (viewport.scrollLeft < swipeThreshold) return;
+
+            userHasSwiped = true;
             section.dataset.swipeHintDismissed = "true";
             cancelMobileSwipeHint();
           };
@@ -547,25 +590,32 @@ export function SelectedWorks() {
           const hintTrigger = ScrollTrigger.create({
             trigger: gallery,
             start: "top 74%",
-            once: true,
+            end: "bottom 26%",
             onEnter: () => {
-              if (!userHasInteracted) {
-                playMobileSwipeHint();
-              }
+              isGalleryVisible = true;
+              scheduleMobileSwipeHint();
+            },
+            onEnterBack: () => {
+              isGalleryVisible = true;
+              scheduleMobileSwipeHint();
+            },
+            onLeave: () => {
+              isGalleryVisible = false;
+              cancelMobileSwipeHint();
+            },
+            onLeaveBack: () => {
+              isGalleryVisible = false;
+              cancelMobileSwipeHint();
             },
           });
 
-          viewport.addEventListener("pointerdown", stopHintForInteraction, {
-            passive: true,
-          });
-          viewport.addEventListener("wheel", stopHintForInteraction, {
+          viewport.addEventListener("scroll", stopHintAfterHorizontalSwipe, {
             passive: true,
           });
 
           return () => {
             hintTrigger.kill();
-            viewport.removeEventListener("pointerdown", stopHintForInteraction);
-            viewport.removeEventListener("wheel", stopHintForInteraction);
+            viewport.removeEventListener("scroll", stopHintAfterHorizontalSwipe);
             cancelMobileSwipeHint();
           };
         },

@@ -7,10 +7,14 @@ import {
 import { usePortfolioOverlay } from "./PortfolioOverlayContext";
 
 const SOCIAL_LINKS = [
-  { label: "Telegram", Icon: TelegramLogo },
+  { label: "Telegram", Icon: TelegramLogo, href: "https://web.telegram.org/k/#@vaoaoadim" },
   { label: "Instagram", Icon: InstagramLogo },
   { label: "Threads", Icon: ThreadsLogo },
-  { label: "GitHub", Icon: GithubLogo },
+  {
+    label: "GitHub",
+    Icon: GithubLogo,
+    href: "https://github.com/vaoaoadim?tab=overview&from=2026-08-01&to=2026-08-08",
+  },
 ];
 
 const LEGAL_LINKS = [
@@ -38,8 +42,7 @@ function MarqueeGroup() {
     <span className="portfolio-footer__marquee-group">
       {MARQUEE_ITEMS.map((item) => (
         <span className="portfolio-footer__marquee-item" key={item}>
-          <span>v.build</span>
-          <span>portfolio</span>
+          <span>Better call v.build</span>
         </span>
       ))}
     </span>
@@ -62,16 +65,30 @@ export function PortfolioFooter() {
           </a>
 
           <nav className="portfolio-footer__socials" aria-label="Социальные сети">
-            {SOCIAL_LINKS.map(({ label, Icon }) => (
-              <PlaceholderButton
-                className="portfolio-footer__social"
-                key={label}
-                label={label}
-              >
-                <Icon aria-hidden="true" size="1em" weight="regular" />
-                <span className="portfolio-footer__visually-hidden">{label}</span>
-              </PlaceholderButton>
-            ))}
+            {SOCIAL_LINKS.map(({ label, Icon, href }) =>
+              href ? (
+                <a
+                  className="portfolio-footer__social"
+                  href={href}
+                  key={label}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={label}
+                >
+                  <Icon aria-hidden="true" size="1em" weight="regular" />
+                  <span className="portfolio-footer__visually-hidden">{label}</span>
+                </a>
+              ) : (
+                <PlaceholderButton
+                  className="portfolio-footer__social"
+                  key={label}
+                  label={label}
+                >
+                  <Icon aria-hidden="true" size="1em" weight="regular" />
+                  <span className="portfolio-footer__visually-hidden">{label}</span>
+                </PlaceholderButton>
+              ),
+            )}
           </nav>
         </div>
 
@@ -98,6 +115,7 @@ export function PortfolioFooter() {
 
       <div className="portfolio-footer__marquee" aria-hidden="true">
         <div className="portfolio-footer__marquee-track">
+          <MarqueeGroup />
           <MarqueeGroup />
           <MarqueeGroup />
         </div>
