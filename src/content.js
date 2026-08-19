@@ -2,225 +2,658 @@ export const sectionOrder = ["work", "about", "services", "contact"];
 
 export const copy = {
   en: {
-    metaTitle: "vao.dev | Developer portfolio",
-    skip: "Skip to portfolio navigation",
-    brandLabel: "vao.dev home",
-    role: "Websites, applications",
-    descriptor: "Developer portfolio",
-    languageSwitch: "Switch to Russian",
-    motionPause: "Pause ambient motion",
-    motionPlay: "Play ambient motion",
-    close: "Close",
-    lightOn: "Turn the scene light on",
-    lightOff: "Turn the scene light off",
-    lightStateOn: "Scene light on",
-    lightStateOff: "Scene light off",
-    fallbackTitle: "Portfolio sections",
-    fallbackNote:
-      "Interactive 3D is unavailable or reduced on this device. All sections remain available.",
-    futureMascot: "Future mascot media slot",
-    placeholder: "Concept placeholder",
-    backToCases: "Back to work",
-    nav: {
-      work: "Work",
-      about: "About",
-      services: "Services",
-      contact: "Contact",
+    meta: {
+      title: "v.build | Developer portfolio",
+      description:
+        "Developer portfolio by Vadim Bednov: websites, web applications, bots, integrations, and automation.",
     },
-    buildingHint: {
-      work: "Open work",
-      about: "Open about",
-      services: "Open services",
-      contact: "Open contact",
+    header: {
+      brandLabel: "v.build — back to the top",
+      openMenu: "Open menu",
+      close: "Close",
+      more: "more",
+      closeLabel: "close",
+      languageGroup: "Choose site language",
+      chooseRussian: "Switch site language to Russian",
+      chooseEnglish: "Switch site language to English",
     },
-    panel: {
-      work: {
-        kicker: "Work",
-        title: "Project placeholders",
-        intro:
-          "Real case studies will replace these entries. Each final case will state the problem, role, decisions, implementation, and verified outcome.",
+    hero: {
+      firstLine: "HELLO, THIS IS",
+      thirdLine: "MY DEVELOPMENT",
+      fourthLine: "PORTFOLIO",
+      statusLabel: "Portfolio status",
+      status: "// portfolio",
+      scroll: "scroll down ↓",
+      mediaTitles: [
+        "CRT monitor",
+        "Palette and brushes",
+        "Retro controller",
+        "Push pins",
+        "Iridescent compact disc",
+      ],
+    },
+    menu: {
+      label: "Main navigation",
+      goTo: "Go to the {label} section",
+      open: "Open the {label} section",
+      items: {
+        work: "WORK",
+        services: "SERVICES",
+        about: "ABOUT",
+        stack: "STACK",
+      },
+      auxiliary: {
+        privacy: "PRIVACY POLICY",
+        offer: "PUBLIC OFFER",
+        contacts: "CONTACTS",
+      },
+    },
+    build: {
+      sectionLabel: "Section 01",
+      kicker: "// services",
+      instruction: "[ tap the marker or bin — take a break from work ]",
+      titleFirst: "WHAT I",
+      titleSecond: "BUILD",
+      subtitle: "From interface to a working product.",
+      items: [
+        {
+          title: "MINI APPS & GAMES",
+          description:
+            "Small products and game mechanics that communicate an idea quickly and keep users engaged.",
+        },
+        {
+          title: "TELEGRAM BOTS",
+          description:
+            "Bots for services, communication, and workflows — with clear scenarios and no unnecessary complexity.",
+        },
+        {
+          title: "PLUGINS & SCRIPTS",
+          description:
+            "Lightweight software and automations that remove repetitive work from the team.",
+        },
+        {
+          title: "WEBSITES",
+          description:
+            "Websites and promotional pages with expressive presentation, clear structure, and careful implementation.",
+        },
+        {
+          title: "EMAIL AUTOMATION",
+          description:
+            "Automated email sequences, notifications, and integrations for recurring workflows.",
+        },
+        {
+          title: "BROWSER EXTENSIONS",
+          description:
+            "Browser extensions and desktop tools that add the right workflow directly to the working environment.",
+        },
+        {
+          title: "AI INTEGRATIONS",
+          description:
+            "AI integrations and process automation where they deliver real value to the product.",
+        },
+      ],
+      interaction: {
+        closeBoard: "Close enlarged whiteboard",
+        drawingArea: "Whiteboard drawing area",
+        takeMarker: "Pick up the marker and draw on the whiteboard",
+        createBall: "Create a paper ball",
+        unavailableBall: "Paper ball unavailable: WebGL is not supported",
+        grabBall: "Grab the paper ball",
+        draw: "draw",
+        throw: "throw",
+        clear: "clear",
+      },
+    },
+    works: {
+      kicker: "// my work",
+      titleFirst: "SELECTED",
+      titleSecond: { before: "W", focus: "O", after: "RK" },
+      galleryLabel: "Selected work",
+      casePrefix: "CASE",
+      swipe: "swipe →",
+      previewTitle: "PROJECT SCREENSHOT",
+      previewNote: "COMING SOON",
+      openCase: "[ open case ↗ ]",
+      previewSoon: "{title}: case preview coming soon",
+      cases: [
+        {
+          id: "signal",
+          title: "SIGNAL",
+          type: "TELEGRAM AUTOMATION / 2026",
+          description:
+            "A Telegram system for requests, notifications, and small-team automation.",
+          color: "green",
+        },
+        {
+          id: "localhost",
+          title: "LOCALHOST",
+          type: "DEVELOPER PORTFOLIO / 2026",
+          description:
+            "An experimental developer portfolio with interactive scenes and scroll-based mechanics.",
+          color: "yellow",
+        },
+        {
+          id: "cache",
+          title: "CACHE",
+          type: "BROWSER EXTENSION / 2026",
+          description:
+            "A browser extension for quickly saving and organizing materials from the web.",
+          color: "red",
+        },
+        {
+          id: "room-404",
+          title: "ROOM 404",
+          type: "INTERACTIVE MINI-GAME / 2026",
+          description:
+            "A compact browser game built around exploring a digital space.",
+          color: "orange",
+        },
+        {
+          id: "trace",
+          title: "TRACE",
+          type: "AI WORKFLOW TOOL / 2026",
+          description: "A tool for building and controlling multi-step AI workflows.",
+          color: "green",
+        },
+        {
+          id: "patch",
+          title: "PATCH",
+          type: "DESKTOP UTILITY / 2026",
+          description:
+            "A minimalist desktop utility for automating repetitive actions.",
+          color: "yellow",
+        },
+        {
+          id: "ping",
+          title: "PING",
+          type: "NOTIFICATION SYSTEM / 2026",
+          description:
+            "An event and notification system for small digital products.",
+          color: "red",
+        },
+        {
+          id: "frame",
+          title: "FRAME",
+          type: "INTERACTIVE WEBSITE / 2026",
+          description:
+            "An experimental promotional website with responsive motion and interactive graphics.",
+          color: "orange",
+        },
+      ],
+    },
+    footer: {
+      title: "Contacts and business details",
+      kicker: "// contacts",
+      socialLabel: "Social media",
+      unavailable: "{label} — link coming soon",
+      unavailableTitle: "Link coming soon",
+      status: "self-employed",
+      owner: "Vadim Dmitrievich Bednov",
+      taxId: "Tax ID 524711417910",
+      legalLabel: "Legal information",
+      privacy: "privacy policy",
+      offer: "public offer",
+      marquee: "Better call v.build",
+    },
+    overlays: {
+      titles: {
+        about: "about",
+        stack: "stack",
+        privacy: "privacy policy",
+        offer: "public offer",
       },
       about: {
-        kicker: "About",
-        title: "Developer profile",
-        intro:
-          "Owner-approved biography, experience, availability, and public links will be added before launch.",
+        eyebrow: "// about me",
+        paragraphs: [
+          "I create digital products — from an expressive interface to a working system. I develop websites, web applications, Telegram bots, extensions, and automations, considering both the visual layer and the logic behind each scenario.",
+          "I build projects end to end: frontend, server-side logic, databases, APIs, and third-party integrations. I work with notifications, payment flows, internal tools, content processes, and AI features where they genuinely make work easier.",
+          "Clear structure, careful implementation, responsiveness, and speed matter to me. I choose technology for the task, not for the sake of the stack.",
+        ],
       },
-      services: {
-        kicker: "Services",
-        title: "Websites, applications",
+      stack: {
+        eyebrow: "// technologies and disciplines",
         intro:
-          "The final service list and pricing will use owner-provided scope and real commercial terms.",
+          "The working stack is selected for the task, scale, and timeline. Below are the technologies and disciplines I use or bring in when needed.",
+        items: [
+          [
+            "FRONTEND",
+            "React, TypeScript, JavaScript, Vite, HTML, CSS, responsive layout, GSAP, and scroll-driven interfaces.",
+          ],
+          [
+            "BACKEND & DATA",
+            "Node.js, REST APIs, webhooks, PostgreSQL, Supabase, Firebase, authentication, server-side logic, and databases.",
+          ],
+          [
+            "INTEGRATIONS",
+            "Telegram Bot API, CRM and external APIs, payment APIs, email automation, notifications, analytics, and internal services.",
+          ],
+          [
+            "INFRASTRUCTURE",
+            "Git, GitHub, CI/CD, deployment, domains, hosting, Cloudflare/Vercel, and production environment setup.",
+          ],
+          [
+            "AI",
+            "OpenAI API and other model APIs, AI automation, prompt design, product AI features, RAG, and data workflows — where AI delivers real value to users or the team.",
+          ],
+        ],
       },
-      contact: {
-        kicker: "Contact",
-        title: "Contact details",
-        intro:
-          "A real email or booking link will be added before launch. No inactive form is shown.",
+      revision: "version dated August 12, 2026",
+      privacy: {
+        intro: "Personal data processing policy for the v.build website.",
+        sections: [
+          [
+            "1. General provisions",
+            "This Personal Data Processing Policy applies to the v.build website and defines how users’ personal data is processed. Operator: self-employed Vadim Dmitrievich Bednov, Tax ID 524711417910, email: vbednov921@gmail.com.",
+          ],
+          [
+            "2. Data that may be processed",
+            "When contacting the Operator by email, the user’s name, email address, message content, and any other information voluntarily included in the message may be processed. The website infrastructure may also process technical data required to operate the website and protect it from failures.",
+          ],
+          [
+            "3. Purposes and legal grounds",
+            "Data is used to respond to enquiries, discuss and fulfil orders, conduct business correspondence, comply with legal requirements, and protect the rights of the parties. The legal ground depends on the situation: user consent, entering into and performing a contract, or obligations established by law.",
+          ],
+          [
+            "4. Principles and retention period",
+            "Only data required for the stated purpose is processed. It is retained no longer than necessary for correspondence, performance of agreements, accounting and tax records, or other legal obligations.",
+          ],
+          [
+            "5. Disclosure to third parties",
+            "Data is not sold or disclosed to third parties without a lawful basis. It may be transferred to technical providers that support email, hosting, or other connected services, and to public authorities where required by law.",
+          ],
+          [
+            "6. User rights",
+            "Users may request information about the processing of their data, correct it, withdraw consent where applicable, and request that processing stop where there are lawful grounds. Send requests to vbednov921@gmail.com.",
+          ],
+          [
+            "7. Security and updates",
+            "The Operator applies reasonable organizational and technical safeguards. This Policy may be updated when processing practices or legislation change; the current version is published on this page.",
+          ],
+        ],
       },
+      offer: {
+        intro: "Public offer for the performance of work and provision of services.",
+        sections: [
+          [
+            "1. Status of this document",
+            "This document sets out the general terms for work and services related to digital product development. The specific scope, price, schedule, payment procedure, and deliverables are agreed individually in correspondence, a specification, commercial proposal, invoice, or another agreed document.",
+          ],
+          [
+            "2. Contractor",
+            "Contractor: self-employed Vadim Dmitrievich Bednov, Tax ID 524711417910, email: vbednov921@gmail.com.",
+          ],
+          [
+            "3. Scope",
+            "The Contractor may develop websites, web applications, Telegram bots, automations, integrations, interfaces, and other digital solutions. The services listed on the website are for information only and do not replace individual project approval.",
+          ],
+          [
+            "4. Order approval",
+            "Before work begins, the parties agree on the task, scope, stages, price, schedule, required materials and access, and the acceptance procedure. Essential terms are recorded in correspondence or a separate document.",
+          ],
+          [
+            "5. Acceptance and payment",
+            "Acceptance of the offer occurs only after individual terms have been agreed and an invoice has been paid, or another explicitly agreed action has been taken. Viewing the website or sending an initial email does not constitute acceptance. Upon payment, the Contractor issues and provides a professional income tax receipt through the My Tax service.",
+          ],
+          [
+            "6. Schedule and changes",
+            "The schedule depends on the agreed scope and the timely provision of materials and feedback. Changes to the task, additional scope, or new integrations are agreed separately before implementation.",
+          ],
+          [
+            "7. Acceptance of deliverables",
+            "The delivery and review procedure is defined in the terms of each order. Comments are submitted within a reasonable period through the agreed communication channel; the parties clarify the list of revisions where necessary.",
+          ],
+          [
+            "8. Rights and materials",
+            "Rights to the deliverables, source files, access credentials, and client materials are transferred or provided to the extent and at the time explicitly agreed for the order. No exclusive rights are transferred automatically without a separate agreement.",
+          ],
+          [
+            "9. Confidentiality and data",
+            "The parties use information received during the work only to perform their agreements and comply with applicable personal data protection requirements.",
+          ],
+          [
+            "10. Cancellation, refunds, and liability",
+            "The consequences of cancellation, refunds, and the parties’ liability are determined with regard to the work actually completed, the individual terms of the order, and mandatory legal provisions. This document does not limit mandatory consumer rights.",
+          ],
+          [
+            "11. Claims and governing law",
+            "Questions and claims should be sent to vbednov921@gmail.com. Relations between the parties are governed by the laws of the Russian Federation.",
+          ],
+          [
+            "12. Amendments",
+            "The current version is published on the website. An order already agreed remains governed by the version and terms recorded by the parties at the time it was placed, unless otherwise agreed in writing.",
+          ],
+        ],
+      },
+      legalTodo:
+        "LEGAL TODO: before final publication, confirm the actual hosting and email providers, the use of cookies or analytics, data retention periods, storage location, the address for legally significant notices, and payment terms for each service type.",
     },
-    cases: [
-      {
-        id: "case-one",
-        number: "01",
-        type: "Website",
-        title: "Case placeholder",
-        summary: "Reserved for a real website project.",
-        detail:
-          "Add verified screenshots, scope, role, important decisions, technology, and outcome.",
-      },
-      {
-        id: "case-two",
-        number: "02",
-        type: "Application",
-        title: "Case placeholder",
-        summary: "Reserved for a real application project.",
-        detail:
-          "Add the target user, problem, product flow, implementation details, and measured result.",
-      },
-      {
-        id: "case-three",
-        number: "03",
-        type: "Interactive experience",
-        title: "Case placeholder",
-        summary: "Reserved for a real interactive project.",
-        detail:
-          "Add the interaction goal, performance constraints, accessible fallback, and outcome.",
-      },
-    ],
-    aboutFacts: [
-      ["Role", "Developer — final specialization pending owner input"],
-      ["Focus", "Websites and applications"],
-      ["Availability", "Real availability status will be added before launch"],
-    ],
-    services: [
-      {
-        number: "01",
-        title: "Websites",
-        text: "Structure, interface, frontend implementation, responsive behavior, and launch preparation.",
-      },
-      {
-        number: "02",
-        title: "Applications",
-        text: "Product flows, interface states, frontend architecture, and API integration.",
-      },
-      {
-        number: "03",
-        title: "Interactive frontend",
-        text: "Three.js, WebGL, and motion when they support a clear product or communication goal.",
-      },
-    ],
-    contactState: "Real contact details will be added before launch.",
   },
   ru: {
-    metaTitle: "vao.dev | Портфолио разработчика",
-    skip: "Перейти к навигации по портфолио",
-    brandLabel: "vao.dev, главная",
-    role: "Сайты, приложения",
-    descriptor: "Портфолио разработчика",
-    languageSwitch: "Switch to English",
-    motionPause: "Остановить фоновое движение",
-    motionPlay: "Запустить фоновое движение",
-    close: "Закрыть",
-    lightOn: "Включить свет сцены",
-    lightOff: "Выключить свет сцены",
-    lightStateOn: "Свет сцены включён",
-    lightStateOff: "Свет сцены выключен",
-    fallbackTitle: "Разделы портфолио",
-    fallbackNote:
-      "Интерактивная 3D-сцена недоступна или упрощена на этом устройстве. Все разделы остаются доступны.",
-    futureMascot: "Будущий слой с видео маскота",
-    placeholder: "Концепт-заглушка",
-    backToCases: "Назад к работам",
-    nav: {
-      work: "Работы",
-      about: "Обо мне",
-      services: "Услуги",
-      contact: "Контакт",
+    meta: {
+      title: "v.build | Портфолио разработчика",
+      description:
+        "Портфолио разработчика Вадима Беднова: сайты, веб-приложения, боты, интеграции и автоматизация.",
     },
-    buildingHint: {
-      work: "Открыть работы",
-      about: "Открыть раздел обо мне",
-      services: "Открыть услуги",
-      contact: "Открыть контакты",
+    header: {
+      brandLabel: "v.build — к началу страницы",
+      openMenu: "Открыть меню",
+      close: "Закрыть",
+      more: "ещё",
+      closeLabel: "закрыть",
+      languageGroup: "Выберите язык сайта",
+      chooseRussian: "Переключить сайт на русский язык",
+      chooseEnglish: "Переключить сайт на английский язык",
     },
-    panel: {
-      work: {
-        kicker: "Работы",
-        title: "Заглушки проектов",
-        intro:
-          "Эти записи будут заменены реальными кейсами. В каждом финальном кейсе будут указаны задача, роль, решения, реализация и проверенный результат.",
+    hero: {
+      firstLine: "ПРИВЕТ, ЭТО",
+      thirdLine: "МОЁ ПОРТФОЛИО",
+      fourthLine: "РАЗРАБОТЧИКА",
+      statusLabel: "Статус портфолио",
+      status: "// портфолио",
+      scroll: "листайте вниз ↓",
+      mediaTitles: [
+        "ЭЛТ-монитор",
+        "Палитра и кисти",
+        "Ретро-контроллер",
+        "Канцелярские кнопки",
+        "Переливающийся компакт-диск",
+      ],
+    },
+    menu: {
+      label: "Основная навигация",
+      goTo: "Перейти к разделу {label}",
+      open: "Открыть раздел {label}",
+      items: {
+        work: "РАБОТЫ",
+        services: "УСЛУГИ",
+        about: "ОБО МНЕ",
+        stack: "СТЕК",
+      },
+      auxiliary: {
+        privacy: "ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ",
+        offer: "ПУБЛИЧНАЯ ОФЕРТА",
+        contacts: "КОНТАКТЫ",
+      },
+    },
+    build: {
+      sectionLabel: "Раздел 01",
+      kicker: "// спектр услуг",
+      instruction: "[ жми на маркер или урну — отвлекись от дел ]",
+      titleFirst: "ЧТО Я",
+      titleSecond: "СОЗДАЮ",
+      subtitle: "Из интерфейса — в работающий продукт.",
+      items: [
+        {
+          title: "МИНИ-ПРИЛОЖЕНИЯ И ИГРЫ",
+          description:
+            "Небольшие продукты и игровые механики, которые быстро объясняют идею и вовлекают пользователя.",
+        },
+        {
+          title: "TELEGRAM-БОТЫ",
+          description:
+            "Боты для сервисов, коммуникации и процессов — с понятными сценариями и без лишней сложности.",
+        },
+        {
+          title: "ПЛАГИНЫ И СКРИПТЫ",
+          description:
+            "Небольшой софт и автоматизации, которые снимают повторяющиеся задачи с команды.",
+        },
+        {
+          title: "САЙТЫ",
+          description:
+            "Сайты и промостраницы с выразительной подачей, ясной структурой и аккуратной реализацией.",
+        },
+        {
+          title: "EMAIL-АВТОМАТИЗАЦИЯ",
+          description:
+            "Автоматические цепочки писем, уведомления и интеграции для регулярных процессов.",
+        },
+        {
+          title: "РАСШИРЕНИЯ БРАУЗЕРА",
+          description:
+            "Расширения и desktop-инструменты, которые добавляют нужный сценарий прямо в рабочую среду.",
+        },
+        {
+          title: "ИИ-ИНТЕГРАЦИИ",
+          description:
+            "ИИ-интеграции и автоматизация процессов там, где они дают реальную пользу продукту.",
+        },
+      ],
+      interaction: {
+        closeBoard: "Закрыть увеличенную доску",
+        drawingArea: "Область рисования на доске",
+        takeMarker: "Взять маркер и рисовать на доске",
+        createBall: "Создать бумажный мяч",
+        unavailableBall: "Бумажный мяч недоступен: WebGL не поддерживается",
+        grabBall: "Схватить бумажный мяч",
+        draw: "рисуй",
+        throw: "кидай",
+        clear: "стереть",
+      },
+    },
+    works: {
+      kicker: "// мои работы",
+      titleFirst: "ИЗБРАННЫЕ",
+      titleSecond: { before: "РАБ", focus: "О", after: "ТЫ" },
+      galleryLabel: "Избранные работы",
+      casePrefix: "КЕЙС",
+      swipe: "листай →",
+      previewTitle: "СКРИНШОТ ПРОЕКТА",
+      previewNote: "СКОРО",
+      openCase: "[ открыть кейс ↗ ]",
+      previewSoon: "{title}: превью кейса появится позже",
+      cases: [
+        {
+          id: "signal",
+          title: "SIGNAL",
+          type: "TELEGRAM-АВТОМАТИЗАЦИЯ / 2026",
+          description:
+            "Telegram-система для заявок, уведомлений и автоматизации небольших команд.",
+          color: "green",
+        },
+        {
+          id: "localhost",
+          title: "LOCALHOST",
+          type: "ПОРТФОЛИО РАЗРАБОТЧИКА / 2026",
+          description:
+            "Экспериментальное портфолио разработчика с интерактивными сценами и scroll-based механиками.",
+          color: "yellow",
+        },
+        {
+          id: "cache",
+          title: "CACHE",
+          type: "РАСШИРЕНИЕ БРАУЗЕРА / 2026",
+          description:
+            "Расширение браузера для быстрого сохранения и организации материалов из сети.",
+          color: "red",
+        },
+        {
+          id: "room-404",
+          title: "ROOM 404",
+          type: "ИНТЕРАКТИВНАЯ МИНИ-ИГРА / 2026",
+          description:
+            "Небольшая browser-game, построенная вокруг исследования цифрового пространства.",
+          color: "orange",
+        },
+        {
+          id: "trace",
+          title: "TRACE",
+          type: "ИНСТРУМЕНТ ДЛЯ ИИ-ПРОЦЕССОВ / 2026",
+          description:
+            "Инструмент для сборки и контроля многошаговых ИИ-процессов.",
+          color: "green",
+        },
+        {
+          id: "patch",
+          title: "PATCH",
+          type: "DESKTOP-УТИЛИТА / 2026",
+          description:
+            "Минималистичная desktop-утилита для автоматизации повторяющихся действий.",
+          color: "yellow",
+        },
+        {
+          id: "ping",
+          title: "PING",
+          type: "СИСТЕМА УВЕДОМЛЕНИЙ / 2026",
+          description:
+            "Система уведомлений и событий для небольших digital-продуктов.",
+          color: "red",
+        },
+        {
+          id: "frame",
+          title: "FRAME",
+          type: "ИНТЕРАКТИВНЫЙ САЙТ / 2026",
+          description:
+            "Экспериментальный промосайт с responsive motion и интерактивной графикой.",
+          color: "orange",
+        },
+      ],
+    },
+    footer: {
+      title: "Контакты и реквизиты",
+      kicker: "// контакты",
+      socialLabel: "Социальные сети",
+      unavailable: "{label} — ссылка появится позже",
+      unavailableTitle: "Ссылка появится позже",
+      status: "самозанятый",
+      owner: "Беднов Вадим Дмитриевич",
+      taxId: "ИНН 524711417910",
+      legalLabel: "Юридическая информация",
+      privacy: "политика конфиденциальности",
+      offer: "публичная оферта",
+      marquee: "Лучше позвоните в v.build",
+    },
+    overlays: {
+      titles: {
+        about: "обо мне",
+        stack: "стек",
+        privacy: "политика конфиденциальности",
+        offer: "публичная оферта",
       },
       about: {
-        kicker: "Обо мне",
-        title: "Профиль разработчика",
-        intro:
-          "Биография, опыт, доступность и публичные ссылки будут добавлены после подтверждения владельцем.",
+        eyebrow: "// обо мне",
+        paragraphs: [
+          "Создаю цифровые продукты — от выразительного интерфейса до работающей системы. Разрабатываю сайты, веб‑приложения, Telegram‑боты, расширения и автоматизации, продумывая не только внешний вид, но и логику сценариев.",
+          "Собираю проекты целиком: frontend, серверную часть, базы данных, API и интеграции со сторонними сервисами. Работаю с уведомлениями, платёжными сценариями, внутренними инструментами, контентными процессами и AI‑функциями там, где они действительно упрощают работу.",
+          "Для меня важны понятная структура, аккуратная реализация, адаптивность и скорость. Технологии выбираю под задачу, а не ради самого стека.",
+        ],
       },
-      services: {
-        kicker: "Услуги",
-        title: "Сайты, приложения",
+      stack: {
+        eyebrow: "// технологии и направления",
         intro:
-          "Финальный список услуг и цены будут основаны на реальном объёме работ и условиях владельца.",
+          "Рабочий стек подбирается под задачу, масштаб и срок проекта. Ниже — технологии и направления, которые использую или подключаю при необходимости.",
+        items: [
+          [
+            "FRONTEND",
+            "React, TypeScript, JavaScript, Vite, HTML, CSS, адаптивная вёрстка, GSAP и scroll-driven interfaces.",
+          ],
+          [
+            "BACKEND & DATA",
+            "Node.js, REST API, вебхуки, PostgreSQL, Supabase, Firebase, авторизация, серверная логика и базы данных.",
+          ],
+          [
+            "INTEGRATIONS",
+            "Telegram Bot API, CRM и внешние API, платёжные API, email-автоматизация, уведомления, аналитика и внутренние сервисы.",
+          ],
+          [
+            "INFRASTRUCTURE",
+            "Git, GitHub, CI/CD, deployment, домены, hosting, Cloudflare/Vercel и настройка production-среды.",
+          ],
+          [
+            "AI",
+            "OpenAI API и другие model APIs, AI-автоматизация, prompt design, AI-функции в продуктах, RAG и работа с данными — там, где ИИ даёт реальную пользу пользователю или команде.",
+          ],
+        ],
       },
-      contact: {
-        kicker: "Контакт",
-        title: "Контактные данные",
-        intro:
-          "Реальная почта или ссылка на созвон будут добавлены перед запуском. Нерабочая форма не используется.",
+      revision: "редакция от 12.08.2026",
+      privacy: {
+        intro: "Политика обработки персональных данных для сайта v.build.",
+        sections: [
+          [
+            "1. Общие положения",
+            "Настоящая Политика обработки персональных данных действует в отношении сайта v.build и определяет порядок обработки персональных данных пользователей. Оператор: самозанятый Беднов Вадим Дмитриевич, ИНН 524711417910, email: vbednov921@gmail.com.",
+          ],
+          [
+            "2. Какие данные могут обрабатываться",
+            "При обращении по электронной почте могут обрабатываться имя, адрес email, содержание обращения и иные сведения, которые пользователь добровольно указывает в письме. Техническая инфраструктура сайта может также обрабатывать технические сведения, необходимые для работы сайта и защиты от сбоев.",
+          ],
+          [
+            "3. Цели и правовые основания",
+            "Данные используются для ответа на обращение, обсуждения и исполнения заказа, ведения деловой переписки, соблюдения требований законодательства и защиты прав сторон. Основание обработки зависит от ситуации: согласие пользователя, заключение и исполнение договора, а также обязанности, установленные законодательством.",
+          ],
+          [
+            "4. Принципы и срок хранения",
+            "Обрабатываются только данные, необходимые для заявленной цели. Они хранятся не дольше, чем это требуется для переписки, исполнения договорённостей, бухгалтерского и налогового учёта либо иных обязанностей по закону.",
+          ],
+          [
+            "5. Передача третьим лицам",
+            "Данные не продаются и не передаются третьим лицам без законного основания. Передача возможна техническим подрядчикам, обеспечивающим работу почты, хостинга или иных подключённых сервисов, а также государственным органам — в случаях, предусмотренных законом.",
+          ],
+          [
+            "6. Права пользователя",
+            "Пользователь вправе запросить сведения об обработке своих данных, уточнить их, отозвать согласие в применимых случаях и потребовать прекращения обработки при наличии законных оснований. Для этого направьте обращение на vbednov921@gmail.com.",
+          ],
+          [
+            "7. Защита и актуализация",
+            "Оператор применяет разумные организационные и технические меры защиты данных. Политика может обновляться при изменении процессов обработки или законодательства; актуальная редакция публикуется на этой странице.",
+          ],
+        ],
       },
+      offer: {
+        intro: "Публичная оферта о выполнении работ и оказании услуг.",
+        sections: [
+          [
+            "1. Статус документа",
+            "Настоящий текст устанавливает общие условия выполнения работ и оказания услуг по разработке цифровых продуктов. Конкретный состав работ, стоимость, сроки, порядок оплаты и результат определяются индивидуально в переписке, техническом задании, коммерческом предложении, счёте или ином согласованном документе.",
+          ],
+          [
+            "2. Исполнитель",
+            "Исполнитель: самозанятый Беднов Вадим Дмитриевич, ИНН 524711417910, email: vbednov921@gmail.com.",
+          ],
+          [
+            "3. Предмет",
+            "Исполнитель может выполнять работы по разработке сайтов, веб-приложений, Telegram-ботов, автоматизаций, интеграций, интерфейсов и иных цифровых решений. Перечень услуг на сайте носит информационный характер и не заменяет индивидуальное согласование проекта.",
+          ],
+          [
+            "4. Согласование заказа",
+            "До начала работ стороны согласовывают задачу, объём, этапы, стоимость, сроки, требования к материалам и доступам, а также порядок сдачи результата. Существенные условия фиксируются в переписке или отдельном документе.",
+          ],
+          [
+            "5. Акцепт и оплата",
+            "Акцепт происходит только после согласования индивидуальных условий и оплаты счёта либо иного явно согласованного действия. Просмотр сайта или первое обращение по email сами по себе не являются акцептом. При получении оплаты Исполнитель формирует и передаёт заказчику чек НПД через сервис «Мой налог».",
+          ],
+          [
+            "6. Сроки и изменения",
+            "Сроки зависят от согласованного объёма, своевременности предоставления материалов и обратной связи. Изменение задачи, дополнительный объём или новые интеграции согласуются сторонами отдельно до их выполнения.",
+          ],
+          [
+            "7. Приёмка",
+            "Порядок передачи и проверки результата определяется в условиях конкретного заказа. Замечания направляются в разумный срок по согласованному каналу связи; при необходимости стороны уточняют перечень доработок.",
+          ],
+          [
+            "8. Права и материалы",
+            "Права на результат, исходные файлы, доступы и материалы заказчика передаются или предоставляются в том объёме и в тот момент, которые прямо согласованы для конкретного заказа. Никакая передача исключительных прав не предполагается автоматически без отдельного соглашения.",
+          ],
+          [
+            "9. Конфиденциальность и данные",
+            "Стороны используют полученную при работе информацию только для исполнения договорённостей и соблюдают применимые требования к защите персональных данных.",
+          ],
+          [
+            "10. Отказ, возврат и ответственность",
+            "Последствия прекращения работ, возврат средств и ответственность сторон определяются с учётом фактически выполненного объёма, индивидуальных условий заказа и обязательных норм законодательства. Настоящий текст не ограничивает обязательные права потребителя.",
+          ],
+          [
+            "11. Претензии и применимое право",
+            "Вопросы и претензии направляются на vbednov921@gmail.com. К отношениям сторон применяется законодательство Российской Федерации.",
+          ],
+          [
+            "12. Изменение редакции",
+            "Актуальная редакция публикуется на сайте. Для уже согласованного заказа действует редакция и условия, зафиксированные сторонами на момент его оформления, если иное не согласовано письменно.",
+          ],
+        ],
+      },
+      legalTodo:
+        "LEGAL_TODO: перед финальной публикацией подтвердить фактических провайдеров хостинга и почты, наличие cookies/аналитики, сроки хранения данных, место хранения, адрес для юридически значимых уведомлений и условия оплаты каждого типа услуг.",
     },
-    cases: [
-      {
-        id: "case-one",
-        number: "01",
-        type: "Сайт",
-        title: "Заглушка кейса",
-        summary: "Место для реального проекта сайта.",
-        detail:
-          "Добавьте проверенные скриншоты, объём работ, роль, ключевые решения, технологии и результат.",
-      },
-      {
-        id: "case-two",
-        number: "02",
-        type: "Приложение",
-        title: "Заглушка кейса",
-        summary: "Место для реального проекта приложения.",
-        detail:
-          "Добавьте целевого пользователя, задачу, продуктовый сценарий, детали реализации и измеримый результат.",
-      },
-      {
-        id: "case-three",
-        number: "03",
-        type: "Интерактивный проект",
-        title: "Заглушка кейса",
-        summary: "Место для реального интерактивного проекта.",
-        detail:
-          "Добавьте цель взаимодействия, ограничения производительности, доступный fallback и результат.",
-      },
-    ],
-    aboutFacts: [
-      ["Роль", "Разработчик — специализация будет уточнена владельцем"],
-      ["Фокус", "Сайты и приложения"],
-      ["Доступность", "Реальный статус будет добавлен перед запуском"],
-    ],
-    services: [
-      {
-        number: "01",
-        title: "Сайты",
-        text: "Структура, интерфейс, frontend-разработка, адаптивность и подготовка к запуску.",
-      },
-      {
-        number: "02",
-        title: "Приложения",
-        text: "Продуктовые сценарии, состояния интерфейса, frontend-архитектура и интеграция API.",
-      },
-      {
-        number: "03",
-        title: "Интерактивный frontend",
-        text: "Three.js, WebGL и анимация, когда они поддерживают конкретную продуктовую или коммуникационную задачу.",
-      },
-    ],
-    contactState: "Реальные контактные данные будут добавлены перед запуском.",
   },
 };

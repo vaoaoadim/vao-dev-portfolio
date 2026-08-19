@@ -1,84 +1,20 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLanguage } from "./LanguageContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const CASES = [
-  {
-    id: "signal",
-    title: "SIGNAL",
-    type: "TELEGRAM AUTOMATION / 2026",
-    description:
-      "Telegram-система для заявок, уведомлений и автоматизации небольших команд.",
-    color: "green",
-  },
-  {
-    id: "localhost",
-    title: "LOCALHOST",
-    type: "DEVELOPER PORTFOLIO / 2026",
-    description:
-      "Экспериментальное портфолио разработчика с интерактивными сценами и scroll-based механиками.",
-    color: "yellow",
-  },
-  {
-    id: "cache",
-    title: "CACHE",
-    type: "BROWSER EXTENSION / 2026",
-    description:
-      "Расширение браузера для быстрого сохранения и организации материалов из сети.",
-    color: "red",
-  },
-  {
-    id: "room-404",
-    title: "ROOM 404",
-    type: "INTERACTIVE MINI-GAME / 2026",
-    description:
-      "Небольшая browser-game, построенная вокруг исследования цифрового пространства.",
-    color: "orange",
-  },
-  {
-    id: "trace",
-    title: "TRACE",
-    type: "AI WORKFLOW TOOL / 2026",
-    description:
-      "Инструмент для сборки и контроля многошаговых AI-процессов.",
-    color: "green",
-  },
-  {
-    id: "patch",
-    title: "PATCH",
-    type: "DESKTOP UTILITY / 2026",
-    description:
-      "Минималистичная desktop-утилита для автоматизации повторяющихся действий.",
-    color: "yellow",
-  },
-  {
-    id: "ping",
-    title: "PING",
-    type: "NOTIFICATION SYSTEM / 2026",
-    description:
-      "Система уведомлений и событий для небольших digital-продуктов.",
-    color: "red",
-  },
-  {
-    id: "frame",
-    title: "FRAME",
-    type: "INTERACTIVE WEBSITE / 2026",
-    description:
-      "Экспериментальный промосайт с responsive motion и интерактивной графикой.",
-    color: "orange",
-  },
-];
+const CASE_COUNT = 8;
 
 const SCRAMBLE_SYMBOLS = "[]{}<>/\\|!@#$%^&*+=-~?:;";
 
 const clamp = (value, minimum, maximum) =>
   Math.min(maximum, Math.max(minimum, value));
 
-function formatCase(index) {
-  return `CASE ${String(index + 1).padStart(2, "0")}`;
+function formatCase(index, prefix) {
+  return `${prefix} ${String(index + 1).padStart(2, "0")}`;
 }
 
 function previewLabel(index) {
@@ -298,7 +234,228 @@ function WorkPendants() {
   );
 }
 
+function SelectedWorksMascot() {
+  const rootRef = useRef(null);
+  const videoRef = useRef(null);
+  const lifecycleRef = useRef({
+    hasLoaded: false,
+    hasStarted: false,
+    hasEnded: false,
+  });
+  const [playbackState, setPlaybackState] = useState(
+    lifecycleRef.current,
+  );
+
+  useEffect(() => {
+    const root = rootRef.current;
+    const video = videoRef.current;
+
+    if (!root || !video) return undefined;
+
+    const lifecycle = lifecycleRef.current;
+    const reducedMotionQuery = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
+    let loadObserver = null;
+    let playbackObserver = null;
+    let isAttemptingPlayback = false;
+    let retryWasUsed = false;
+    let fallbackVisibilityCleanup = null;
+    let gestureRetryCleanup = null;
+    let isDisposed = false;
+
+    const markLifecycleState = (stateName) => {
+      if (lifecycle[stateName]) return;
+
+      lifecycle[stateName] = true;
+      setPlaybackState((currentState) => ({
+        ...currentState,
+        [stateName]: true,
+      }));
+    };
+
+    const handleLoadedData = () => {
+      markLifecycleState("hasLoaded");
+    };
+
+    const handleEnded = () => {
+      markLifecycleState("hasEnded");
+      gestureRetryCleanup?.();
+    };
+
+    const prepareVideo = () => {
+      if (video.preload === "auto") return;
+
+      video.preload = "auto";
+      video.load();
+    };
+
+    const registerGestureRetry = (attemptPlayback) => {
+      if (gestureRetryCleanup || retryWasUsed || lifecycle.hasStarted) {
+        return;
+      }
+
+      const retryPlayback = () => {
+        retryWasUsed = true;
+        gestureRetryCleanup?.();
+        attemptPlayback(false);
+      };
+
+      gestureRetryCleanup = () => {
+        window.removeEventListener("pointerdown", retryPlayback);
+        window.removeEventListener("keydown", retryPlayback);
+        gestureRetryCleanup = null;
+      };
+
+      window.addEventListener("pointerdown", retryPlayback, {
+        once: true,
+        passive: true,
+      });
+      window.addEventListener("keydown", retryPlayback, { once: true });
+    };
+
+    const attemptPlayback = async (canRegisterRetry = true) => {
+      if (
+        isDisposed ||
+        reducedMotionQuery.matches ||
+        lifecycle.hasStarted ||
+        lifecycle.hasEnded ||
+        isAttemptingPlayback
+      ) {
+        return;
+      }
+
+      isAttemptingPlayback = true;
+      prepareVideo();
+      video.defaultMuted = true;
+      video.muted = true;
+
+      try {
+        await video.play();
+
+        if (!isDisposed) {
+          markLifecycleState("hasStarted");
+          gestureRetryCleanup?.();
+        }
+      } catch {
+        if (!isDisposed && canRegisterRetry) {
+          registerGestureRetry(attemptPlayback);
+        }
+      } finally {
+        isAttemptingPlayback = false;
+      }
+    };
+
+    video.addEventListener("loadeddata", handleLoadedData);
+    video.addEventListener("ended", handleEnded);
+
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      handleLoadedData();
+    }
+
+    if (!reducedMotionQuery.matches && "IntersectionObserver" in window) {
+      loadObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+
+          prepareVideo();
+          loadObserver?.disconnect();
+        },
+        { rootMargin: "120% 0px", threshold: 0 },
+      );
+
+      playbackObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting || entry.intersectionRatio < 0.18) {
+            return;
+          }
+
+          attemptPlayback();
+          playbackObserver?.disconnect();
+        },
+        { threshold: [0, 0.18] },
+      );
+
+      loadObserver.observe(root);
+      playbackObserver.observe(root);
+    } else if (!reducedMotionQuery.matches) {
+      const checkFallbackVisibility = () => {
+        const bounds = root.getBoundingClientRect();
+
+        if (bounds.top < window.innerHeight * 2) {
+          prepareVideo();
+        }
+
+        if (bounds.top < window.innerHeight && bounds.bottom > 0) {
+          attemptPlayback();
+          fallbackVisibilityCleanup?.();
+        }
+      };
+
+      fallbackVisibilityCleanup = () => {
+        window.removeEventListener("scroll", checkFallbackVisibility);
+        window.removeEventListener("resize", checkFallbackVisibility);
+        fallbackVisibilityCleanup = null;
+      };
+
+      window.addEventListener("scroll", checkFallbackVisibility, {
+        passive: true,
+      });
+      window.addEventListener("resize", checkFallbackVisibility);
+      checkFallbackVisibility();
+    }
+
+    return () => {
+      isDisposed = true;
+      loadObserver?.disconnect();
+      playbackObserver?.disconnect();
+      fallbackVisibilityCleanup?.();
+      gestureRetryCleanup?.();
+      video.removeEventListener("loadeddata", handleLoadedData);
+      video.removeEventListener("ended", handleEnded);
+    };
+  }, []);
+
+  return (
+    <span
+      ref={rootRef}
+      className="selected-works__mascot-media"
+      data-loaded={playbackState.hasLoaded}
+      data-started={playbackState.hasStarted}
+      data-ended={playbackState.hasEnded}
+      aria-hidden="true"
+    >
+      <video
+        ref={videoRef}
+        className="selected-works__mascot-video"
+        poster="/assets/selected-works/selected-work-mascot-first.png?v=trim-3800"
+        preload="metadata"
+        muted
+        playsInline
+        disablePictureInPicture
+        tabIndex={-1}
+      >
+        <source
+          src="/assets/selected-works/selected-work-mascot.mp4?v=trim-3800"
+          type="video/mp4"
+        />
+      </video>
+      <img
+        className="selected-works__mascot-final"
+        src="/assets/selected-works/selected-work-mascot-last.png?v=trim-3800"
+        alt=""
+        width="1120"
+        height="720"
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+      />
+    </span>
+  );
+}
+
 export function SelectedWorks() {
+  const { copy, interpolate } = useLanguage();
   const sectionRef = useRef(null);
   const galleryRef = useRef(null);
   const viewportRef = useRef(null);
@@ -306,6 +463,8 @@ export function SelectedWorks() {
   const caseLabelRef = useRef(null);
   const activeCaseRef = useRef(0);
   const nativeProgressFrameRef = useRef(0);
+  const casePrefixRef = useRef(copy.works.casePrefix);
+  casePrefixRef.current = copy.works.casePrefix;
 
   const handleNativeScroll = (event) => {
     if (
@@ -330,7 +489,7 @@ export function SelectedWorks() {
         viewport.scrollWidth - viewport.clientWidth,
       );
       const progress = viewport.scrollLeft / maximumScroll;
-      const index = Math.round(progress * (CASES.length - 1));
+      const index = Math.round(progress * (CASE_COUNT - 1));
 
       sectionRef.current?.style.setProperty(
         "--works-progress",
@@ -339,7 +498,7 @@ export function SelectedWorks() {
       activeCaseRef.current = index;
 
       if (caseLabelRef.current) {
-        caseLabelRef.current.textContent = formatCase(index);
+        caseLabelRef.current.textContent = formatCase(index, casePrefixRef.current);
       }
     });
   };
@@ -371,8 +530,8 @@ export function SelectedWorks() {
       };
 
       const setCaseLabel = (index, shouldScramble = false) => {
-        const nextIndex = clamp(index, 0, CASES.length - 1);
-        const nextLabel = formatCase(nextIndex);
+        const nextIndex = clamp(index, 0, CASE_COUNT - 1);
+        const nextLabel = formatCase(nextIndex, casePrefixRef.current);
 
         if (activeCaseRef.current === nextIndex && caseLabel.textContent === nextLabel) {
           return;
@@ -424,7 +583,7 @@ export function SelectedWorks() {
         (context) => {
           const { desktop, reduced } = context.conditions;
           activeCaseRef.current = 0;
-          caseLabel.textContent = formatCase(0);
+          caseLabel.textContent = formatCase(0, casePrefixRef.current);
           setProgress(0);
 
           if (!desktop || reduced) {
@@ -633,21 +792,30 @@ export function SelectedWorks() {
       <div className="selected-works__intro">
         <p className="selected-works__kicker">
           <span>02</span>
-          <span>// мои работы</span>
+          <span>{copy.works.kicker}</span>
         </p>
         <h2 id="works-title">
-          SELECTED
-          <br />
-          W<span className="selected-works__o">O<WorkPendants /></span>RK
+          <span className="selected-works__title-stage">
+            <SelectedWorksMascot />
+            <span className="selected-works__selected-line">{copy.works.titleFirst}</span>
+          </span>
+          <span className="selected-works__work-line">
+            {copy.works.titleSecond.before}
+            <span className="selected-works__o">
+              {copy.works.titleSecond.focus}
+              <WorkPendants />
+            </span>
+            {copy.works.titleSecond.after}
+          </span>
         </h2>
       </div>
 
-      <div ref={galleryRef} className="works-gallery" aria-label="Избранные работы">
+      <div ref={galleryRef} className="works-gallery" aria-label={copy.works.galleryLabel}>
         <div className="works-gallery__status" aria-live="polite">
-          <span ref={caseLabelRef}>CASE 01</span>
+          <span ref={caseLabelRef}>{formatCase(0, copy.works.casePrefix)}</span>
         </div>
         <span className="works-gallery__swipe-label" aria-hidden="true">
-          листай →
+          {copy.works.swipe}
         </span>
 
         <div
@@ -656,18 +824,18 @@ export function SelectedWorks() {
           onScroll={handleNativeScroll}
         >
           <div ref={trackRef} className="works-gallery__track">
-            {CASES.map((project, index) => (
+            {copy.works.cases.map((project, index) => (
               <article
                 key={project.id}
                 className={`work-case work-case--${project.color}`}
-                aria-label={`${formatCase(index)}: ${project.title}`}
+                aria-label={`${formatCase(index, copy.works.casePrefix)}: ${project.title}`}
               >
                 <div className="work-case__visual">
                   <button
                     className="work-case__preview"
                     type="button"
                     data-cursor="interactive"
-                    aria-label={`${project.title}: превью кейса появится позже`}
+                    aria-label={interpolate(copy.works.previewSoon, { title: project.title })}
                   >
                     <span className="work-case__corner work-case__corner--top-left" aria-hidden="true" />
                     <span className="work-case__corner work-case__corner--top-right" aria-hidden="true" />
@@ -680,11 +848,11 @@ export function SelectedWorks() {
                         <span />
                         <span />
                       </span>
-                      <span className="work-case__preview-title">PROJECT SCREENSHOT</span>
-                      <span className="work-case__preview-note">COMING SOON</span>
+                      <span className="work-case__preview-title">{copy.works.previewTitle}</span>
+                      <span className="work-case__preview-note">{copy.works.previewNote}</span>
                     </span>
                     <span className="work-case__open-label" aria-hidden="true">
-                      [ открыть кейс ↗ ]
+                      {copy.works.openCase}
                     </span>
                   </button>
                 </div>

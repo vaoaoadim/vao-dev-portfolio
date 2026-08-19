@@ -4,6 +4,7 @@ import {
   TelegramLogo,
   ThreadsLogo,
 } from "@phosphor-icons/react";
+import { useLanguage } from "./LanguageContext";
 import { usePortfolioOverlay } from "./PortfolioOverlayContext";
 
 const SOCIAL_LINKS = [
@@ -18,31 +19,31 @@ const SOCIAL_LINKS = [
 ];
 
 const LEGAL_LINKS = [
-  { label: "политика конфиденциальности", overlay: "privacy-policy" },
-  { label: "публичная оферта", overlay: "public-offer" },
+  { labelKey: "privacy", overlay: "privacy-policy" },
+  { labelKey: "offer", overlay: "public-offer" },
 ];
 const MARQUEE_ITEMS = Array.from({ length: 5 }, (_, index) => index);
 
-function PlaceholderButton({ children, className = "", label }) {
+function PlaceholderButton({ children, className = "", label, unavailableLabel, title }) {
   return (
     <button
       className={className}
       type="button"
       aria-disabled="true"
-      aria-label={`${label ?? children} — ссылка появится позже`}
-      title="Ссылка появится позже"
+      aria-label={unavailableLabel}
+      title={title}
     >
       {children}
     </button>
   );
 }
 
-function MarqueeGroup() {
+function MarqueeGroup({ text }) {
   return (
     <span className="portfolio-footer__marquee-group">
       {MARQUEE_ITEMS.map((item) => (
         <span className="portfolio-footer__marquee-item" key={item}>
-          <span>Better call v.build</span>
+          <span>{text}</span>
         </span>
       ))}
     </span>
@@ -50,21 +51,22 @@ function MarqueeGroup() {
 }
 
 export function PortfolioFooter() {
+  const { copy, interpolate } = useLanguage();
   const { openInfo } = usePortfolioOverlay();
 
   return (
     <footer className="portfolio-footer" id="contacts">
-      <h2 className="portfolio-footer__visually-hidden">Контакты и реквизиты</h2>
+      <h2 className="portfolio-footer__visually-hidden">{copy.footer.title}</h2>
 
       <div className="portfolio-footer__info">
-        <p className="portfolio-footer__label">03&nbsp;&nbsp; // контакты</p>
+        <p className="portfolio-footer__label">03&nbsp;&nbsp; {copy.footer.kicker}</p>
 
         <div className="portfolio-footer__contact">
           <a className="portfolio-footer__email" href="mailto:vbednov921@gmail.com">
             vbednov921@gmail.com
           </a>
 
-          <nav className="portfolio-footer__socials" aria-label="Социальные сети">
+          <nav className="portfolio-footer__socials" aria-label={copy.footer.socialLabel}>
             {SOCIAL_LINKS.map(({ label, Icon, href }) =>
               href ? (
                 <a
@@ -83,6 +85,8 @@ export function PortfolioFooter() {
                   className="portfolio-footer__social"
                   key={label}
                   label={label}
+                  unavailableLabel={interpolate(copy.footer.unavailable, { label })}
+                  title={copy.footer.unavailableTitle}
                 >
                   <Icon aria-hidden="true" size="1em" weight="regular" />
                   <span className="portfolio-footer__visually-hidden">{label}</span>
@@ -93,12 +97,12 @@ export function PortfolioFooter() {
         </div>
 
         <div className="portfolio-footer__details">
-          <p>самозанятый</p>
-          <p>Беднов Вадим Дмитриевич</p>
-          <p>ИНН 524711417910</p>
+          <p>{copy.footer.status}</p>
+          <p>{copy.footer.owner}</p>
+          <p>{copy.footer.taxId}</p>
         </div>
 
-        <nav className="portfolio-footer__legal" aria-label="Юридическая информация">
+        <nav className="portfolio-footer__legal" aria-label={copy.footer.legalLabel}>
           {LEGAL_LINKS.map((item) => (
             <button
               className="portfolio-footer__legal-link"
@@ -106,7 +110,7 @@ export function PortfolioFooter() {
               type="button"
               onClick={(event) => openInfo(item.overlay, event.currentTarget)}
             >
-              {item.label}
+              {copy.footer[item.labelKey]}
             </button>
           ))}
           <span>© 2026 v.build</span>
@@ -115,9 +119,9 @@ export function PortfolioFooter() {
 
       <div className="portfolio-footer__marquee" aria-hidden="true">
         <div className="portfolio-footer__marquee-track">
-          <MarqueeGroup />
-          <MarqueeGroup />
-          <MarqueeGroup />
+          <MarqueeGroup text={copy.footer.marquee} />
+          <MarqueeGroup text={copy.footer.marquee} />
+          <MarqueeGroup text={copy.footer.marquee} />
         </div>
       </div>
     </footer>

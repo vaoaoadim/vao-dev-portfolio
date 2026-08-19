@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
+import { useLanguage } from "./LanguageContext";
 
 const MENU_ITEMS = [
-  { id: "work", label: "WORK", targetId: "work", accent: "green" },
-  { id: "services", label: "SERVICES", targetId: "build", accent: "yellow" },
-  { id: "about", label: "ABOUT", overlay: "about", accent: "red" },
-  { id: "stack", label: "STACK", overlay: "stack", accent: "orange" },
+  { id: "work", targetId: "work", accent: "green" },
+  { id: "services", targetId: "build", accent: "yellow" },
+  { id: "about", overlay: "about", accent: "red" },
+  { id: "stack", overlay: "stack", accent: "orange" },
 ];
 
 const AUXILIARY_LINKS = [
-  { id: "privacy-policy", label: "PRIVACY POLICY", overlay: "privacy-policy" },
-  { id: "public-offer", label: "PUBLIC OFFER", overlay: "public-offer" },
-  { id: "contacts", label: "CONTACTS", targetId: "contacts" },
+  { id: "privacy-policy", labelKey: "privacy", overlay: "privacy-policy" },
+  { id: "public-offer", labelKey: "offer", overlay: "public-offer" },
+  { id: "contacts", labelKey: "contacts", targetId: "contacts" },
 ];
 
 function getFocusableElements(menu, brand, trigger) {
@@ -42,6 +43,7 @@ export function PortfolioMenu({
   brandRef,
   triggerRef,
 }) {
+  const { copy, interpolate } = useLanguage();
   const menuRef = useRef(null);
   const hasOpenedRef = useRef(false);
   const [activeItemId, setActiveItemId] = useState(null);
@@ -219,7 +221,7 @@ export function PortfolioMenu({
       ref={menuRef}
       className="portfolio-menu"
       id="portfolio-menu"
-      aria-label="Основная навигация"
+      aria-label={copy.menu.label}
       aria-hidden={!isInteractive}
     >
       <div className="portfolio-menu__main">
@@ -227,7 +229,10 @@ export function PortfolioMenu({
           className="portfolio-menu__main-list"
           data-active={activeItemId ?? undefined}
         >
-          {MENU_ITEMS.map((item) => (
+          {MENU_ITEMS.map((item) => {
+            const label = copy.menu.items[item.id];
+
+            return (
             <li
               key={item.id}
               className={`portfolio-menu__main-item ${
@@ -246,15 +251,15 @@ export function PortfolioMenu({
                   onPointerDown={() => setActiveItemId(item.id)}
                   aria-label={
                     item.targetId
-                      ? `Перейти к разделу ${item.label}`
-                      : `Открыть раздел ${item.label}`
+                      ? interpolate(copy.menu.goTo, { label })
+                      : interpolate(copy.menu.open, { label })
                   }
                 >
                   <span className="portfolio-menu__item-inner">
                     <span className="portfolio-menu__bracket portfolio-menu__bracket--left" aria-hidden="true">
                       [
                     </span>
-                    <span>{item.label}</span>
+                    <span>{label}</span>
                     <span className="portfolio-menu__bracket portfolio-menu__bracket--right" aria-hidden="true">
                       ]
                     </span>
@@ -262,7 +267,8 @@ export function PortfolioMenu({
                 </button>
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </div>
 
@@ -274,7 +280,7 @@ export function PortfolioMenu({
             type="button"
             onClick={(event) => handleAuxiliaryClick(item, event.currentTarget)}
           >
-            {item.label}
+            {copy.menu.auxiliary[item.labelKey]}
           </button>
         ))}
       </div>

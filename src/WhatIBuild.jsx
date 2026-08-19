@@ -2,44 +2,9 @@ import { Fragment, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { InteractiveBuildScene } from "./InteractiveBuildScene";
+import { useLanguage } from "./LanguageContext";
 
-const buildItems = [
-  {
-    title: "MINI APPS & GAMES",
-    symbol: "{ play }",
-    description: "Небольшие продукты и игровые механики, которые быстро объясняют идею и вовлекают пользователя.",
-  },
-  {
-    title: "TELEGRAM BOTS",
-    symbol: "// tg",
-    description: "Боты для сервисов, коммуникации и процессов — с понятными сценариями и без лишней сложности.",
-  },
-  {
-    title: "PLUGINS & SCRIPTS",
-    symbol: "<> tools",
-    description: "Небольшой софт и автоматизации, которые снимают повторяющиеся задачи с команды.",
-  },
-  {
-    title: "WEBSITES",
-    symbol: "< / >",
-    description: "Сайты и промостраницы с выразительной подачей, ясной структурой и аккуратной реализацией.",
-  },
-  {
-    title: "EMAIL AUTOMATION",
-    symbol: "=> mail",
-    description: "Автоматические цепочки писем, уведомления и интеграции для регулярных процессов.",
-  },
-  {
-    title: "BROWSER EXTENSIONS",
-    symbol: "[ ext ]",
-    description: "Расширения и desktop-инструменты, которые добавляют нужный сценарий прямо в рабочую среду.",
-  },
-  {
-    title: "AI INTEGRATIONS",
-    symbol: "ai()",
-    description: "ИИ-интеграции и автоматизация процессов там, где они дают реальную пользу продукту.",
-  },
-];
+const BUILD_SYMBOLS = ["{ play }", "// tg", "<> tools", "< / >", "=> mail", "[ ext ]", "ai()"];
 
 const SCRAMBLE_SYMBOLS = "<>{}[]()|&!@#$%^*+=-~?:;.,/\\\\'\"";
 
@@ -56,6 +21,7 @@ function getScrambledWord(characters, revealedCharacters = 0) {
 }
 
 export function WhatIBuild() {
+  const { copy } = useLanguage();
   const sectionRef = useRef(null);
   const mascotImageRef = useRef(null);
   const { contextSafe } = useGSAP({ scope: sectionRef });
@@ -184,28 +150,31 @@ export function WhatIBuild() {
 
       <InteractiveBuildScene sectionRef={sectionRef} imageRef={mascotImageRef} />
 
-      <div className="section-kicker" aria-label="Section 01">
+      <div className="section-kicker" aria-label={copy.build.sectionLabel}>
         <div className="section-kicker__line">
           <span>01</span>
-          <span>// спектр услуг</span>
+          <span>{copy.build.kicker}</span>
         </div>
         <p className="section-kicker__instruction">
-          [ жми на маркер или урну — отвлекись от дел ]
+          {copy.build.instruction}
         </p>
       </div>
 
       <div className="what-i-build-heading">
         <h2 id="build-title">
-          WHAT I
+          {copy.build.titleFirst}
           <br />
-          BUILD
+          {copy.build.titleSecond}
         </h2>
-        <p>Из интерфейса — в работающий продукт.</p>
+        <p>{copy.build.subtitle}</p>
       </div>
 
       <ol className="build-list">
-        {buildItems.map(({ title, symbol, description }, index) => (
-          <li key={title}>
+        {copy.build.items.map(({ title, description }, index) => {
+          const symbol = BUILD_SYMBOLS[index];
+
+          return (
+          <li key={symbol}>
             <span className="build-number">[{String(index + 1).padStart(2, "0")}]</span>
             <div className="build-name">
               <span>{symbol}</span>
@@ -225,7 +194,8 @@ export function WhatIBuild() {
             </div>
             <p>{description}</p>
           </li>
-        ))}
+          );
+        })}
       </ol>
     </section>
   );

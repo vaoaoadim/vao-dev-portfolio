@@ -3,6 +3,28 @@ import { access } from "node:fs/promises";
 import test from "node:test";
 import worker from "../worker/index.js";
 
+test("returns same-origin country data without touching static assets", async () => {
+  let assetCalls = 0;
+  const response = await worker.fetch(
+    new Request("https://example.test/api/locale", {
+      headers: { "cf-ipcountry": "RU" },
+    }),
+    {
+      ASSETS: {
+        fetch: async () => {
+          assetCalls += 1;
+          return new Response("unexpected");
+        },
+      },
+    },
+  );
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.deepEqual(await response.json(), { country: "RU" });
+  assert.equal(assetCalls, 0);
+});
+
 test("serves existing static assets without a fallback", async () => {
   const calls = [];
   const response = await worker.fetch(new Request("https://example.test/assets/app.js"), {

@@ -1,19 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
+import { useLanguage } from "./LanguageContext";
 
 const HERO_MEDIA = [
-  { asset: "hero-crt-monitor-v1", label: "CRT monitor" },
-  { asset: "hero-palette-v3", label: "Palette and brushes" },
-  { asset: "hero-controller-v1", label: "Retro controller" },
-  { asset: "hero-pushpins-v1", label: "Push pins" },
-  { asset: "hero-rainbow-disc-v1", label: "Iridescent compact disc" },
+  "hero-crt-monitor-v1",
+  "hero-palette-v3",
+  "hero-controller-v1",
+  "hero-pushpins-v1",
+  "hero-rainbow-disc-v1",
 ];
 
 const MEDIA_INTERVAL_MS = 960;
 const FONT_READY_TIMEOUT_MS = 900;
 
 export function HeroIntro() {
+  const { copy } = useLanguage();
   const heroRef = useRef(null);
   const [activeMedia, setActiveMedia] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -105,7 +107,7 @@ export function HeroIntro() {
         <h1 className="hero-title" id="hero-title">
           <span className="hero-line-clip">
             <span className="hero-line" data-hero-line>
-              HELLO, THIS IS
+              {copy.hero.firstLine}
             </span>
           </span>
           <span className="hero-line-clip">
@@ -115,7 +117,7 @@ export function HeroIntro() {
                 <span className="hero-code-glyph--yellow">[</span>
               </span>
               <span className="hero-media" aria-hidden="true">
-                {HERO_MEDIA.map(({ asset, label }, index) => (
+                {HERO_MEDIA.map((asset, index) => (
                   <picture
                     key={asset}
                     className={index === activeMedia ? "is-active" : ""}
@@ -133,7 +135,7 @@ export function HeroIntro() {
                       fetchPriority={index === 0 ? "high" : "low"}
                       decoding="async"
                       draggable="false"
-                      title={label}
+                      title={copy.hero.mediaTitles[index]}
                     />
                   </picture>
                 ))}
@@ -146,19 +148,19 @@ export function HeroIntro() {
           </span>
           <span className="hero-line-clip">
             <span className="hero-line hero-line--development" data-hero-line>
-              MY DEVELOPMENT
+              {copy.hero.thirdLine}
             </span>
           </span>
           <span className="hero-line-clip">
             <span className="hero-line" data-hero-line>
-              PORTFOLIO
+              {copy.hero.fourthLine}
             </span>
           </span>
         </h1>
 
-        <div className="hero-meta" aria-label="Статус портфолио">
-          <span data-hero-meta>// портфолио</span>
-          <span data-hero-meta>листайте вниз ↓</span>
+        <div className="hero-meta" aria-label={copy.hero.statusLabel}>
+          <span data-hero-meta>{copy.hero.status}</span>
+          <span data-hero-meta>{copy.hero.scroll}</span>
         </div>
       </div>
     </section>

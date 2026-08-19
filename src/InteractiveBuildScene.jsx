@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLanguage } from "./LanguageContext";
 import * as THREE from "three";
 
 // The office is a single flattened PNG. These normalized anchors target its
@@ -111,6 +112,8 @@ function HintArrow({ direction = "down" }) {
 }
 
 export function InteractiveBuildScene({ sectionRef, imageRef }) {
+  const { copy } = useLanguage();
+  const [isPaperBallSupported, setIsPaperBallSupported] = useState(true);
   const layerRef = useRef(null);
   const drawingCanvasRef = useRef(null);
   const threeCanvasRef = useRef(null);
@@ -744,11 +747,8 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       paperMesh.visible = false;
       scene.add(paperMesh);
     } catch {
+      setIsPaperBallSupported(false);
       binButton.setAttribute("aria-disabled", "true");
-      binButton.setAttribute(
-        "aria-label",
-        "Бумажный мяч недоступен: WebGL не поддерживается",
-      );
       binHint.hidden = true;
     }
 
@@ -808,14 +808,14 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         ref={focusDismissRef}
         className="whiteboard-focus-dismiss"
         type="button"
-        aria-label="Закрыть увеличенную доску"
+        aria-label={copy.build.interaction.closeBoard}
         hidden
       />
 
       <canvas
         ref={drawingCanvasRef}
         className="whiteboard-drawing"
-        aria-label="Область рисования на доске"
+        aria-label={copy.build.interaction.drawingArea}
         data-active="false"
       />
 
@@ -829,7 +829,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         ref={markerButtonRef}
         className="scene-hit-zone scene-hit-zone--marker"
         type="button"
-        aria-label="Взять маркер и рисовать на доске"
+        aria-label={copy.build.interaction.takeMarker}
         aria-pressed="false"
         data-cursor="interactive"
       />
@@ -838,7 +838,12 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         ref={binButtonRef}
         className="scene-hit-zone scene-hit-zone--bin"
         type="button"
-        aria-label="Создать бумажный мяч"
+        aria-label={
+          isPaperBallSupported
+            ? copy.build.interaction.createBall
+            : copy.build.interaction.unavailableBall
+        }
+        aria-disabled={!isPaperBallSupported}
         data-cursor="interactive"
       />
 
@@ -846,19 +851,19 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         ref={ballProxyRef}
         className="paper-ball-hit-proxy"
         type="button"
-        aria-label="Схватить бумажный мяч"
+        aria-label={copy.build.interaction.grabBall}
         data-cursor="interactive"
         hidden
       />
 
       <div ref={markerHintRef} className="scene-interaction-hint scene-interaction-hint--marker">
-        <span>рисуй</span>
+        <span>{copy.build.interaction.draw}</span>
         <HintArrow />
       </div>
 
       <div ref={binHintRef} className="scene-interaction-hint scene-interaction-hint--bin">
         <HintArrow direction="up" />
-        <span>кидай</span>
+        <span>{copy.build.interaction.throw}</span>
       </div>
 
       <button
@@ -868,7 +873,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         data-cursor="interactive"
         hidden
       >
-        стереть
+        {copy.build.interaction.clear}
       </button>
     </div>
   );
