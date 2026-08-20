@@ -1207,7 +1207,7 @@ a {
   --selected-title-size: clamp(5.75rem, min(12vw, 19svh), 11.5rem);
   --selected-mascot-size: clamp(15rem, min(27vw, 35svh), 23rem);
   --selected-mascot-x: 0%;
-  --selected-video-x: 34%;
+  --selected-video-x: 50%;
   --selected-mascot-foot-offset: clamp(0.65rem, 1.25svh, 0.85rem);
   position: relative;
   z-index: 1;
@@ -1243,6 +1243,12 @@ a {
   line-height: 1.25;
 }
 
+@media (min-width: 761px) {
+  .selected-works__kicker {
+    transform: translateY(clamp(2rem, 3svh, 2.5rem));
+  }
+}
+
 .selected-works__kicker span:first-child {
   min-width: 2.5ch;
 }
@@ -1266,17 +1272,24 @@ a {
 .selected-works__title-stage {
   display: grid;
   justify-items: center;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .selected-works__selected-line,
 .selected-works__work-line {
   display: block;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: normal;
+  white-space: nowrap;
+  word-break: normal;
 }
 
 .selected-works__mascot-media {
   position: relative;
   display: block;
-  width: min(100%, calc(var(--selected-mascot-size) * 1.48));
+  width: min(100%, calc(var(--selected-mascot-size) * 0.96));
   height: calc(
     var(--selected-mascot-size) - var(--selected-mascot-foot-offset)
   );
@@ -1284,25 +1297,26 @@ a {
   background: transparent;
   pointer-events: none;
   transform: translateX(var(--selected-mascot-x));
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0, #000 20%, #000 80%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 5%, #000 100%);
-  -webkit-mask-position: 50% 0, 0 0;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+  -webkit-mask-position: 50% 0;
   -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: 56% 100%, 100% 100%;
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(to right, transparent 0, #000 20%, #000 80%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 5%, #000 100%);
-  mask-position: 50% 0, 0 0;
+  -webkit-mask-size: 100% 100%;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+  mask-position: 50% 0;
   mask-repeat: no-repeat;
-  mask-size: 56% 100%, 100% 100%;
-  mask-composite: intersect;
-}
-
-.selected-works__mascot-media[data-ended="true"] {
-  -webkit-mask-position: 50% 0, 0 0;
-  mask-position: 50% 0, 0 0;
+  mask-size: 100% 100%;
 }
 
 .selected-works__mascot-video,
@@ -1317,6 +1331,12 @@ a {
   object-fit: contain;
   transform: translateX(-50%);
   user-select: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 5%, #000 100%);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 5%, #000 100%);
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
 }
 
 .selected-works__mascot-video {
@@ -1334,11 +1354,6 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .selected-works__mascot-media {
-    -webkit-mask-position: 50% 0, 0 0;
-    mask-position: 50% 0, 0 0;
-  }
-
   .selected-works__mascot-video {
     visibility: hidden;
   }
@@ -2173,6 +2188,10 @@ a {
     transform: none;
   }
 
+  html[lang="ru"] .selected-works__intro h2 {
+    font-size: clamp(3rem, 16.5vw, 7rem);
+  }
+
   .selected-works__title-stage {
     justify-items: center;
   }
@@ -2412,6 +2431,10 @@ a {
 
   .build-name h3 {
     font-size: clamp(1.5rem, 8.6vw, 2.1rem);
+  }
+
+  html[lang="ru"] .build-name h3 {
+    font-size: clamp(1.2rem, 6.1vw, 1.8rem);
   }
 
   .portfolio-menu__main-link {

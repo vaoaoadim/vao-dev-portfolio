@@ -428,7 +428,7 @@ function SelectedWorksMascot() {
       <video
         ref={videoRef}
         className="selected-works__mascot-video"
-        poster="/assets/selected-works/selected-work-mascot-first.png?v=trim-3800"
+        poster="/assets/selected-works/selected-work-mascot-first.png?v=steps-2800-crop660"
         preload="metadata"
         muted
         playsInline
@@ -436,15 +436,15 @@ function SelectedWorksMascot() {
         tabIndex={-1}
       >
         <source
-          src="/assets/selected-works/selected-work-mascot.mp4?v=trim-3800"
+          src="/assets/selected-works/selected-work-mascot.mp4?v=steps-2800-crop660"
           type="video/mp4"
         />
       </video>
       <img
         className="selected-works__mascot-final"
-        src="/assets/selected-works/selected-work-mascot-last.png?v=trim-3800"
+        src="/assets/selected-works/selected-work-mascot-last.png?v=steps-2800-crop660"
         alt=""
-        width="1120"
+        width="660"
         height="720"
         loading="lazy"
         decoding="async"
