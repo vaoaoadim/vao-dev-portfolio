@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { BeautyBombGamePopup } from "./BeautyBombGamePopup";
 import { useLanguage } from "./LanguageContext";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -456,6 +457,8 @@ function SelectedWorksMascot() {
 
 export function SelectedWorks() {
   const { copy, interpolate } = useLanguage();
+  const [isGameOpen, setIsGameOpen] = useState(false);
+  const gameTriggerRef = useRef(null);
   const sectionRef = useRef(null);
   const galleryRef = useRef(null);
   const viewportRef = useRef(null);
@@ -465,6 +468,8 @@ export function SelectedWorks() {
   const nativeProgressFrameRef = useRef(0);
   const casePrefixRef = useRef(copy.works.casePrefix);
   casePrefixRef.current = copy.works.casePrefix;
+
+  const closeGame = useCallback(() => setIsGameOpen(false), []);
 
   const handleNativeScroll = (event) => {
     if (
@@ -832,10 +837,20 @@ export function SelectedWorks() {
               >
                 <div className="work-case__visual">
                   <button
+                    ref={project.id === "cache" ? gameTriggerRef : undefined}
                     className="work-case__preview"
                     type="button"
                     data-cursor="interactive"
-                    aria-label={interpolate(copy.works.previewSoon, { title: project.title })}
+                    aria-label={
+                      project.id === "cache"
+                        ? interpolate(copy.works.playGame, { title: project.title })
+                        : interpolate(copy.works.previewSoon, { title: project.title })
+                    }
+                    onClick={
+                      project.id === "cache"
+                        ? () => setIsGameOpen(true)
+                        : undefined
+                    }
                   >
                     <span className="work-case__corner work-case__corner--top-left" aria-hidden="true" />
                     <span className="work-case__corner work-case__corner--top-right" aria-hidden="true" />
@@ -877,6 +892,12 @@ export function SelectedWorks() {
           <span>08</span>
         </div>
       </div>
+
+      <BeautyBombGamePopup
+        open={isGameOpen}
+        onClose={closeGame}
+        triggerRef={gameTriggerRef}
+      />
     </section>
   );
 }

@@ -115,6 +115,7 @@ export const copy = {
       previewNote: "COMING SOON",
       openCase: "[ open case ↗ ]",
       previewSoon: "{title}: case preview coming soon",
+      playGame: "Open and play {title}",
       cases: [
         {
           id: "signal",
@@ -134,10 +135,10 @@ export const copy = {
         },
         {
           id: "cache",
-          title: "CACHE",
-          type: "BROWSER EXTENSION / 2026",
+          title: "BEAUTYBOMB DELIVERY",
+          type: "INTERACTIVE PROMO MINI-GAME / 2026",
           description:
-            "A browser extension for quickly saving and organizing materials from the web.",
+            "An independent portfolio concept for a BeautyBomb browser game, built with Phaser 3.90.",
           color: "red",
         },
         {
@@ -442,6 +443,7 @@ export const copy = {
       previewNote: "СКОРО",
       openCase: "[ открыть кейс ↗ ]",
       previewSoon: "{title}: превью кейса появится позже",
+      playGame: "Открыть и сыграть в {title}",
       cases: [
         {
           id: "signal",
@@ -461,10 +463,10 @@ export const copy = {
         },
         {
           id: "cache",
-          title: "CACHE",
-          type: "РАСШИРЕНИЕ БРАУЗЕРА / 2026",
+          title: "BEAUTYBOMB DELIVERY",
+          type: "ИНТЕРАКТИВНАЯ ПРОМО-МИНИ-ИГРА / 2026",
           description:
-            "Расширение браузера для быстрого сохранения и организации материалов из сети.",
+            "Независимый концепт браузерной игры для BeautyBomb, созданный на Phaser 3.90.",
           color: "red",
         },
         {

@@ -1710,6 +1710,41 @@ a {
   transform: translateY(0);
 }
 
+.beautybomb-game-popup {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  padding:
+    max(12px, env(safe-area-inset-top))
+    max(12px, env(safe-area-inset-right))
+    max(12px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left));
+  overflow: hidden;
+  background: transparent;
+  place-items: center;
+}
+
+.beautybomb-game-popup__frame {
+  display: block;
+  width: min(404px, calc(100vw - 24px), calc((100dvh - 24px) * 404 / 684));
+  height: min(684px, calc(100dvh - 24px), calc((100vw - 24px) * 684 / 404));
+  border: 0;
+  background: transparent;
+}
+
+.beautybomb-game-popup__frame:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 4px;
+}
+
+@supports not (height: 100dvh) {
+  .beautybomb-game-popup__frame {
+    width: min(404px, calc(100vw - 24px), calc((100vh - 24px) * 404 / 684));
+    height: min(684px, calc(100vh - 24px), calc((100vw - 24px) * 684 / 404));
+  }
+}
+
 .work-case__meta {
   display: grid;
   grid-template-columns: minmax(15rem, 1fr) minmax(17rem, 1fr);
