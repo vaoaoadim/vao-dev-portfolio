@@ -136,6 +136,8 @@ export const copy = {
         {
           id: "cache",
           title: "BEAUTYBOMB DELIVERY",
+          coverAlt:
+            "BeautyBomb Delivery game cover with a courier van carrying a cosmetic product through a colorful city",
           type: "INTERACTIVE PROMO MINI-GAME / 2026",
           description:
             "An independent portfolio concept for a BeautyBomb browser game, built with Phaser 3.90.",
@@ -464,6 +466,8 @@ export const copy = {
         {
           id: "cache",
           title: "BEAUTYBOMB DELIVERY",
+          coverAlt:
+            "Обложка игры BeautyBomb Delivery: курьерский автомобиль везёт косметический продукт по яркому городу",
           type: "ИНТЕРАКТИВНАЯ ПРОМО-МИНИ-ИГРА / 2026",
           description:
             "Независимый концепт браузерной игры для BeautyBomb, созданный на Phaser 3.90.",

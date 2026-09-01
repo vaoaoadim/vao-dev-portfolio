@@ -856,15 +856,46 @@ export function SelectedWorks() {
                     <span className="work-case__corner work-case__corner--top-right" aria-hidden="true" />
                     <span className="work-case__corner work-case__corner--bottom-left" aria-hidden="true" />
                     <span className="work-case__corner work-case__corner--bottom-right" aria-hidden="true" />
-                    <span className="work-case__preview-canvas" aria-hidden="true">
-                      <span className="work-case__preview-file">{previewLabel(index)}</span>
-                      <span className="work-case__preview-window">
-                        <span />
-                        <span />
-                        <span />
-                      </span>
-                      <span className="work-case__preview-title">{copy.works.previewTitle}</span>
-                      <span className="work-case__preview-note">{copy.works.previewNote}</span>
+                    <span
+                      className={`work-case__preview-canvas${
+                        project.id === "cache" ? " work-case__preview-canvas--cover" : ""
+                      }`}
+                      aria-hidden={project.id === "cache" ? undefined : "true"}
+                    >
+                      {project.id === "cache" ? (
+                        <picture className="work-case__cover-picture">
+                          <source
+                            srcSet="/assets/selected-works/beautybomb-delivery-cover-v1.avif"
+                            type="image/avif"
+                          />
+                          <source
+                            srcSet="/assets/selected-works/beautybomb-delivery-cover-v1.webp"
+                            type="image/webp"
+                          />
+                          <img
+                            className="work-case__cover-image"
+                            src="/assets/selected-works/beautybomb-delivery-cover-v1.png"
+                            alt={project.coverAlt}
+                            width="1584"
+                            height="990"
+                            loading="lazy"
+                            decoding="async"
+                            fetchPriority="low"
+                            draggable="false"
+                          />
+                        </picture>
+                      ) : (
+                        <>
+                          <span className="work-case__preview-file">{previewLabel(index)}</span>
+                          <span className="work-case__preview-window">
+                            <span />
+                            <span />
+                            <span />
+                          </span>
+                          <span className="work-case__preview-title">{copy.works.previewTitle}</span>
+                          <span className="work-case__preview-note">{copy.works.previewNote}</span>
+                        </>
+                      )}
                     </span>
                     <span className="work-case__open-label" aria-hidden="true">
                       {copy.works.openCase}

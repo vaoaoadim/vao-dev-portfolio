@@ -38,9 +38,9 @@ function PlaceholderButton({ children, className = "", label, unavailableLabel, 
   );
 }
 
-function MarqueeGroup({ text }) {
+function MarqueeContent({ text }) {
   return (
-    <span className="portfolio-footer__marquee-group">
+    <span className="portfolio-footer__marquee-content">
       {MARQUEE_ITEMS.map((item) => (
         <span className="portfolio-footer__marquee-item" key={item}>
           <span>{text}</span>
@@ -119,9 +119,8 @@ export function PortfolioFooter() {
 
       <div className="portfolio-footer__marquee" aria-hidden="true">
         <div className="portfolio-footer__marquee-track">
-          <MarqueeGroup text={copy.footer.marquee} />
-          <MarqueeGroup text={copy.footer.marquee} />
-          <MarqueeGroup text={copy.footer.marquee} />
+          <MarqueeContent text={copy.footer.marquee} />
+          <MarqueeContent text={copy.footer.marquee} />
         </div>
       </div>
     </footer>
