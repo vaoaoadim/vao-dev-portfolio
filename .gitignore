@@ -1,0 +1,15 @@
+# Dependencies and generated builds
+/node_modules/
+/dist/
+/site/
+
+# Temporary captures, audits, archives, and local runtime state
+/.tmp-*
+/*.tar.gz
+
+# Local agent and editor state
+/.agents/
+/.claude/
+/.codex/
+/.cursor/
+/.openai/
