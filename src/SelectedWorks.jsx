@@ -205,31 +205,37 @@ function WorkPendants() {
         className="work-pendant work-pendant--floppy"
       >
         <span className="work-pendant__wire" />
-        <img
-          className="work-pendant__object"
-          src="/assets/work-pendants/floppy-disk.png"
-          alt=""
-          draggable="false"
-          width="880"
-          height="1028"
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
-        />
+        <picture>
+          <source srcSet="/assets/work-pendants/floppy-disk.webp" type="image/webp" />
+          <img
+            className="work-pendant__object"
+            src="/assets/work-pendants/floppy-disk.png"
+            alt=""
+            draggable="false"
+            width="880"
+            height="1028"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+          />
+        </picture>
       </span>
       <span ref={mouseRef} className="work-pendant work-pendant--mouse">
         <span className="work-pendant__wire" />
-        <img
-          className="work-pendant__object"
-          src="/assets/work-pendants/ball-mouse.png"
-          alt=""
-          draggable="false"
-          width="533"
-          height="930"
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
-        />
+        <picture>
+          <source srcSet="/assets/work-pendants/ball-mouse.webp" type="image/webp" />
+          <img
+            className="work-pendant__object"
+            src="/assets/work-pendants/ball-mouse.png"
+            alt=""
+            draggable="false"
+            width="533"
+            height="930"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+          />
+        </picture>
       </span>
     </span>
   );

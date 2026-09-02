@@ -20,6 +20,7 @@ export function HeroIntro() {
   const [activeMedia, setActiveMedia] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [heroReady, setHeroReady] = useState(false);
+  const [isHeroVisible, setIsHeroVisible] = useState(true);
 
   useEffect(() => {
     let isCurrent = true;
@@ -51,6 +52,19 @@ export function HeroIntro() {
   }, []);
 
   useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero || !("IntersectionObserver" in window)) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsHeroVisible(entry.isIntersecting),
+      { threshold: 0 },
+    );
+
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const updatePreference = () => setReducedMotion(mediaQuery.matches);
 
@@ -60,14 +74,14 @@ export function HeroIntro() {
   }, []);
 
   useEffect(() => {
-    if (reducedMotion) return undefined;
+    if (reducedMotion || !isHeroVisible) return undefined;
 
     const interval = window.setInterval(() => {
       setActiveMedia((current) => (current + 1) % HERO_MEDIA.length);
     }, MEDIA_INTERVAL_MS);
 
     return () => window.clearInterval(interval);
-  }, [reducedMotion]);
+  }, [isHeroVisible, reducedMotion]);
 
   useGSAP(
     () => {
@@ -131,7 +145,7 @@ export function HeroIntro() {
                       alt=""
                       width="1448"
                       height="1086"
-                      loading={index === 0 ? "eager" : "lazy"}
+                      loading={index === 0 || heroReady ? "eager" : "lazy"}
                       fetchPriority={index === 0 ? "high" : "low"}
                       decoding="async"
                       draggable="false"

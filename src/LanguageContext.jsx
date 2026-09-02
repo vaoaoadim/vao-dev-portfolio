@@ -53,7 +53,10 @@ export function LanguageProvider({ children }) {
     savedLanguage ??
     getBrowserLanguage();
   const [language, setLanguage] = useState(bootstrapLanguage);
-  const [isReady, setIsReady] = useState(Boolean(savedLanguage) || import.meta.env.DEV);
+  // The inline bootstrap in index.html already selects a safe browser-language
+  // fallback. Keeping the application visible prevents locale detection from
+  // holding the entire first screen behind a network request.
+  const [isReady, setIsReady] = useState(true);
 
   const selectLanguage = useCallback((nextLanguage) => {
     const normalizedLanguage = normalizeLanguage(nextLanguage);
@@ -71,7 +74,6 @@ export function LanguageProvider({ children }) {
 
   useEffect(() => {
     if (savedLanguage || import.meta.env.DEV) {
-      setIsReady(true);
       return undefined;
     }
 
@@ -101,7 +103,6 @@ export function LanguageProvider({ children }) {
         window.clearTimeout(timeoutId);
         if (isCurrent) {
           setLanguage(nextLanguage);
-          setIsReady(true);
         }
       }
     };

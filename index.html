@@ -39,20 +39,20 @@
         const language =
           savedLanguage === "ru" || savedLanguage === "en"
             ? savedLanguage
-            : browserLanguage;
+            : document.documentElement.dataset.countryLanguage === "ru" ||
+                document.documentElement.dataset.countryLanguage === "en"
+              ? document.documentElement.dataset.countryLanguage
+              : browserLanguage;
 
         document.documentElement.lang = language;
         document.documentElement.dataset.language = language;
-        document.documentElement.dataset.languageReady = String(Boolean(savedLanguage));
+        // Render the browser-language version immediately. The worker can still
+        // refine it from the visitor's country without delaying the first paint.
+        document.documentElement.dataset.languageReady = "true";
       } catch {
         document.documentElement.dataset.language = "en";
       }
     </script>
-    <style>
-      html[data-language-ready="false"] #root {
-        visibility: hidden;
-      }
-    </style>
     <title>v.build | Developer portfolio</title>
   </head>
   <body>

@@ -40,6 +40,35 @@ test("serves existing static assets without a fallback", async () => {
   assert.deepEqual(calls, ["/assets/app.js"]);
 });
 
+test("caches only fingerprinted build assets for repeat visits", async () => {
+  const response = await worker.fetch(
+    new Request("https://example.test/assets/index-C7d9xQ2a.js"),
+    {
+      ASSETS: { fetch: async () => new Response("asset", { status: 200 }) },
+    },
+  );
+
+  assert.equal(response.headers.get("cache-control"), "public, max-age=31536000, immutable");
+});
+
+test("embeds the country language before the application starts rendering", async () => {
+  const response = await worker.fetch(
+    new Request("https://example.test/", {
+      headers: { accept: "text/html", "cf-ipcountry": "RU" },
+    }),
+    {
+      ASSETS: {
+        fetch: async () =>
+          new Response("<!doctype html><html lang=\"en\"><body></body></html>", {
+            headers: { "content-type": "text/html; charset=utf-8" },
+          }),
+      },
+    },
+  );
+
+  assert.match(await response.text(), /<html data-country-language="ru" lang="en">/);
+});
+
 test("falls back to index.html for an unknown app route", async () => {
   const calls = [];
   const response = await worker.fetch(

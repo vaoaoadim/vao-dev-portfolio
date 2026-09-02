@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "./LanguageContext";
-import * as THREE from "three";
 
 // The office is a single flattened PNG. These normalized anchors target its
 // intrinsic image area, so every overlay follows the existing responsive image.
@@ -75,8 +74,8 @@ function getBallDiameter(width, binRect) {
   return Math.min(preferredDiameter, binCap);
 }
 
-function makePaperGeometry() {
-  const baseGeometry = new THREE.IcosahedronGeometry(1, 3);
+function makePaperGeometry(three) {
+  const baseGeometry = new three.IcosahedronGeometry(1, 3);
   const geometry = baseGeometry.index ? baseGeometry.toNonIndexed() : baseGeometry;
   const positions = geometry.attributes.position;
 
@@ -184,6 +183,11 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     let paperMesh = null;
     let paperGeometry = null;
     let paperMaterial = null;
+    let threeLoadPromise = null;
+    let sceneObserver = null;
+    let isSceneNearViewport = false;
+    let isDisposed = false;
+    let hasQueuedBall = false;
 
     const world = {
       width: 1,
@@ -395,6 +399,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     };
 
     const requestLayout = () => {
+      if (!isSceneNearViewport) return;
       if (layoutFrame) return;
       layoutFrame = window.requestAnimationFrame(updateLayout);
     };
@@ -406,7 +411,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       ball.sinking = false;
       ball.pointerId = null;
       ball.samples.length = 0;
-      paperMesh.visible = false;
+      if (paperMesh) paperMesh.visible = false;
       ballProxy.hidden = true;
       binButton.removeAttribute("aria-disabled");
       renderPaper();
@@ -522,7 +527,13 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     }
 
     const spawnBall = () => {
-      if (ball.exists || !anchors.mouth || !renderer) return;
+      if (ball.exists || !anchors.mouth) return;
+      if (!renderer) {
+        hasQueuedBall = true;
+        void initializeThree();
+        return;
+      }
+
       ball.exists = true;
       ball.sleeping = false;
       ball.sinking = false;
@@ -544,8 +555,8 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       ball.scale = reducedMotionQuery.matches ? 0.9 : 0.6;
       ball.opacity = 0;
       ball.phaseTime = 0;
-      paperMesh.rotation.set(0.45, -0.25, 0.15);
-      paperMesh.visible = true;
+      paperMesh?.rotation.set(0.45, -0.25, 0.15);
+      if (paperMesh) paperMesh.visible = true;
       ballProxy.hidden = false;
       binButton.setAttribute("aria-disabled", "true");
       binHint.classList.add("is-hidden");
@@ -719,38 +730,57 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       if (event.key === "Escape") closeBoardFocus();
     };
 
-    try {
-      renderer = new THREE.WebGLRenderer({
-        canvas: threeCanvas,
-        alpha: true,
-        antialias: true,
-        powerPreference: "high-performance",
-      });
-      renderer.setClearColor(0x000000, 0);
-      scene = new THREE.Scene();
-      camera = new THREE.OrthographicCamera(0, 1, 0, 1, 0.1, 100);
-      camera.position.set(0, 0, 10);
-      camera.lookAt(0, 0, 0);
-      scene.add(new THREE.HemisphereLight(0xffffff, 0xc7c1b8, 2.1));
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 2.8);
-      directionalLight.position.set(-2.5, -4, 7);
-      scene.add(directionalLight);
-      paperGeometry = makePaperGeometry();
-      paperMaterial = new THREE.MeshStandardMaterial({
-        color: 0xe5dfd4,
-        roughness: 0.96,
-        metalness: 0,
-        flatShading: true,
-        transparent: true,
-      });
-      paperMesh = new THREE.Mesh(paperGeometry, paperMaterial);
-      paperMesh.visible = false;
-      scene.add(paperMesh);
-    } catch {
+    const markPaperBallUnavailable = () => {
+      if (isDisposed) return;
       setIsPaperBallSupported(false);
       binButton.setAttribute("aria-disabled", "true");
       binHint.hidden = true;
-    }
+    };
+
+    const initializeThree = () => {
+      if (renderer || threeLoadPromise) return threeLoadPromise;
+
+      threeLoadPromise = import("three")
+        .then((three) => {
+          if (isDisposed) return;
+
+          renderer = new three.WebGLRenderer({
+            canvas: threeCanvas,
+            alpha: true,
+            antialias: true,
+            powerPreference: "high-performance",
+          });
+          renderer.setClearColor(0x000000, 0);
+          scene = new three.Scene();
+          camera = new three.OrthographicCamera(0, 1, 0, 1, 0.1, 100);
+          camera.position.set(0, 0, 10);
+          camera.lookAt(0, 0, 0);
+          scene.add(new three.HemisphereLight(0xffffff, 0xc7c1b8, 2.1));
+          const directionalLight = new three.DirectionalLight(0xffffff, 2.8);
+          directionalLight.position.set(-2.5, -4, 7);
+          scene.add(directionalLight);
+          paperGeometry = makePaperGeometry(three);
+          paperMaterial = new three.MeshStandardMaterial({
+            color: 0xe5dfd4,
+            roughness: 0.96,
+            metalness: 0,
+            flatShading: true,
+            transparent: true,
+          });
+          paperMesh = new three.Mesh(paperGeometry, paperMaterial);
+          paperMesh.visible = false;
+          scene.add(paperMesh);
+          updateLayout();
+
+          if (hasQueuedBall) {
+            hasQueuedBall = false;
+            spawnBall();
+          }
+        })
+        .catch(markPaperBallUnavailable);
+
+      return threeLoadPromise;
+    };
 
     markerButton.addEventListener("click", activateDrawing);
     binButton.addEventListener("click", spawnBall);
@@ -772,12 +802,32 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     const resizeObserver = new ResizeObserver(requestLayout);
     resizeObserver.observe(section);
     resizeObserver.observe(image);
-    updateLayout();
+
+    if ("IntersectionObserver" in window) {
+      sceneObserver = new IntersectionObserver(
+        ([entry]) => {
+          isSceneNearViewport = entry.isIntersecting;
+          if (!isSceneNearViewport) return;
+
+          updateLayout();
+          void initializeThree();
+          sceneObserver?.disconnect();
+        },
+        { threshold: 0 },
+      );
+      sceneObserver.observe(section);
+    } else {
+      isSceneNearViewport = true;
+      updateLayout();
+      void initializeThree();
+    }
 
     return () => {
+      isDisposed = true;
       if (layoutFrame) window.cancelAnimationFrame(layoutFrame);
       if (animationFrame) window.cancelAnimationFrame(animationFrame);
       resizeObserver.disconnect();
+      sceneObserver?.disconnect();
       markerButton.removeEventListener("click", activateDrawing);
       binButton.removeEventListener("click", spawnBall);
       clearButton.removeEventListener("click", clearDrawing);

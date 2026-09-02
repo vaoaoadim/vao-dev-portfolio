@@ -1579,6 +1579,10 @@ a {
   content: "";
 }
 
+.work-pendant > picture {
+  display: block;
+}
+
 .work-case__preview-canvas--cover {
   display: block;
   padding: 0;
