@@ -24,6 +24,9 @@ const LEGAL_LINKS = [
   { labelKey: "offer", overlay: "public-offer" },
 ];
 const MARQUEE_ITEMS = Array.from({ length: 5 }, (_, index) => index);
+const MARQUEE_MIN_DURATION = 60;
+const MARQUEE_MAX_DURATION = 96;
+const MARQUEE_TARGET_SPEED = 110;
 
 function PlaceholderButton({ children, className = "", label, unavailableLabel, title }) {
   return (
@@ -73,7 +76,10 @@ export function PortfolioFooter() {
       if (distance > 0) {
         track.style.setProperty(
           "--portfolio-marquee-duration",
-          `${Math.max(60, distance / 26).toFixed(2)}s`,
+          `${Math.min(
+            MARQUEE_MAX_DURATION,
+            Math.max(MARQUEE_MIN_DURATION, distance / MARQUEE_TARGET_SPEED),
+          ).toFixed(2)}s`,
         );
       }
     };
