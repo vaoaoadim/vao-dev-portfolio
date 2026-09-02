@@ -2021,7 +2021,7 @@ a {
   font-weight: 400;
   letter-spacing: var(--tracking-display);
   line-height: 0.76;
-  animation: portfolio-footer-marquee 36s linear infinite;
+  animation: portfolio-footer-marquee var(--portfolio-marquee-duration, 84s) linear infinite;
   contain: paint;
 }
 
@@ -2409,7 +2409,6 @@ a {
 
   .portfolio-footer__marquee-track {
     font-size: clamp(8rem, min(36vw, 25svh), 15rem);
-    animation-duration: 30s;
   }
 
 }

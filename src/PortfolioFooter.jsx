@@ -4,6 +4,7 @@ import {
   TelegramLogo,
   ThreadsLogo,
 } from "@phosphor-icons/react";
+import { useEffect, useRef } from "react";
 import { useLanguage } from "./LanguageContext";
 import { usePortfolioOverlay } from "./PortfolioOverlayContext";
 
@@ -38,9 +39,9 @@ function PlaceholderButton({ children, className = "", label, unavailableLabel, 
   );
 }
 
-function MarqueeContent({ text }) {
+function MarqueeContent({ text, contentRef }) {
   return (
-    <span className="portfolio-footer__marquee-content">
+    <span className="portfolio-footer__marquee-content" ref={contentRef}>
       {MARQUEE_ITEMS.map((item) => (
         <span className="portfolio-footer__marquee-item" key={item}>
           <span>{text}</span>
@@ -53,6 +54,48 @@ function MarqueeContent({ text }) {
 export function PortfolioFooter() {
   const { copy, interpolate } = useLanguage();
   const { openInfo } = usePortfolioOverlay();
+  const marqueeTrackRef = useRef(null);
+  const marqueeContentRef = useRef(null);
+
+  useEffect(() => {
+    const track = marqueeTrackRef.current;
+    const content = marqueeContentRef.current;
+
+    if (!track || !content) return undefined;
+
+    let frame = 0;
+    let active = true;
+
+    const updateDuration = () => {
+      frame = 0;
+      const distance = content.getBoundingClientRect().width;
+
+      if (distance > 0) {
+        track.style.setProperty(
+          "--portfolio-marquee-duration",
+          `${Math.max(60, distance / 26).toFixed(2)}s`,
+        );
+      }
+    };
+
+    const scheduleUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateDuration);
+    };
+
+    const resizeObserver = new ResizeObserver(scheduleUpdate);
+    resizeObserver.observe(content);
+    scheduleUpdate();
+
+    document.fonts?.ready.then(() => {
+      if (active) scheduleUpdate();
+    });
+
+    return () => {
+      active = false;
+      resizeObserver.disconnect();
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [copy.footer.marquee]);
 
   return (
     <footer className="portfolio-footer" id="contacts">
@@ -118,8 +161,8 @@ export function PortfolioFooter() {
       </div>
 
       <div className="portfolio-footer__marquee" aria-hidden="true">
-        <div className="portfolio-footer__marquee-track">
-          <MarqueeContent text={copy.footer.marquee} />
+        <div className="portfolio-footer__marquee-track" ref={marqueeTrackRef}>
+          <MarqueeContent text={copy.footer.marquee} contentRef={marqueeContentRef} />
           <MarqueeContent text={copy.footer.marquee} />
         </div>
       </div>

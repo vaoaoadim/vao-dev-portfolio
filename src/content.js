@@ -527,7 +527,7 @@ export const copy = {
       legalLabel: "Юридическая информация",
       privacy: "политика конфиденциальности",
       offer: "публичная оферта",
-      marquee: "Лучше позвоните в v.build",
+      marquee: "Лучше звоните v.build",
     },
     overlays: {
       titles: {

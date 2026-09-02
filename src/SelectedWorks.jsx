@@ -22,6 +22,86 @@ function previewLabel(index) {
   return `preview_${String(index + 1).padStart(2, "0")}.png`;
 }
 
+const PORTFOLIO_MEDIA_WARMUP = [
+  {
+    sources: [
+      "/assets/selected-works/beautybomb-delivery-cover-v1.avif",
+      "/assets/selected-works/beautybomb-delivery-cover-v1.webp",
+      "/assets/selected-works/beautybomb-delivery-cover-v1.png",
+    ],
+    priority: "low",
+  },
+  {
+    sources: [
+      "/assets/work-pendants/floppy-disk.webp",
+      "/assets/work-pendants/floppy-disk.png",
+    ],
+    priority: "auto",
+  },
+  {
+    sources: [
+      "/assets/work-pendants/ball-mouse.webp",
+      "/assets/work-pendants/ball-mouse.png",
+    ],
+    priority: "auto",
+  },
+];
+
+const warmedPortfolioMedia = new Map();
+
+function warmupPortfolioImage({ sources, priority }) {
+  const key = sources.join("|");
+  const cached = warmedPortfolioMedia.get(key);
+
+  if (cached) return cached.promise;
+
+  const image = new Image();
+  let sourceIndex = 0;
+
+  image.decoding = "async";
+  image.fetchPriority = priority;
+
+  const promise = new Promise((resolve) => {
+    const complete = async () => {
+      try {
+        await image.decode?.();
+      } catch {
+        // A completed image is still usable when decode() is unavailable.
+      }
+
+      image.onload = null;
+      image.onerror = null;
+      resolve(image);
+    };
+
+    const tryNextSource = () => {
+      sourceIndex += 1;
+
+      if (sourceIndex >= sources.length) {
+        image.onload = null;
+        image.onerror = null;
+        resolve(null);
+        return;
+      }
+
+      image.src = sources[sourceIndex];
+    };
+
+    image.onload = complete;
+    image.onerror = tryNextSource;
+    image.src = sources[sourceIndex];
+  });
+
+  warmedPortfolioMedia.set(key, { image, promise });
+  return promise;
+}
+
+function warmupPortfolioMedia() {
+  PORTFOLIO_MEDIA_WARMUP.forEach((asset) => {
+    void warmupPortfolioImage(asset);
+  });
+}
+
 function WorkPendants() {
   const rootRef = useRef(null);
   const floppyRef = useRef(null);
@@ -216,7 +296,7 @@ function WorkPendants() {
             height="1028"
             loading="eager"
             decoding="async"
-            fetchPriority="high"
+            fetchPriority="auto"
           />
         </picture>
       </span>
@@ -233,7 +313,7 @@ function WorkPendants() {
             height="930"
             loading="eager"
             decoding="async"
-            fetchPriority="high"
+            fetchPriority="auto"
           />
         </picture>
       </span>
@@ -474,6 +554,16 @@ export function SelectedWorks() {
   const nativeProgressFrameRef = useRef(0);
   const casePrefixRef = useRef(copy.works.casePrefix);
   casePrefixRef.current = copy.works.casePrefix;
+
+  useEffect(() => {
+    let frame = window.requestAnimationFrame(() => {
+      frame = window.requestAnimationFrame(warmupPortfolioMedia);
+    });
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   const closeGame = useCallback(() => setIsGameOpen(false), []);
 
@@ -757,6 +847,22 @@ export function SelectedWorks() {
             cancelMobileSwipeHint();
           };
 
+          const stopHintOnUserIntent = (event) => {
+            if (viewport.dataset.swipeHint !== "true") return;
+
+            if (
+              event.type === "wheel" &&
+              Math.abs(event.deltaX) <= Math.abs(event.deltaY) &&
+              !event.shiftKey
+            ) {
+              return;
+            }
+
+            userHasSwiped = true;
+            section.dataset.swipeHintDismissed = "true";
+            cancelMobileSwipeHint();
+          };
+
           const hintTrigger = ScrollTrigger.create({
             trigger: gallery,
             start: "top 74%",
@@ -782,10 +888,22 @@ export function SelectedWorks() {
           viewport.addEventListener("scroll", stopHintAfterHorizontalSwipe, {
             passive: true,
           });
+          viewport.addEventListener("pointerdown", stopHintOnUserIntent, {
+            passive: true,
+          });
+          viewport.addEventListener("touchstart", stopHintOnUserIntent, {
+            passive: true,
+          });
+          viewport.addEventListener("wheel", stopHintOnUserIntent, {
+            passive: true,
+          });
 
           return () => {
             hintTrigger.kill();
             viewport.removeEventListener("scroll", stopHintAfterHorizontalSwipe);
+            viewport.removeEventListener("pointerdown", stopHintOnUserIntent);
+            viewport.removeEventListener("touchstart", stopHintOnUserIntent);
+            viewport.removeEventListener("wheel", stopHintOnUserIntent);
             cancelMobileSwipeHint();
           };
         },
@@ -884,7 +1002,7 @@ export function SelectedWorks() {
                             alt={project.coverAlt}
                             width="1584"
                             height="990"
-                            loading="lazy"
+                            loading="eager"
                             decoding="async"
                             fetchPriority="low"
                             draggable="false"
