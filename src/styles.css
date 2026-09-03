@@ -1538,6 +1538,7 @@ a {
   background: #fafaf8;
   box-shadow: none;
   cursor: pointer;
+  text-decoration: none;
   transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 

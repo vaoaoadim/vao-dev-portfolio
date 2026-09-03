@@ -120,6 +120,8 @@ export function PixelCursor() {
       });
 
       const moveCursor = contextSafe((event) => {
+        if (root.classList.contains("has-beautybomb-game-open")) return;
+
         lastPointerRef.current = {
           x: event.clientX,
           y: event.clientY,
@@ -162,12 +164,15 @@ export function PixelCursor() {
         if (document.visibilityState !== "visible") hideCursor();
       });
 
+      const hideForGamePopup = contextSafe(() => hideCursor());
+
       gsap.set(cursor, { color: "#ffffff" });
       window.addEventListener("pointermove", moveCursor, { passive: true });
       window.addEventListener("scroll", refreshTargetState, { passive: true, capture: true });
       window.addEventListener("resize", refreshTargetState, { passive: true });
       window.addEventListener("mouseleave", hideCursor);
       window.addEventListener("blur", hideCursor);
+      window.addEventListener("portfolio:hide-cursor", hideForGamePopup);
       document.addEventListener("pointerover", refreshTargetState, { passive: true });
       document.addEventListener("pointerout", hideWhenLeavingDocument);
       document.addEventListener("visibilitychange", hideOnVisibilityChange);
@@ -179,6 +184,7 @@ export function PixelCursor() {
         window.removeEventListener("resize", refreshTargetState);
         window.removeEventListener("mouseleave", hideCursor);
         window.removeEventListener("blur", hideCursor);
+        window.removeEventListener("portfolio:hide-cursor", hideForGamePopup);
         document.removeEventListener("pointerover", refreshTargetState);
         document.removeEventListener("pointerout", hideWhenLeavingDocument);
         document.removeEventListener("visibilitychange", hideOnVisibilityChange);

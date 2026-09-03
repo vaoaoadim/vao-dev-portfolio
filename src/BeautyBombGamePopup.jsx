@@ -64,6 +64,9 @@ export function BeautyBombGamePopup({ open, onClose, triggerRef }) {
     const previousOverflow = document.body.style.overflow;
     const previousFocus = document.activeElement;
 
+    document.documentElement.classList.add("has-beautybomb-game-open");
+    window.dispatchEvent(new Event("portfolio:hide-cursor"));
+
     const postGameActiveState = (active) => {
       iframeRef.current?.contentWindow?.postMessage(
         {
@@ -101,6 +104,7 @@ export function BeautyBombGamePopup({ open, onClose, triggerRef }) {
       window.removeEventListener("message", handleMessage);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       document.body.style.overflow = previousOverflow;
+      document.documentElement.classList.remove("has-beautybomb-game-open");
 
       const focusTarget = triggerRef?.current || previousFocus;
       window.requestAnimationFrame(() => focusTarget?.focus?.());

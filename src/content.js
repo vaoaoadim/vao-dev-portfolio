@@ -114,6 +114,8 @@ export const copy = {
       previewTitle: "PROJECT SCREENSHOT",
       previewNote: "COMING SOON",
       openCase: "[ open case ↗ ]",
+      openProject: "[ open project ↗ ]",
+      openProjectAria: "Open the Pläner web application in a new tab",
       previewSoon: "{title}: case preview coming soon",
       playGame: "Open and play {title}",
       cases: [
@@ -126,16 +128,22 @@ export const copy = {
           color: "green",
         },
         {
-          id: "localhost",
-          title: "LOCALHOST",
-          type: "DEVELOPER PORTFOLIO / 2026",
+          id: "planer",
+          title: "PLÄNER",
+          cover: "planer",
+          coverAlt:
+            "Pläner weekly planner interface with tasks, calendar, habit tracking, and statistics",
+          href: "https://planer-eight.vercel.app",
+          type: "WEEKLY PLANNER / 2026",
           description:
-            "An experimental developer portfolio with interactive scenes and scroll-based mechanics.",
+            "A cozy weekly planner for tasks, sleep, mood, energy, habits, calendar, and personal statistics with automatic data saving.",
           color: "yellow",
         },
         {
           id: "cache",
           title: "BEAUTYBOMB DELIVERY",
+          cover: "beautybomb",
+          interaction: "embedded-game",
           coverAlt:
             "BeautyBomb Delivery game cover with a courier van carrying a cosmetic product through a colorful city",
           type: "INTERACTIVE PROMO MINI-GAME / 2026",
@@ -444,6 +452,8 @@ export const copy = {
       previewTitle: "СКРИНШОТ ПРОЕКТА",
       previewNote: "СКОРО",
       openCase: "[ открыть кейс ↗ ]",
+      openProject: "[ открыть проект ↗ ]",
+      openProjectAria: "Открыть веб-приложение Pläner в новой вкладке",
       previewSoon: "{title}: превью кейса появится позже",
       playGame: "Открыть и сыграть в {title}",
       cases: [
@@ -456,16 +466,22 @@ export const copy = {
           color: "green",
         },
         {
-          id: "localhost",
-          title: "LOCALHOST",
-          type: "ПОРТФОЛИО РАЗРАБОТЧИКА / 2026",
+          id: "planer",
+          title: "PLÄNER",
+          cover: "planer",
+          coverAlt:
+            "Интерфейс недельного планера Pläner с задачами, календарём, привычками и статистикой",
+          href: "https://planer-eight.vercel.app",
+          type: "НЕДЕЛЬНЫЙ ПЛАНЕР / 2026",
           description:
-            "Экспериментальное портфолио разработчика с интерактивными сценами и scroll-based механиками.",
+            "Уютный недельный планер для задач, сна, настроения, энергии, привычек, календаря и личной статистики. Данные сохраняются автоматически.",
           color: "yellow",
         },
         {
           id: "cache",
           title: "BEAUTYBOMB DELIVERY",
+          cover: "beautybomb",
+          interaction: "embedded-game",
           coverAlt:
             "Обложка игры BeautyBomb Delivery: курьерский автомобиль везёт косметический продукт по яркому городу",
           type: "ИНТЕРАКТИВНАЯ ПРОМО-МИНИ-ИГРА / 2026",

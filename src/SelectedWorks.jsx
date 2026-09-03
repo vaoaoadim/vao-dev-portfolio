@@ -10,6 +10,19 @@ gsap.registerPlugin(ScrollTrigger);
 const CASE_COUNT = 8;
 const GAME_TAP_TOLERANCE = 10;
 
+const PROJECT_COVERS = {
+  planer: {
+    avif: "/assets/selected-works/planer-cover-v1.avif",
+    webp: "/assets/selected-works/planer-cover-v1.webp",
+    png: "/assets/selected-works/planer-cover-v1.png",
+  },
+  beautybomb: {
+    avif: "/assets/selected-works/beautybomb-delivery-cover-v1.avif",
+    webp: "/assets/selected-works/beautybomb-delivery-cover-v1.webp",
+    png: "/assets/selected-works/beautybomb-delivery-cover-v1.png",
+  },
+};
+
 const SCRAMBLE_SYMBOLS = "[]{}<>/\\|!@#$%^&*+=-~?:;";
 
 const clamp = (value, minimum, maximum) =>
@@ -25,11 +38,11 @@ function previewLabel(index) {
 
 const PORTFOLIO_MEDIA_WARMUP = [
   {
-    sources: [
-      "/assets/selected-works/beautybomb-delivery-cover-v1.avif",
-      "/assets/selected-works/beautybomb-delivery-cover-v1.webp",
-      "/assets/selected-works/beautybomb-delivery-cover-v1.png",
-    ],
+    sources: Object.values(PROJECT_COVERS.planer),
+    priority: "low",
+  },
+  {
+    sources: Object.values(PROJECT_COVERS.beautybomb),
     priority: "low",
   },
   {
@@ -542,6 +555,95 @@ function SelectedWorksMascot() {
   );
 }
 
+function WorkCasePreview({
+  project,
+  index,
+  copy,
+  interpolate,
+  gameTriggerRef,
+  openGame,
+  handleGamePointerDown,
+  handleGamePointerUp,
+  handleGamePointerCancel,
+}) {
+  const isEmbeddedGame = project.interaction === "embedded-game";
+  const isExternalProject = Boolean(project.href);
+  const cover = project.cover ? PROJECT_COVERS[project.cover] : null;
+  const PreviewTag = isExternalProject ? "a" : "button";
+  const previewProps = isExternalProject
+    ? {
+        href: project.href,
+        target: "_blank",
+        rel: "noopener noreferrer",
+      }
+    : {
+        type: "button",
+        onClick: isEmbeddedGame ? openGame : undefined,
+        onPointerDown: isEmbeddedGame ? handleGamePointerDown : undefined,
+        onPointerUp: isEmbeddedGame ? handleGamePointerUp : undefined,
+        onPointerCancel: isEmbeddedGame ? handleGamePointerCancel : undefined,
+      };
+
+  return (
+    <PreviewTag
+      ref={isEmbeddedGame ? gameTriggerRef : undefined}
+      className="work-case__preview"
+      data-cursor="interactive"
+      aria-label={
+        isExternalProject
+          ? copy.works.openProjectAria
+          : isEmbeddedGame
+            ? interpolate(copy.works.playGame, { title: project.title })
+            : interpolate(copy.works.previewSoon, { title: project.title })
+      }
+      {...previewProps}
+    >
+      <span className="work-case__corner work-case__corner--top-left" aria-hidden="true" />
+      <span className="work-case__corner work-case__corner--top-right" aria-hidden="true" />
+      <span className="work-case__corner work-case__corner--bottom-left" aria-hidden="true" />
+      <span className="work-case__corner work-case__corner--bottom-right" aria-hidden="true" />
+      <span
+        className={`work-case__preview-canvas${
+          cover ? " work-case__preview-canvas--cover" : ""
+        }`}
+        aria-hidden={cover ? undefined : "true"}
+      >
+        {cover ? (
+          <picture className="work-case__cover-picture">
+            <source srcSet={cover.avif} type="image/avif" />
+            <source srcSet={cover.webp} type="image/webp" />
+            <img
+              className="work-case__cover-image"
+              src={cover.png}
+              alt={project.coverAlt}
+              width="1584"
+              height="990"
+              loading="eager"
+              decoding="async"
+              fetchPriority="low"
+              draggable="false"
+            />
+          </picture>
+        ) : (
+          <>
+            <span className="work-case__preview-file">{previewLabel(index)}</span>
+            <span className="work-case__preview-window">
+              <span />
+              <span />
+              <span />
+            </span>
+            <span className="work-case__preview-title">{copy.works.previewTitle}</span>
+            <span className="work-case__preview-note">{copy.works.previewNote}</span>
+          </>
+        )}
+      </span>
+      <span className="work-case__open-label" aria-hidden="true">
+        {isExternalProject ? copy.works.openProject : copy.works.openCase}
+      </span>
+    </PreviewTag>
+  );
+}
+
 export function SelectedWorks() {
   const { copy, interpolate } = useLanguage();
   const [isGameOpen, setIsGameOpen] = useState(false);
@@ -1001,80 +1103,17 @@ export function SelectedWorks() {
                 aria-label={`${formatCase(index, copy.works.casePrefix)}: ${project.title}`}
               >
                 <div className="work-case__visual">
-                  <button
-                    ref={project.id === "cache" ? gameTriggerRef : undefined}
-                    className="work-case__preview"
-                    type="button"
-                    data-cursor="interactive"
-                    aria-label={
-                      project.id === "cache"
-                        ? interpolate(copy.works.playGame, { title: project.title })
-                        : interpolate(copy.works.previewSoon, { title: project.title })
-                    }
-                    onClick={
-                      project.id === "cache"
-                        ? openGame
-                        : undefined
-                    }
-                    onPointerDown={
-                      project.id === "cache" ? handleGamePointerDown : undefined
-                    }
-                    onPointerUp={
-                      project.id === "cache" ? handleGamePointerUp : undefined
-                    }
-                    onPointerCancel={
-                      project.id === "cache" ? handleGamePointerCancel : undefined
-                    }
-                  >
-                    <span className="work-case__corner work-case__corner--top-left" aria-hidden="true" />
-                    <span className="work-case__corner work-case__corner--top-right" aria-hidden="true" />
-                    <span className="work-case__corner work-case__corner--bottom-left" aria-hidden="true" />
-                    <span className="work-case__corner work-case__corner--bottom-right" aria-hidden="true" />
-                    <span
-                      className={`work-case__preview-canvas${
-                        project.id === "cache" ? " work-case__preview-canvas--cover" : ""
-                      }`}
-                      aria-hidden={project.id === "cache" ? undefined : "true"}
-                    >
-                      {project.id === "cache" ? (
-                        <picture className="work-case__cover-picture">
-                          <source
-                            srcSet="/assets/selected-works/beautybomb-delivery-cover-v1.avif"
-                            type="image/avif"
-                          />
-                          <source
-                            srcSet="/assets/selected-works/beautybomb-delivery-cover-v1.webp"
-                            type="image/webp"
-                          />
-                          <img
-                            className="work-case__cover-image"
-                            src="/assets/selected-works/beautybomb-delivery-cover-v1.png"
-                            alt={project.coverAlt}
-                            width="1584"
-                            height="990"
-                            loading="eager"
-                            decoding="async"
-                            fetchPriority="low"
-                            draggable="false"
-                          />
-                        </picture>
-                      ) : (
-                        <>
-                          <span className="work-case__preview-file">{previewLabel(index)}</span>
-                          <span className="work-case__preview-window">
-                            <span />
-                            <span />
-                            <span />
-                          </span>
-                          <span className="work-case__preview-title">{copy.works.previewTitle}</span>
-                          <span className="work-case__preview-note">{copy.works.previewNote}</span>
-                        </>
-                      )}
-                    </span>
-                    <span className="work-case__open-label" aria-hidden="true">
-                      {copy.works.openCase}
-                    </span>
-                  </button>
+                  <WorkCasePreview
+                    project={project}
+                    index={index}
+                    copy={copy}
+                    interpolate={interpolate}
+                    gameTriggerRef={gameTriggerRef}
+                    openGame={openGame}
+                    handleGamePointerDown={handleGamePointerDown}
+                    handleGamePointerUp={handleGamePointerUp}
+                    handleGamePointerCancel={handleGamePointerCancel}
+                  />
                 </div>
 
                 <div className="work-case__meta">
