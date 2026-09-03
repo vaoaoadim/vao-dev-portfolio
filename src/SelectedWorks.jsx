@@ -8,6 +8,7 @@ import { useLanguage } from "./LanguageContext";
 gsap.registerPlugin(ScrollTrigger);
 
 const CASE_COUNT = 8;
+const GAME_TAP_TOLERANCE = 10;
 
 const SCRAMBLE_SYMBOLS = "[]{}<>/\\|!@#$%^&*+=-~?:;";
 
@@ -545,6 +546,7 @@ export function SelectedWorks() {
   const { copy, interpolate } = useLanguage();
   const [isGameOpen, setIsGameOpen] = useState(false);
   const gameTriggerRef = useRef(null);
+  const gameTapRef = useRef(null);
   const sectionRef = useRef(null);
   const galleryRef = useRef(null);
   const viewportRef = useRef(null);
@@ -565,7 +567,46 @@ export function SelectedWorks() {
     };
   }, []);
 
+  const openGame = useCallback(() => setIsGameOpen(true), []);
   const closeGame = useCallback(() => setIsGameOpen(false), []);
+
+  const handleGamePointerDown = useCallback((event) => {
+    if (
+      !event.isPrimary ||
+      (event.pointerType === "mouse" && event.button !== 0)
+    ) {
+      return;
+    }
+
+    gameTapRef.current = {
+      pointerId: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+    };
+  }, []);
+
+  const handleGamePointerUp = useCallback(
+    (event) => {
+      const tap = gameTapRef.current;
+      gameTapRef.current = null;
+
+      if (!tap || tap.pointerId !== event.pointerId) return;
+
+      const distance = Math.hypot(
+        event.clientX - tap.x,
+        event.clientY - tap.y,
+      );
+
+      if (distance <= GAME_TAP_TOLERANCE) openGame();
+    },
+    [openGame],
+  );
+
+  const handleGamePointerCancel = useCallback((event) => {
+    if (gameTapRef.current?.pointerId === event.pointerId) {
+      gameTapRef.current = null;
+    }
+  }, []);
 
   const handleNativeScroll = (event) => {
     if (
@@ -972,8 +1013,17 @@ export function SelectedWorks() {
                     }
                     onClick={
                       project.id === "cache"
-                        ? () => setIsGameOpen(true)
+                        ? openGame
                         : undefined
+                    }
+                    onPointerDown={
+                      project.id === "cache" ? handleGamePointerDown : undefined
+                    }
+                    onPointerUp={
+                      project.id === "cache" ? handleGamePointerUp : undefined
+                    }
+                    onPointerCancel={
+                      project.id === "cache" ? handleGamePointerCancel : undefined
                     }
                   >
                     <span className="work-case__corner work-case__corner--top-left" aria-hidden="true" />

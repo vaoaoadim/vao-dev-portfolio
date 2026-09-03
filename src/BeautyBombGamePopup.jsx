@@ -22,6 +22,43 @@ export function BeautyBombGamePopup({ open, onClose, triggerRef }) {
   }, []);
 
   useEffect(() => {
+    const trigger = triggerRef?.current;
+
+    if (!trigger) return undefined;
+
+    let connectionLink = null;
+    let observer = null;
+
+    const warmConnection = () => {
+      if (connectionLink) return;
+
+      connectionLink = document.createElement("link");
+      connectionLink.rel = "preconnect";
+      connectionLink.href = gameUrl.origin;
+      connectionLink.crossOrigin = "anonymous";
+      document.head.append(connectionLink);
+      observer?.disconnect();
+    };
+
+    if ("IntersectionObserver" in window) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) warmConnection();
+        },
+        { rootMargin: "120%" },
+      );
+      observer.observe(trigger);
+    } else {
+      warmConnection();
+    }
+
+    return () => {
+      observer?.disconnect();
+      connectionLink?.remove();
+    };
+  }, [gameUrl.origin, triggerRef]);
+
+  useEffect(() => {
     if (!open) return undefined;
 
     const previousOverflow = document.body.style.overflow;
