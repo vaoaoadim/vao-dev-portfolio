@@ -195,6 +195,7 @@ export function BeautyBombGamePopup({ open, onClose, triggerRef }) {
       aria-modal="true"
       aria-label="BeautyBomb Delivery"
     >
+      <div className="beautybomb-game-popup__stage">
       {frameSource ? (
         <iframe
           ref={iframeRef}
@@ -269,6 +270,7 @@ export function BeautyBombGamePopup({ open, onClose, triggerRef }) {
             </div>
           </>
         )}
+      </div>
       </div>
     </div>,
     document.body,
