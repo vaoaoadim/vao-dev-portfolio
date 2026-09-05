@@ -2061,6 +2061,12 @@ a {
   margin-right: 0.18em;
 }
 
+@media (min-width: 981px) {
+  .portfolio-footer__info {
+    padding-bottom: clamp(0.55rem, 1.1svh, 0.9rem);
+  }
+}
+
 @keyframes portfolio-footer-marquee {
   from {
     transform: translate3d(0, 0, 0);
