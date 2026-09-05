@@ -128,16 +128,9 @@ export const copy = {
           color: "green",
         },
         {
-          id: "planer",
-          title: "PLÄNER",
-          cover: "planer",
-          coverAlt:
-            "Pläner weekly planner interface with tasks, calendar, habit tracking, and statistics",
-          href: "https://planer-eight.vercel.app",
-          type: "WEEKLY PLANNER / 2026",
-          description:
-            "A cozy weekly planner for tasks, sleep, mood, energy, habits, calendar, and personal statistics with automatic data saving.",
+          id: "reserved-02",
           color: "yellow",
+          empty: true,
         },
         {
           id: "cache",
@@ -152,11 +145,15 @@ export const copy = {
           color: "red",
         },
         {
-          id: "room-404",
-          title: "ROOM 404",
-          type: "INTERACTIVE MINI-GAME / 2026",
+          id: "planer",
+          title: "PLÄNER",
+          cover: "planer",
+          coverAlt:
+            "Pläner weekly planner interface with tasks, calendar, habit tracking, and statistics",
+          href: "https://planer-eight.vercel.app",
+          type: "WEEKLY PLANNER / 2026",
           description:
-            "A compact browser game built around exploring a digital space.",
+            "A cozy weekly planner for tasks, sleep, mood, energy, habits, calendar, and personal statistics with automatic data saving.",
           color: "orange",
         },
         {
@@ -466,16 +463,9 @@ export const copy = {
           color: "green",
         },
         {
-          id: "planer",
-          title: "PLÄNER",
-          cover: "planer",
-          coverAlt:
-            "Интерфейс недельного планера Pläner с задачами, календарём, привычками и статистикой",
-          href: "https://planer-eight.vercel.app",
-          type: "НЕДЕЛЬНЫЙ ПЛАНЕР / 2026",
-          description:
-            "Уютный недельный планер для задач, сна, настроения, энергии, привычек, календаря и личной статистики.",
+          id: "reserved-02",
           color: "yellow",
+          empty: true,
         },
         {
           id: "cache",
@@ -490,11 +480,15 @@ export const copy = {
           color: "red",
         },
         {
-          id: "room-404",
-          title: "ROOM 404",
-          type: "ИНТЕРАКТИВНАЯ МИНИ-ИГРА / 2026",
+          id: "planer",
+          title: "PLÄNER",
+          cover: "planer",
+          coverAlt:
+            "Интерфейс недельного планера Pläner с задачами, календарём, привычками и статистикой",
+          href: "https://planer-eight.vercel.app",
+          type: "НЕДЕЛЬНЫЙ ПЛАНЕР / 2026",
           description:
-            "Небольшая browser-game, построенная вокруг исследования цифрового пространства.",
+            "Уютный недельный планер для задач, сна, настроения, энергии, привычек, календаря и личной статистики.",
           color: "orange",
         },
         {

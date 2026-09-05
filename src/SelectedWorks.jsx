@@ -1107,29 +1107,37 @@ export function SelectedWorks() {
               <article
                 key={project.id}
                 className={`work-case work-case--${project.color}`}
-                aria-label={`${formatCase(index, copy.works.casePrefix)}: ${project.title}`}
+                aria-label={
+                  project.empty
+                    ? formatCase(index, copy.works.casePrefix)
+                    : `${formatCase(index, copy.works.casePrefix)}: ${project.title}`
+                }
               >
-                <div className="work-case__visual">
-                  <WorkCasePreview
-                    project={project}
-                    index={index}
-                    copy={copy}
-                    interpolate={interpolate}
-                    gameTriggerRef={gameTriggerRef}
-                    openGame={openGame}
-                    handleGamePointerDown={handleGamePointerDown}
-                    handleGamePointerUp={handleGamePointerUp}
-                    handleGamePointerCancel={handleGamePointerCancel}
-                  />
-                </div>
+                {!project.empty ? (
+                  <>
+                    <div className="work-case__visual">
+                      <WorkCasePreview
+                        project={project}
+                        index={index}
+                        copy={copy}
+                        interpolate={interpolate}
+                        gameTriggerRef={gameTriggerRef}
+                        openGame={openGame}
+                        handleGamePointerDown={handleGamePointerDown}
+                        handleGamePointerUp={handleGamePointerUp}
+                        handleGamePointerCancel={handleGamePointerCancel}
+                      />
+                    </div>
 
-                <div className="work-case__meta">
-                  <div>
-                    <h3>{project.title}</h3>
-                    <p>{project.type}</p>
-                  </div>
-                  <p className="work-case__description">{project.description}</p>
-                </div>
+                    <div className="work-case__meta">
+                      <div>
+                        <h3>{project.title}</h3>
+                        <p>{project.type}</p>
+                      </div>
+                      <p className="work-case__description">{project.description}</p>
+                    </div>
+                  </>
+                ) : null}
               </article>
             ))}
           </div>
