@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BeautyBombGamePopup } from "./BeautyBombGamePopup";
 import { useLanguage } from "./LanguageContext";
+import { setupSelectedWorksMascot } from "./selectedWorksMascotPlayback";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -339,13 +340,14 @@ function WorkPendants() {
 function SelectedWorksMascot() {
   const rootRef = useRef(null);
   const videoRef = useRef(null);
+  const finalImageRef = useRef(null);
   const lifecycleRef = useRef({
     hasLoaded: false,
     hasStarted: false,
     hasEnded: false,
   });
   const [playbackState, setPlaybackState] = useState(
-    lifecycleRef.current,
+    { ...lifecycleRef.current },
   );
 
   useEffect(() => {
@@ -354,168 +356,18 @@ function SelectedWorksMascot() {
 
     if (!root || !video) return undefined;
 
-    const lifecycle = lifecycleRef.current;
-    const reducedMotionQuery = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    );
-    let loadObserver = null;
-    let playbackObserver = null;
-    let isAttemptingPlayback = false;
-    let retryWasUsed = false;
-    let fallbackVisibilityCleanup = null;
-    let gestureRetryCleanup = null;
-    let isDisposed = false;
-
-    const markLifecycleState = (stateName) => {
-      if (lifecycle[stateName]) return;
-
-      lifecycle[stateName] = true;
-      setPlaybackState((currentState) => ({
-        ...currentState,
-        [stateName]: true,
-      }));
-    };
-
-    const handleLoadedData = () => {
-      markLifecycleState("hasLoaded");
-    };
-
-    const handleEnded = () => {
-      markLifecycleState("hasEnded");
-      gestureRetryCleanup?.();
-    };
-
-    const prepareVideo = () => {
-      if (video.preload === "auto") return;
-
-      video.preload = "auto";
-      video.load();
-    };
-
-    const registerGestureRetry = (attemptPlayback) => {
-      if (gestureRetryCleanup || retryWasUsed || lifecycle.hasStarted) {
-        return;
-      }
-
-      const retryPlayback = () => {
-        retryWasUsed = true;
-        gestureRetryCleanup?.();
-        attemptPlayback(false);
-      };
-
-      gestureRetryCleanup = () => {
-        window.removeEventListener("pointerdown", retryPlayback);
-        window.removeEventListener("keydown", retryPlayback);
-        gestureRetryCleanup = null;
-      };
-
-      window.addEventListener("pointerdown", retryPlayback, {
-        once: true,
-        passive: true,
-      });
-      window.addEventListener("keydown", retryPlayback, { once: true });
-    };
-
-    const attemptPlayback = async (canRegisterRetry = true) => {
-      if (
-        isDisposed ||
-        reducedMotionQuery.matches ||
-        lifecycle.hasStarted ||
-        lifecycle.hasEnded ||
-        isAttemptingPlayback
-      ) {
-        return;
-      }
-
-      isAttemptingPlayback = true;
-      prepareVideo();
-      video.defaultMuted = true;
-      video.muted = true;
-
-      try {
-        await video.play();
-
-        if (!isDisposed) {
-          markLifecycleState("hasStarted");
-          gestureRetryCleanup?.();
-        }
-      } catch {
-        if (!isDisposed && canRegisterRetry) {
-          registerGestureRetry(attemptPlayback);
-        }
-      } finally {
-        isAttemptingPlayback = false;
-      }
-    };
-
-    video.addEventListener("loadeddata", handleLoadedData);
-    video.addEventListener("ended", handleEnded);
-
-    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
-      handleLoadedData();
-    }
-
-    if (!reducedMotionQuery.matches && "IntersectionObserver" in window) {
-      loadObserver = new IntersectionObserver(
-        ([entry]) => {
-          if (!entry.isIntersecting) return;
-
-          prepareVideo();
-          loadObserver?.disconnect();
-        },
-        { rootMargin: "120% 0px", threshold: 0 },
-      );
-
-      playbackObserver = new IntersectionObserver(
-        ([entry]) => {
-          if (!entry.isIntersecting || entry.intersectionRatio < 0.18) {
-            return;
-          }
-
-          attemptPlayback();
-          playbackObserver?.disconnect();
-        },
-        { threshold: [0, 0.18] },
-      );
-
-      loadObserver.observe(root);
-      playbackObserver.observe(root);
-    } else if (!reducedMotionQuery.matches) {
-      const checkFallbackVisibility = () => {
-        const bounds = root.getBoundingClientRect();
-
-        if (bounds.top < window.innerHeight * 2) {
-          prepareVideo();
-        }
-
-        if (bounds.top < window.innerHeight && bounds.bottom > 0) {
-          attemptPlayback();
-          fallbackVisibilityCleanup?.();
-        }
-      };
-
-      fallbackVisibilityCleanup = () => {
-        window.removeEventListener("scroll", checkFallbackVisibility);
-        window.removeEventListener("resize", checkFallbackVisibility);
-        fallbackVisibilityCleanup = null;
-      };
-
-      window.addEventListener("scroll", checkFallbackVisibility, {
-        passive: true,
-      });
-      window.addEventListener("resize", checkFallbackVisibility);
-      checkFallbackVisibility();
-    }
-
-    return () => {
-      isDisposed = true;
-      loadObserver?.disconnect();
-      playbackObserver?.disconnect();
-      fallbackVisibilityCleanup?.();
-      gestureRetryCleanup?.();
-      video.removeEventListener("loadeddata", handleLoadedData);
-      video.removeEventListener("ended", handleEnded);
-    };
+    return setupSelectedWorksMascot({
+      root,
+      video,
+      finalImage: finalImageRef.current,
+      lifecycle: lifecycleRef.current,
+      onStateChange: (stateName) => {
+        setPlaybackState((currentState) => ({
+          ...currentState,
+          [stateName]: true,
+        }));
+      },
+    });
   }, []);
 
   return (
@@ -543,6 +395,7 @@ function SelectedWorksMascot() {
         />
       </video>
       <img
+        ref={finalImageRef}
         className="selected-works__mascot-final"
         src="/assets/selected-works/selected-work-mascot-last.png?v=steps-2800-crop660"
         alt=""
