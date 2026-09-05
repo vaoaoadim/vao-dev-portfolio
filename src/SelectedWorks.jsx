@@ -12,9 +12,10 @@ const GAME_TAP_TOLERANCE = 10;
 
 const PROJECT_COVERS = {
   planer: {
-    avif: "/assets/selected-works/planer-cover-v1.avif",
-    webp: "/assets/selected-works/planer-cover-v1.webp",
-    png: "/assets/selected-works/planer-cover-v1.png",
+    avif: "/assets/selected-works/planer-cover-v2.avif",
+    webp: "/assets/selected-works/planer-cover-v2.webp",
+    png: "/assets/selected-works/planer-cover-v2.png",
+    label: "Pläner",
   },
   beautybomb: {
     avif: "/assets/selected-works/beautybomb-delivery-cover-v1.avif",
@@ -606,6 +607,7 @@ function WorkCasePreview({
         className={`work-case__preview-canvas${
           cover ? " work-case__preview-canvas--cover" : ""
         }`}
+        data-cover={project.cover}
         aria-hidden={cover ? undefined : "true"}
       >
         {cover ? (
@@ -636,6 +638,11 @@ function WorkCasePreview({
             <span className="work-case__preview-note">{copy.works.previewNote}</span>
           </>
         )}
+        {cover?.label ? (
+          <span className="work-case__cover-title" aria-hidden="true">
+            {cover.label}
+          </span>
+        ) : null}
       </span>
       <span className="work-case__open-label" aria-hidden="true">
         {isExternalProject ? copy.works.openProject : copy.works.openCase}

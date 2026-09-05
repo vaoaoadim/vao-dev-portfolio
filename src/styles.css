@@ -1521,6 +1521,7 @@ a {
   display: grid;
   min-height: 0;
   place-items: center;
+  overflow: clip;
   transform-origin: 50% 50%;
   will-change: transform;
 }
@@ -1601,9 +1602,33 @@ a {
   height: 100%;
 }
 
+.work-case__cover-picture {
+  position: absolute;
+  inset: 0;
+}
+
 .work-case__cover-image {
   object-fit: cover;
   object-position: 50% 50%;
+}
+
+.work-case__preview-canvas--cover[data-cover="planer"] {
+  background: #41243a;
+}
+
+.work-case__cover-title {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #ffc7c8;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8.8vw, 10.25rem);
+  font-weight: 600;
+  letter-spacing: -0.08em;
+  line-height: 1;
+  pointer-events: none;
 }
 
 .work-case__preview-file,
@@ -1773,6 +1798,8 @@ a {
 }
 
 .work-case__meta {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: minmax(15rem, 1fr) minmax(17rem, 1fr);
   gap: clamp(2rem, 8vw, 10rem);
