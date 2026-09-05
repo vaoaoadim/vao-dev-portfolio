@@ -121,6 +121,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
   const ballProxyRef = useRef(null);
   const clearButtonRef = useRef(null);
   const focusDismissRef = useRef(null);
+  const focusCloseButtonRef = useRef(null);
   const markerHintRef = useRef(null);
   const binHintRef = useRef(null);
 
@@ -135,6 +136,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     const ballProxy = ballProxyRef.current;
     const clearButton = clearButtonRef.current;
     const focusDismiss = focusDismissRef.current;
+    const focusCloseButton = focusCloseButtonRef.current;
     const markerHint = markerHintRef.current;
     const binHint = binHintRef.current;
 
@@ -149,6 +151,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       !ballProxy ||
       !clearButton ||
       !focusDismiss ||
+      !focusCloseButton ||
       !markerHint ||
       !binHint
     ) {
@@ -157,6 +160,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
 
     delete layer.dataset.drawingActive;
     clearButton.hidden = true;
+    focusCloseButton.hidden = true;
 
     const reducedMotionQuery = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -394,6 +398,16 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       )}px`;
       clearButton.style.top = `${activeBoardRect.top + activeBoardRect.height + 6}px`;
 
+      const closeButtonSize = 44;
+      focusCloseButton.style.left = `${Math.max(
+        0,
+        Math.min(
+          section.clientWidth - closeButtonSize,
+          activeBoardRect.left + activeBoardRect.width - closeButtonSize,
+        ),
+      )}px`;
+      focusCloseButton.style.top = `${Math.max(0, activeBoardRect.top - closeButtonSize)}px`;
+
       resizeDrawingCanvas();
       resizeThreeScene();
     };
@@ -578,6 +592,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         boardFocused = true;
         layer.dataset.boardFocused = "true";
         focusDismiss.hidden = false;
+        focusCloseButton.hidden = false;
         requestLayout();
       }
 
@@ -589,7 +604,9 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       boardFocused = false;
       delete layer.dataset.boardFocused;
       focusDismiss.hidden = true;
+      focusCloseButton.hidden = true;
       requestLayout();
+      markerButton.focus({ preventScroll: true });
     };
 
     const pointFromDrawingEvent = (event) => {
@@ -637,7 +654,6 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     };
 
     const onScroll = () => {
-      if (strokes.length) clearDrawing();
       requestLayout();
     };
 
@@ -786,6 +802,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     binButton.addEventListener("click", spawnBall);
     clearButton.addEventListener("click", clearDrawing);
     focusDismiss.addEventListener("click", closeBoardFocus);
+    focusCloseButton.addEventListener("click", closeBoardFocus);
     drawingCanvas.addEventListener("pointerdown", onDrawingPointerDown);
     drawingCanvas.addEventListener("pointermove", onDrawingPointerMove);
     drawingCanvas.addEventListener("pointerup", finishDrawingPointer);
@@ -832,6 +849,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       binButton.removeEventListener("click", spawnBall);
       clearButton.removeEventListener("click", clearDrawing);
       focusDismiss.removeEventListener("click", closeBoardFocus);
+      focusCloseButton.removeEventListener("click", closeBoardFocus);
       drawingCanvas.removeEventListener("pointerdown", onDrawingPointerDown);
       drawingCanvas.removeEventListener("pointermove", onDrawingPointerMove);
       drawingCanvas.removeEventListener("pointerup", finishDrawingPointer);
@@ -849,6 +867,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       renderer?.dispose();
       delete layer.dataset.drawingActive;
       clearButton.hidden = true;
+      focusCloseButton.hidden = true;
     };
   }, [imageRef, sectionRef]);
 
@@ -861,6 +880,17 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         aria-label={copy.build.interaction.closeBoard}
         hidden
       />
+
+      <button
+        ref={focusCloseButtonRef}
+        className="whiteboard-focus-close"
+        type="button"
+        aria-label={copy.build.interaction.closeBoard}
+        data-cursor="interactive"
+        hidden
+      >
+        ×
+      </button>
 
       <canvas
         ref={drawingCanvasRef}
