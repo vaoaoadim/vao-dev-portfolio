@@ -18,6 +18,8 @@ export function BeautyBombGamePopup({ open, onClose, triggerRef }) {
       import.meta.env.VITE_BEAUTYBOMB_GAME_URL || DEFAULT_GAME_URL,
     );
     url.searchParams.set("embed", "portfolio");
+    // Bypass cached game HTML that selected its frame only after loading Phaser.
+    url.searchParams.set("embedVersion", "2");
     return url;
   }, []);
 
