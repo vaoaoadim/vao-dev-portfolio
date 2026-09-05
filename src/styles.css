@@ -1317,30 +1317,12 @@ a {
   height: calc(
     var(--selected-mascot-size) - var(--selected-mascot-foot-offset)
   );
-  overflow: hidden;
+  /* Keep the layout anchor, but expose the source's floor below the shoes. */
+  overflow: visible;
+  isolation: isolate;
   background: transparent;
   pointer-events: none;
   transform: translateX(var(--selected-mascot-x));
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    #000 18%,
-    #000 82%,
-    transparent 100%
-  );
-  -webkit-mask-position: 50% 0;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: 100% 100%;
-  mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    #000 18%,
-    #000 82%,
-    transparent 100%
-  );
-  mask-position: 50% 0;
-  mask-repeat: no-repeat;
-  mask-size: 100% 100%;
 }
 
 .selected-works__mascot-video,
@@ -1355,12 +1337,26 @@ a {
   object-fit: contain;
   transform: translateX(-50%);
   user-select: none;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 5%, #000 100%);
+  /* Shoes end by row 692/720. Fade only the floor from row 700 onward. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 18%, #000 82%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 5%, #000 97.222222%, transparent 100%);
+  -webkit-mask-position: 50% 0;
   -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: 100% 100%;
-  mask-image: linear-gradient(to bottom, transparent 0, #000 5%, #000 100%);
+  -webkit-mask-size: calc(var(--selected-mascot-size) * 0.96) 100%, 100% 100%;
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 18%, #000 82%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 5%, #000 97.222222%, transparent 100%);
+  mask-position: 50% 0;
   mask-repeat: no-repeat;
-  mask-size: 100% 100%;
+  mask-size: calc(var(--selected-mascot-size) * 0.96) 100%, 100% 100%;
+  mask-composite: intersect;
+}
+
+.selected-works__selected-line {
+  position: relative;
+  z-index: 1;
 }
 
 .selected-works__mascot-video {
