@@ -1545,9 +1545,10 @@ a {
   display: grid;
   min-height: 0;
   place-items: center;
-  overflow: clip;
+  overflow: visible;
   transform-origin: 50% 50%;
   will-change: transform;
+  z-index: 2;
 }
 
 .work-case__preview {
@@ -1725,43 +1726,27 @@ a {
   top: -1px;
   left: -1px;
   border-width: 1px 0 0 1px;
+  transform: translate(-0.3rem, -0.3rem);
 }
 
 .work-case__corner--top-right {
   top: -1px;
   right: -1px;
   border-width: 1px 1px 0 0;
+  transform: translate(0.3rem, -0.3rem);
 }
 
 .work-case__corner--bottom-left {
   bottom: -1px;
   left: -1px;
   border-width: 0 0 1px 1px;
+  transform: translate(-0.3rem, 0.3rem);
 }
 
 .work-case__corner--bottom-right {
   right: -1px;
   bottom: -1px;
   border-width: 0 1px 1px 0;
-}
-
-.work-case__preview:hover .work-case__corner--top-left,
-.work-case__preview:focus-visible .work-case__corner--top-left {
-  transform: translate(-0.3rem, -0.3rem);
-}
-
-.work-case__preview:hover .work-case__corner--top-right,
-.work-case__preview:focus-visible .work-case__corner--top-right {
-  transform: translate(0.3rem, -0.3rem);
-}
-
-.work-case__preview:hover .work-case__corner--bottom-left,
-.work-case__preview:focus-visible .work-case__corner--bottom-left {
-  transform: translate(-0.3rem, 0.3rem);
-}
-
-.work-case__preview:hover .work-case__corner--bottom-right,
-.work-case__preview:focus-visible .work-case__corner--bottom-right {
   transform: translate(0.3rem, 0.3rem);
 }
 
@@ -1774,16 +1759,10 @@ a {
   font-size: clamp(0.66rem, 0.8vw, 0.8rem);
   letter-spacing: -0.05em;
   line-height: 1;
-  opacity: 0;
-  transform: translateY(-0.2rem);
-  transition: opacity 180ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
-  white-space: nowrap;
-}
-
-.work-case__preview:hover .work-case__open-label,
-.work-case__preview:focus-visible .work-case__open-label {
   opacity: 1;
-  transform: translateY(0);
+  pointer-events: none;
+  transform: none;
+  white-space: nowrap;
 }
 
 .beautybomb-game-popup {
