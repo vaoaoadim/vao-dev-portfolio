@@ -155,9 +155,6 @@ export function WhatIBuild() {
           <span>01</span>
           <span>{copy.build.kicker}</span>
         </div>
-        <p className="section-kicker__instruction">
-          {copy.build.instruction}
-        </p>
       </div>
 
       <div className="what-i-build-heading">
