@@ -692,6 +692,9 @@ a {
 
 .hero-code-glyph--green {
   color: #2aa66b;
+  display: inline-block;
+  transform: scaleY(1.2);
+  transform-origin: center;
 }
 
 .hero-code-glyph--yellow {
