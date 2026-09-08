@@ -51,7 +51,6 @@ export const copy = {
     build: {
       sectionLabel: "Section 01",
       kicker: "// services",
-      instruction: "[ tap the marker or bin — take a break from work ]",
       titleFirst: "WHAT I",
       titleSecond: "BUILD",
       subtitle: "From interface to a working product.",
@@ -386,7 +385,6 @@ export const copy = {
     build: {
       sectionLabel: "Раздел 01",
       kicker: "// спектр услуг",
-      instruction: "[ жми на маркер или урну — отвлекись от дел ]",
       titleFirst: "ЧТО Я",
       titleSecond: "СОЗДАЮ",
       subtitle: "Из интерфейса — в работающий продукт.",
