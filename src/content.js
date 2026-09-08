@@ -200,7 +200,6 @@ export const copy = {
       legalLabel: "Legal information",
       privacy: "privacy policy",
       offer: "public offer",
-      marquee: "Better call v.build",
     },
     overlays: {
       titles: {
@@ -535,7 +534,6 @@ export const copy = {
       legalLabel: "Юридическая информация",
       privacy: "политика конфиденциальности",
       offer: "публичная оферта",
-      marquee: "Лучше звоните v.build",
     },
     overlays: {
       titles: {
