@@ -88,7 +88,7 @@ export const copy = {
         {
           title: "AI INTEGRATIONS",
           description:
-            "AI integrations and process automation where they deliver real value to the product.",
+            "AI integrations and process automation to keep up with the times and save your energy for something great! )",
         },
       ],
       interaction: {
@@ -422,7 +422,7 @@ export const copy = {
         {
           title: "ИИ-ИНТЕГРАЦИИ",
           description:
-            "ИИ-интеграции и автоматизация процессов там, где они дают реальную пользу продукту.",
+            "ИИ-интеграции и автоматизация процессов, чтобы идти в ногу со временем и экономить свои силы для чего-нибудь великого! ).",
         },
       ],
       interaction: {
