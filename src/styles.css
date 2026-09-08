@@ -432,15 +432,19 @@ a {
 }
 
 .information-overlay h1 {
-  width: fit-content;
+  width: 100%;
   max-width: 100%;
   margin: 0 auto;
   font-family: var(--font-display);
-  font-size: clamp(4.25rem, 12.4vw, 11.8rem);
+  font-size: clamp(2.25rem, 8vw, 8.25rem);
   font-weight: 400;
   letter-spacing: var(--tracking-display);
   line-height: var(--leading-display);
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  text-align: center;
+  text-wrap: balance;
 }
 
 .information-overlay__eyebrow {
@@ -2164,7 +2168,7 @@ a {
   }
 
   .information-overlay h1 {
-    font-size: clamp(3.75rem, 18vw, 6.2rem);
+    font-size: clamp(1.5rem, 8.6vw, 3.5rem);
     line-height: 0.84;
   }
 
