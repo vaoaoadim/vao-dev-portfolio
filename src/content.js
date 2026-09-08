@@ -58,7 +58,7 @@ export const copy = {
         {
           title: "MINI APPS & GAMES",
           description:
-            "Small products and game mechanics that communicate an idea quickly and keep users engaged.",
+            "Business gamification and marketing games that increase sales.",
         },
         {
           title: "TELEGRAM BOTS",
@@ -392,7 +392,7 @@ export const copy = {
         {
           title: "МИНИ-ПРИЛОЖЕНИЯ И ИГРЫ",
           description:
-            "Небольшие продукты и игровые механики, которые быстро объясняют идею и вовлекают пользователя.",
+            "Геймификация для бизнеса, маркетинговые игры, которые увеличивают продажи.",
         },
         {
           title: "TELEGRAM-БОТЫ",
