@@ -212,15 +212,15 @@ export const copy = {
       about: {
         eyebrow: "// about me",
         paragraphs: [
-          "I create digital products — from an expressive interface to a working system. I develop websites, web applications, Telegram bots, extensions, and automations, considering both the visual layer and the logic behind each scenario.",
-          "I build projects end to end: frontend, server-side logic, databases, APIs, and third-party integrations. I work with notifications, payment flows, internal tools, content processes, and AI features where they genuinely make work easier.",
-          "Clear structure, careful implementation, responsiveness, and speed matter to me. I choose technology for the task, not for the sake of the stack.",
+          "I create digital products — from expressive interfaces to working systems. I develop websites, web applications, Telegram bots, extensions, and automations, considering both the visual layer and the logic behind them.",
+          "I build projects end to end: frontend, server-side logic, databases, APIs, and third-party integrations. I work with notifications, payment flows, internal tools, content processes, and AI.",
+          "When the project is handed over, you’ll receive a detailed FAQ that covers most common questions, along with initial support.",
         ],
       },
       stack: {
         eyebrow: "// technologies and disciplines",
         intro:
-          "The working stack is selected for the task, scale, and timeline. Below are the technologies and disciplines I use or bring in when needed.",
+          "The working stack is selected for the task, scale, and timeline. Below are the technologies and disciplines I use most often or bring in when needed.",
         items: [
           [
             "FRONTEND",
@@ -240,7 +240,7 @@ export const copy = {
           ],
           [
             "AI",
-            "OpenAI API and other model APIs, AI automation, prompt design, product AI features, RAG, and data workflows — where AI delivers real value to users or the team.",
+            "OpenAI API and other model APIs, AI automation, prompt design, product AI features, RAG, and data workflows.",
           ],
         ],
       },
