@@ -2091,6 +2091,12 @@ a {
   }
 }
 
+@media (min-width: 761px) {
+  .portfolio-footer__label {
+    transform: translateY(clamp(-28rem, -42svh, -16rem));
+  }
+}
+
 @media (pointer: coarse) {
   .portfolio-footer__socials {
     grid-template-columns: repeat(4, 2.75rem);

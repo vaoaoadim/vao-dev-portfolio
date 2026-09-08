@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useLanguage } from "./LanguageContext";
 
 // The office is a single flattened PNG. These normalized anchors target its
@@ -112,7 +112,6 @@ function HintArrow({ direction = "down" }) {
 
 export function InteractiveBuildScene({ sectionRef, imageRef }) {
   const { copy } = useLanguage();
-  const [isPaperBallSupported, setIsPaperBallSupported] = useState(true);
   const layerRef = useRef(null);
   const drawingCanvasRef = useRef(null);
   const threeCanvasRef = useRef(null);
@@ -430,6 +429,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       if (paperMesh) paperMesh.visible = false;
       ballProxy.hidden = true;
       binButton.removeAttribute("aria-disabled");
+      binHint.classList.remove("is-hidden");
       renderPaper();
     };
 
@@ -750,13 +750,6 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       if (event.key === "Escape") closeBoardFocus();
     };
 
-    const markPaperBallUnavailable = () => {
-      if (isDisposed) return;
-      setIsPaperBallSupported(false);
-      binButton.setAttribute("aria-disabled", "true");
-      binHint.hidden = true;
-    };
-
     const createRenderer = (three) => {
       const rendererOptions = [
         { alpha: true, antialias: true, powerPreference: "high-performance" },
@@ -827,8 +820,11 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
           camera = null;
           threeLoadPromise = null;
 
+          // Do not hide the bin after a temporary WebGL startup failure. The
+          // original 3D paper mesh stays available for the next user action.
           if (rendererAttempts >= 3) {
-            markPaperBallUnavailable();
+            rendererAttempts = 0;
+            hasQueuedBall = false;
             return;
           }
 
@@ -963,12 +959,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         ref={binButtonRef}
         className="scene-hit-zone scene-hit-zone--bin"
         type="button"
-        aria-label={
-          isPaperBallSupported
-            ? copy.build.interaction.createBall
-            : copy.build.interaction.unavailableBall
-        }
-        aria-disabled={!isPaperBallSupported}
+        aria-label={copy.build.interaction.createBall}
         data-cursor="interactive"
       />
 
