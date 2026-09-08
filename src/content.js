@@ -575,7 +575,7 @@ export const copy = {
           ],
           [
             "AI",
-            "OpenAI API и другие model APIs, AI-автоматизация, prompt design, AI-функции в продуктах, RAG и работа с данными — там, где ИИ даёт реальную пользу пользователю или команде.",
+            "OpenAI API и другие model APIs, AI-автоматизация, prompt design, AI-функции в продуктах, RAG и работа с данными.",
           ],
         ],
       },
