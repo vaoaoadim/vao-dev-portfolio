@@ -4,6 +4,7 @@ import {
   TelegramLogo,
   ThreadsLogo,
 } from "@phosphor-icons/react";
+import { useEffect, useRef } from "react";
 import { useLanguage } from "./LanguageContext";
 import { usePortfolioOverlay } from "./PortfolioOverlayContext";
 
@@ -22,7 +23,7 @@ const LEGAL_LINKS = [
   { labelKey: "privacy", overlay: "privacy-policy" },
   { labelKey: "offer", overlay: "public-offer" },
 ];
-const AVATAR_HEADS = Array.from({ length: 12 }, (_, index) => index);
+const AVATAR_HEADS = Array.from({ length: 8 }, (_, index) => index);
 
 function PlaceholderButton({ children, className = "", label, unavailableLabel, title }) {
   return (
@@ -41,6 +42,32 @@ function PlaceholderButton({ children, className = "", label, unavailableLabel, 
 export function PortfolioFooter() {
   const { copy, interpolate } = useLanguage();
   const { openInfo } = usePortfolioOverlay();
+  const avatarRowRef = useRef(null);
+
+  useEffect(() => {
+    const row = avatarRowRef.current;
+    if (!row) return undefined;
+
+    const setVisible = (isVisible) => {
+      row.dataset.visible = String(isVisible);
+    };
+
+    if (!("IntersectionObserver" in window)) {
+      setVisible(true);
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold: 0.01 },
+    );
+
+    observer.observe(row);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   return (
     <footer className="portfolio-footer" id="contacts">
@@ -105,14 +132,20 @@ export function PortfolioFooter() {
         </nav>
       </div>
 
-      <div className="portfolio-footer__avatar-row" aria-hidden="true">
-        {AVATAR_HEADS.map((index) => (
-          <picture className="portfolio-footer__avatar" key={index}>
-            <source srcSet="/assets/footer/avatar-head-v1.avif" type="image/avif" />
-            <source srcSet="/assets/footer/avatar-head-v1.webp" type="image/webp" />
-            <img src="/assets/footer/avatar-head-v1.png" alt="" draggable="false" />
-          </picture>
-        ))}
+      <div className="portfolio-footer__avatar-row" aria-hidden="true" ref={avatarRowRef}>
+        <div className="portfolio-footer__avatar-track">
+          {[0, 1].map((sequence) => (
+            <div className="portfolio-footer__avatar-sequence" key={sequence}>
+              {AVATAR_HEADS.map((index) => (
+                <picture className="portfolio-footer__avatar" key={index}>
+                  <source srcSet="/assets/footer/avatar-head-v1.avif" type="image/avif" />
+                  <source srcSet="/assets/footer/avatar-head-v1.webp" type="image/webp" />
+                  <img src="/assets/footer/avatar-head-v1.png" alt="" draggable="false" />
+                </picture>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </footer>
   );
