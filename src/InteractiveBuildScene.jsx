@@ -187,12 +187,13 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     let paperMesh = null;
     let paperGeometry = null;
     let paperMaterial = null;
-    let paperFallbackContext = null;
     let threeLoadPromise = null;
     let sceneObserver = null;
     let isSceneNearViewport = false;
     let isDisposed = false;
     let hasQueuedBall = false;
+    let rendererRetryTimer = 0;
+    let rendererAttempts = 0;
 
     const world = {
       width: 1,
@@ -266,59 +267,12 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       }
     };
 
-    const renderFallbackPaper = () => {
-      if (!paperFallbackContext) return;
-
-      paperFallbackContext.clearRect(0, 0, world.width, world.height);
-      if (!ball.exists) return;
-
-      const radius = ball.radius * ball.scale;
-      const gradient = paperFallbackContext.createRadialGradient(
-        ball.x - radius * 0.28,
-        ball.y - radius * 0.34,
-        radius * 0.12,
-        ball.x,
-        ball.y,
-        radius,
-      );
-      gradient.addColorStop(0, `rgb(255 255 252 / ${ball.opacity})`);
-      gradient.addColorStop(0.58, `rgb(229 223 212 / ${ball.opacity})`);
-      gradient.addColorStop(1, `rgb(183 177 166 / ${ball.opacity})`);
-
-      paperFallbackContext.save();
-      paperFallbackContext.translate(ball.x, ball.y);
-      paperFallbackContext.rotate(ball.angularY * 0.16);
-      paperFallbackContext.globalAlpha = ball.opacity;
-      paperFallbackContext.fillStyle = gradient;
-      paperFallbackContext.beginPath();
-      paperFallbackContext.arc(0, 0, radius, 0, Math.PI * 2);
-      paperFallbackContext.fill();
-
-      paperFallbackContext.strokeStyle = "rgb(114 109 102 / 38%)";
-      paperFallbackContext.lineWidth = Math.max(0.7, radius * 0.035);
-      for (let index = 0; index < 7; index += 1) {
-        const angle = index * (Math.PI * 2 / 7) + ball.angularX * 0.08;
-        paperFallbackContext.beginPath();
-        paperFallbackContext.moveTo(0, 0);
-        paperFallbackContext.lineTo(
-          Math.cos(angle) * radius * 0.9,
-          Math.sin(angle) * radius * 0.9,
-        );
-        paperFallbackContext.stroke();
-      }
-      paperFallbackContext.restore();
-    };
-
     const renderPaper = () => {
-      const hasThreeRenderer = renderer && scene && camera && paperMesh;
-      if (!hasThreeRenderer && !paperFallbackContext) return;
-
-      if (hasThreeRenderer) {
-        paperMesh.visible = ball.exists;
-        paperMesh.position.set(ball.x, ball.y, 0);
-        paperMesh.scale.setScalar(ball.radius * ball.scale);
-        paperMaterial.opacity = ball.opacity;
-      }
+      if (!renderer || !scene || !camera || !paperMesh) return;
+      paperMesh.visible = ball.exists;
+      paperMesh.position.set(ball.x, ball.y, 0);
+      paperMesh.scale.setScalar(ball.radius * ball.scale);
+      paperMaterial.opacity = ball.opacity;
 
       if (ball.exists) {
         const proxySize = Math.max(ball.radius * 2 + 14, 52);
@@ -329,15 +283,11 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         }px, 0)`;
       }
 
-      if (hasThreeRenderer) {
-        renderer.render(scene, camera);
-      } else {
-        renderFallbackPaper();
-      }
+      renderer.render(scene, camera);
     };
 
     const resizeThreeScene = () => {
-      if ((!renderer || !camera) && !paperFallbackContext) return;
+      if (!renderer || !camera) return;
       const nextWidth = Math.max(1, section.clientWidth);
       const nextHeight = Math.max(1, section.clientHeight);
       const nextPixelRatio = Math.min(window.devicePixelRatio || 1, 1.75);
@@ -365,19 +315,13 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       );
 
       if (dimensionsChanged) {
-        if (renderer && camera) {
-          renderer.setPixelRatio(world.pixelRatio);
-          renderer.setSize(world.width, world.height, false);
-          camera.left = 0;
-          camera.right = world.width;
-          camera.top = 0;
-          camera.bottom = world.height;
-          camera.updateProjectionMatrix();
-        } else {
-          threeCanvas.width = Math.round(world.width * world.pixelRatio);
-          threeCanvas.height = Math.round(world.height * world.pixelRatio);
-          paperFallbackContext.setTransform(world.pixelRatio, 0, 0, world.pixelRatio, 0, 0);
-        }
+        renderer.setPixelRatio(world.pixelRatio);
+        renderer.setSize(world.width, world.height, false);
+        camera.left = 0;
+        camera.right = world.width;
+        camera.top = 0;
+        camera.bottom = world.height;
+        camera.updateProjectionMatrix();
       }
 
       if (ball.exists) {
@@ -577,10 +521,8 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
           }
         }
 
-        if (paperMesh) {
-          paperMesh.rotation.x += ball.angularX * delta;
-          paperMesh.rotation.y += ball.angularY * delta;
-        }
+        paperMesh.rotation.x += ball.angularX * delta;
+        paperMesh.rotation.y += ball.angularY * delta;
 
         if (ball.scale < 1 || ball.opacity < 1) {
           ball.phaseTime += delta;
@@ -589,10 +531,8 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
           ball.opacity = appearProgress;
         }
       } else if (ball.dragging) {
-        if (paperMesh) {
-          paperMesh.rotation.x += ball.angularX * delta;
-          paperMesh.rotation.y += ball.angularY * delta;
-        }
+        paperMesh.rotation.x += ball.angularX * delta;
+        paperMesh.rotation.y += ball.angularY * delta;
       }
 
       renderPaper();
@@ -603,8 +543,10 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     }
 
     const spawnBall = () => {
-      if (ball.exists || !anchors.mouth) return;
-      if (!renderer && !paperFallbackContext) {
+      if (ball.exists) return;
+      if (!anchors.mouth) updateLayout();
+      if (!anchors.mouth) return;
+      if (!renderer) {
         hasQueuedBall = true;
         void initializeThree();
         return;
@@ -815,27 +757,34 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       binHint.hidden = true;
     };
 
-    const initializePaperFallback = () => {
-      paperFallbackContext = threeCanvas.getContext("2d");
-      if (!paperFallbackContext) return false;
+    const createRenderer = (three) => {
+      const rendererOptions = [
+        { alpha: true, antialias: true, powerPreference: "high-performance" },
+        { alpha: true, antialias: true },
+        { alpha: true, antialias: false, powerPreference: "default" },
+      ];
+      let lastError = null;
 
-      updateLayout();
-      return true;
+      for (const options of rendererOptions) {
+        try {
+          return new three.WebGLRenderer({ canvas: threeCanvas, ...options });
+        } catch (error) {
+          lastError = error;
+        }
+      }
+
+      throw lastError ?? new Error("Unable to initialize the paper ball renderer");
     };
 
     const initializeThree = () => {
       if (renderer || threeLoadPromise) return threeLoadPromise;
 
+      rendererAttempts += 1;
       threeLoadPromise = import("three")
         .then((three) => {
           if (isDisposed) return;
 
-          renderer = new three.WebGLRenderer({
-            canvas: threeCanvas,
-            alpha: true,
-            antialias: true,
-            powerPreference: "high-performance",
-          });
+          renderer = createRenderer(three);
           renderer.setClearColor(0x000000, 0);
           scene = new three.Scene();
           camera = new three.OrthographicCamera(0, 1, 0, 1, 0.1, 100);
@@ -856,6 +805,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
           paperMesh = new three.Mesh(paperGeometry, paperMaterial);
           paperMesh.visible = false;
           scene.add(paperMesh);
+          rendererAttempts = 0;
           updateLayout();
 
           if (hasQueuedBall) {
@@ -866,15 +816,26 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         .catch(() => {
           if (isDisposed) return;
 
-          if (!initializePaperFallback()) {
+          paperGeometry?.dispose();
+          paperMaterial?.dispose();
+          renderer?.dispose();
+          paperGeometry = null;
+          paperMaterial = null;
+          paperMesh = null;
+          renderer = null;
+          scene = null;
+          camera = null;
+          threeLoadPromise = null;
+
+          if (rendererAttempts >= 3) {
             markPaperBallUnavailable();
             return;
           }
 
-          if (hasQueuedBall) {
-            hasQueuedBall = false;
-            spawnBall();
-          }
+          rendererRetryTimer = window.setTimeout(
+            () => void initializeThree(),
+            160 * rendererAttempts,
+          );
         });
 
       return threeLoadPromise;
@@ -901,6 +862,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     const resizeObserver = new ResizeObserver(requestLayout);
     resizeObserver.observe(section);
     resizeObserver.observe(image);
+    updateLayout();
 
     if ("IntersectionObserver" in window) {
       sceneObserver = new IntersectionObserver(
@@ -912,7 +874,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
           void initializeThree();
           sceneObserver?.disconnect();
         },
-        { threshold: 0 },
+        { rootMargin: "100% 0px", threshold: 0 },
       );
       sceneObserver.observe(section);
     } else {
@@ -925,6 +887,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       isDisposed = true;
       if (layoutFrame) window.cancelAnimationFrame(layoutFrame);
       if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      if (rendererRetryTimer) window.clearTimeout(rendererRetryTimer);
       resizeObserver.disconnect();
       sceneObserver?.disconnect();
       markerButton.removeEventListener("click", activateDrawing);
