@@ -176,6 +176,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     let drawingActive = false;
     let boardFocused = false;
     let drawingPointerId = null;
+    let suppressMarkerClickUntil = 0;
     let activeStroke = null;
     let layoutFrame = 0;
     let animationFrame = 0;
@@ -581,6 +582,11 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       startAnimation();
     };
 
+    const shouldFocusMobileBoard = () =>
+      Boolean(
+        coarsePointerQuery.matches && anchors.board && anchors.board.width < 240,
+      );
+
     const activateDrawing = () => {
       if (!drawingActive) {
         drawingActive = true;
@@ -592,7 +598,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         markerHint.classList.add("is-hidden");
       }
 
-      if (anchors.board.width < 240 && coarsePointerQuery.matches) {
+      if (shouldFocusMobileBoard()) {
         boardFocused = true;
         layer.dataset.boardFocused = "true";
         focusDismiss.hidden = false;
@@ -601,6 +607,26 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       }
 
       drawingCanvas.focus({ preventScroll: true });
+    };
+
+    const handleMarkerPointerUp = (event) => {
+      if (!shouldFocusMobileBoard() || event.pointerType === "mouse") return;
+
+      suppressMarkerClickUntil = performance.now() + 500;
+      event.preventDefault();
+      activateDrawing();
+    };
+
+    const handleMarkerClick = (event) => {
+      if (
+        shouldFocusMobileBoard() &&
+        performance.now() < suppressMarkerClickUntil
+      ) {
+        event.preventDefault();
+        return;
+      }
+
+      activateDrawing();
     };
 
     const closeBoardFocus = () => {
@@ -835,7 +861,8 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       return threeLoadPromise;
     };
 
-    markerButton.addEventListener("click", activateDrawing);
+    markerButton.addEventListener("pointerup", handleMarkerPointerUp);
+    markerButton.addEventListener("click", handleMarkerClick);
     binButton.addEventListener("click", spawnBall);
     clearButton.addEventListener("click", clearDrawing);
     focusDismiss.addEventListener("click", closeBoardFocus);
@@ -884,7 +911,8 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       if (rendererRetryTimer) window.clearTimeout(rendererRetryTimer);
       resizeObserver.disconnect();
       sceneObserver?.disconnect();
-      markerButton.removeEventListener("click", activateDrawing);
+      markerButton.removeEventListener("pointerup", handleMarkerPointerUp);
+      markerButton.removeEventListener("click", handleMarkerClick);
       binButton.removeEventListener("click", spawnBall);
       clearButton.removeEventListener("click", clearDrawing);
       focusDismiss.removeEventListener("click", closeBoardFocus);
