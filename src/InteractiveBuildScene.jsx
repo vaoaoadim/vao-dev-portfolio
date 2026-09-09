@@ -186,13 +186,12 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     let paperMesh = null;
     let paperGeometry = null;
     let paperMaterial = null;
+    let paperFallbackContext = null;
     let threeLoadPromise = null;
     let sceneObserver = null;
     let isSceneNearViewport = false;
     let isDisposed = false;
     let hasQueuedBall = false;
-    let rendererRetryTimer = 0;
-    let rendererAttempts = 0;
 
     const world = {
       width: 1,
@@ -266,12 +265,59 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       }
     };
 
+    const renderFallbackPaper = () => {
+      if (!paperFallbackContext) return;
+
+      paperFallbackContext.clearRect(0, 0, world.width, world.height);
+      if (!ball.exists) return;
+
+      const radius = ball.radius * ball.scale;
+      const gradient = paperFallbackContext.createRadialGradient(
+        ball.x - radius * 0.28,
+        ball.y - radius * 0.34,
+        radius * 0.12,
+        ball.x,
+        ball.y,
+        radius,
+      );
+      gradient.addColorStop(0, `rgb(255 255 252 / ${ball.opacity})`);
+      gradient.addColorStop(0.58, `rgb(229 223 212 / ${ball.opacity})`);
+      gradient.addColorStop(1, `rgb(183 177 166 / ${ball.opacity})`);
+
+      paperFallbackContext.save();
+      paperFallbackContext.translate(ball.x, ball.y);
+      paperFallbackContext.rotate(ball.angularY * 0.16);
+      paperFallbackContext.globalAlpha = ball.opacity;
+      paperFallbackContext.fillStyle = gradient;
+      paperFallbackContext.beginPath();
+      paperFallbackContext.arc(0, 0, radius, 0, Math.PI * 2);
+      paperFallbackContext.fill();
+
+      paperFallbackContext.strokeStyle = "rgb(114 109 102 / 38%)";
+      paperFallbackContext.lineWidth = Math.max(0.7, radius * 0.035);
+      for (let index = 0; index < 7; index += 1) {
+        const angle = index * (Math.PI * 2 / 7) + ball.angularX * 0.08;
+        paperFallbackContext.beginPath();
+        paperFallbackContext.moveTo(0, 0);
+        paperFallbackContext.lineTo(
+          Math.cos(angle) * radius * 0.9,
+          Math.sin(angle) * radius * 0.9,
+        );
+        paperFallbackContext.stroke();
+      }
+      paperFallbackContext.restore();
+    };
+
     const renderPaper = () => {
-      if (!renderer || !scene || !camera || !paperMesh) return;
-      paperMesh.visible = ball.exists;
-      paperMesh.position.set(ball.x, ball.y, 0);
-      paperMesh.scale.setScalar(ball.radius * ball.scale);
-      paperMaterial.opacity = ball.opacity;
+      const hasThreeRenderer = renderer && scene && camera && paperMesh;
+      if (!hasThreeRenderer && !paperFallbackContext) return;
+
+      if (hasThreeRenderer) {
+        paperMesh.visible = ball.exists;
+        paperMesh.position.set(ball.x, ball.y, 0);
+        paperMesh.scale.setScalar(ball.radius * ball.scale);
+        paperMaterial.opacity = ball.opacity;
+      }
 
       if (ball.exists) {
         const proxySize = Math.max(ball.radius * 2 + 14, 52);
@@ -282,11 +328,15 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         }px, 0)`;
       }
 
-      renderer.render(scene, camera);
+      if (hasThreeRenderer) {
+        renderer.render(scene, camera);
+      } else {
+        renderFallbackPaper();
+      }
     };
 
     const resizeThreeScene = () => {
-      if (!renderer || !camera) return;
+      if ((!renderer || !camera) && !paperFallbackContext) return;
       const nextWidth = Math.max(1, section.clientWidth);
       const nextHeight = Math.max(1, section.clientHeight);
       const nextPixelRatio = Math.min(window.devicePixelRatio || 1, 1.75);
@@ -314,13 +364,26 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       );
 
       if (dimensionsChanged) {
-        renderer.setPixelRatio(world.pixelRatio);
-        renderer.setSize(world.width, world.height, false);
-        camera.left = 0;
-        camera.right = world.width;
-        camera.top = 0;
-        camera.bottom = world.height;
-        camera.updateProjectionMatrix();
+        if (renderer && camera) {
+          renderer.setPixelRatio(world.pixelRatio);
+          renderer.setSize(world.width, world.height, false);
+          camera.left = 0;
+          camera.right = world.width;
+          camera.top = 0;
+          camera.bottom = world.height;
+          camera.updateProjectionMatrix();
+        } else {
+          threeCanvas.width = Math.round(world.width * world.pixelRatio);
+          threeCanvas.height = Math.round(world.height * world.pixelRatio);
+          paperFallbackContext.setTransform(
+            world.pixelRatio,
+            0,
+            0,
+            world.pixelRatio,
+            0,
+            0,
+          );
+        }
       }
 
       if (ball.exists) {
@@ -521,8 +584,10 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
           }
         }
 
-        paperMesh.rotation.x += ball.angularX * delta;
-        paperMesh.rotation.y += ball.angularY * delta;
+        if (paperMesh) {
+          paperMesh.rotation.x += ball.angularX * delta;
+          paperMesh.rotation.y += ball.angularY * delta;
+        }
 
         if (ball.scale < 1 || ball.opacity < 1) {
           ball.phaseTime += delta;
@@ -531,8 +596,10 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
           ball.opacity = appearProgress;
         }
       } else if (ball.dragging) {
-        paperMesh.rotation.x += ball.angularX * delta;
-        paperMesh.rotation.y += ball.angularY * delta;
+        if (paperMesh) {
+          paperMesh.rotation.x += ball.angularX * delta;
+          paperMesh.rotation.y += ball.angularY * delta;
+        }
       }
 
       renderPaper();
@@ -546,7 +613,7 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       if (ball.exists) return;
       if (!anchors.mouth) updateLayout();
       if (!anchors.mouth) return;
-      if (!renderer) {
+      if (!renderer && !paperFallbackContext) {
         hasQueuedBall = true;
         void initializeThree();
         return;
@@ -769,10 +836,17 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       throw lastError ?? new Error("Unable to initialize the paper ball renderer");
     };
 
+    const initializePaperFallback = () => {
+      paperFallbackContext = threeCanvas.getContext("2d");
+      if (!paperFallbackContext) return false;
+
+      updateLayout();
+      return true;
+    };
+
     const initializeThree = () => {
       if (renderer || threeLoadPromise) return threeLoadPromise;
 
-      rendererAttempts += 1;
       threeLoadPromise = import("three")
         .then((three) => {
           if (isDisposed) return;
@@ -798,7 +872,6 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
           paperMesh = new three.Mesh(paperGeometry, paperMaterial);
           paperMesh.visible = false;
           scene.add(paperMesh);
-          rendererAttempts = 0;
           updateLayout();
 
           if (hasQueuedBall) {
@@ -818,20 +891,16 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
           renderer = null;
           scene = null;
           camera = null;
-          threeLoadPromise = null;
 
-          // Do not hide the bin after a temporary WebGL startup failure. The
-          // original 3D paper mesh stays available for the next user action.
-          if (rendererAttempts >= 3) {
-            rendererAttempts = 0;
+          if (!initializePaperFallback()) {
             hasQueuedBall = false;
             return;
           }
 
-          rendererRetryTimer = window.setTimeout(
-            () => void initializeThree(),
-            160 * rendererAttempts,
-          );
+          if (hasQueuedBall) {
+            hasQueuedBall = false;
+            spawnBall();
+          }
         });
 
       return threeLoadPromise;
@@ -883,7 +952,6 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       isDisposed = true;
       if (layoutFrame) window.cancelAnimationFrame(layoutFrame);
       if (animationFrame) window.cancelAnimationFrame(animationFrame);
-      if (rendererRetryTimer) window.clearTimeout(rendererRetryTimer);
       resizeObserver.disconnect();
       sceneObserver?.disconnect();
       markerButton.removeEventListener("click", activateDrawing);
