@@ -53,7 +53,7 @@ export const copy = {
       kicker: "// services",
       titleFirst: "WHAT I",
       titleSecond: "BUILD",
-      subtitle: "From interface to a working product.",
+      subtitle: "From idea to a working product.",
       items: [
         {
           title: "MINI APPS & GAMES",
@@ -386,7 +386,7 @@ export const copy = {
       kicker: "// спектр услуг",
       titleFirst: "ЧТО Я",
       titleSecond: "СОЗДАЮ",
-      subtitle: "Из интерфейса — в работающий продукт.",
+      subtitle: "Из идеи — в работающий продукт.",
       items: [
         {
           title: "МИНИ-ПРИЛОЖЕНИЯ И ИГРЫ",
