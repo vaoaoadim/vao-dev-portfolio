@@ -1,5 +1,3 @@
-const MINIMUM_INITIAL_BUFFER_SECONDS = 1;
-
 export function setupSelectedWorksMascot({
   root,
   video,
@@ -88,23 +86,6 @@ export function setupSelectedWorksMascot({
     video.preload = "auto";
   };
 
-  const bufferedAhead = () => {
-    const { buffered, currentTime } = video;
-    if (!buffered?.length) return 0;
-
-    for (let index = 0; index < buffered.length; index += 1) {
-      if (buffered.start(index) <= currentTime && buffered.end(index) >= currentTime) {
-        return buffered.end(index) - currentTime;
-      }
-    }
-
-    return 0;
-  };
-
-  const hasInitialPlaybackBuffer = () => (
-    video.readyState >= 3 && bufferedAhead() >= MINIMUM_INITIAL_BUFFER_SECONDS
-  );
-
   const cancelFrameRendering = () => {
     if (videoFrameCallbackId !== undefined) {
       video.cancelVideoFrameCallback?.(videoFrameCallbackId);
@@ -176,7 +157,6 @@ export function setupSelectedWorksMascot({
     ) return;
 
     prepareVideo();
-    if (!lifecycle.hasPresentedFirstFrame && !hasInitialPlaybackBuffer()) return;
 
     isAttemptingPlayback = true;
     video.defaultMuted = true;

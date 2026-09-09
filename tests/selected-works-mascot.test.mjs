@@ -332,17 +332,14 @@ test("the first static frame remains until a video frame is presented", async ()
   f.cleanup();
 });
 
-test("initial playback waits for future data and enough buffered media", async () => {
-  const f = fixture({ readyState: 2, bufferedEnd: 0.25 });
+test("initial playback starts once without waiting for Safari prebuffer", async () => {
+  const f = fixture({ readyState: 1, bufferedEnd: 0 });
   f.enter();
   await settle();
-  assert.equal(f.video.playCount, 0);
-  f.video.readyState = 3;
-  f.video.bufferedEnd = 0.75;
-  emit(f.video, "progress");
-  await settle();
-  assert.equal(f.video.playCount, 0);
-  f.video.bufferedEnd = 1.25;
+  assert.equal(f.video.playCount, 1);
+  assert.equal(f.lifecycle.hasPresentedFirstFrame, false);
+  assert.equal(f.canvasDraws.at(-1)?.source, f.firstImage);
+  emit(f.video, "canplay");
   emit(f.video, "progress");
   await settle();
   assert.equal(f.video.playCount, 1);
