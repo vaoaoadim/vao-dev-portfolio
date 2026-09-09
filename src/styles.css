@@ -2085,6 +2085,12 @@ a {
   .portfolio-footer__info {
     padding-bottom: clamp(0.55rem, 1.1svh, 0.9rem);
   }
+
+  .portfolio-footer__contact,
+  .portfolio-footer__details,
+  .portfolio-footer__legal {
+    transform: translateY(clamp(-3rem, -5svh, -2rem));
+  }
 }
 
 @media (min-width: 761px) {
