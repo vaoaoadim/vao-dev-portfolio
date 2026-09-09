@@ -340,10 +340,13 @@ function WorkPendants() {
 function SelectedWorksMascot() {
   const rootRef = useRef(null);
   const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const firstImageRef = useRef(null);
   const finalImageRef = useRef(null);
   const lifecycleRef = useRef({
     hasLoaded: false,
     hasStarted: false,
+    hasPresentedFirstFrame: false,
     hasEnded: false,
   });
   const [playbackState, setPlaybackState] = useState(
@@ -353,12 +356,15 @@ function SelectedWorksMascot() {
   useEffect(() => {
     const root = rootRef.current;
     const video = videoRef.current;
+    const canvas = canvasRef.current;
 
-    if (!root || !video) return undefined;
+    if (!root || !video || !canvas) return undefined;
 
     return setupSelectedWorksMascot({
       root,
       video,
+      canvas,
+      firstImage: firstImageRef.current,
       finalImage: finalImageRef.current,
       lifecycle: lifecycleRef.current,
       onStateChange: (stateName) => {
@@ -376,14 +382,21 @@ function SelectedWorksMascot() {
       className="selected-works__mascot-media"
       data-loaded={playbackState.hasLoaded}
       data-started={playbackState.hasStarted}
+      data-presented-first-frame={playbackState.hasPresentedFirstFrame}
       data-ended={playbackState.hasEnded}
       aria-hidden="true"
     >
+      <canvas
+        ref={canvasRef}
+        className="selected-works__mascot-canvas"
+        width="660"
+        height="720"
+        aria-hidden="true"
+      />
       <video
         ref={videoRef}
-        className="selected-works__mascot-video"
-        poster="/assets/selected-works/selected-work-mascot-first.png?v=steps-2800-crop660"
-        preload="metadata"
+        className="selected-works__mascot-video-source"
+        preload="auto"
         muted
         playsInline
         disablePictureInPicture
@@ -395,8 +408,21 @@ function SelectedWorksMascot() {
         />
       </video>
       <img
+        ref={firstImageRef}
+        className="selected-works__mascot-frame-source"
+        src="/assets/selected-works/selected-work-mascot-first.png?v=steps-2800-crop660"
+        alt=""
+        aria-hidden="true"
+        width="660"
+        height="720"
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
+        draggable="false"
+      />
+      <img
         ref={finalImageRef}
-        className="selected-works__mascot-final"
+        className="selected-works__mascot-frame-source"
         src="/assets/selected-works/selected-work-mascot-last.png?v=steps-2800-crop660"
         alt=""
         width="660"

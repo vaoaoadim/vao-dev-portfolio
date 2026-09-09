@@ -1327,8 +1327,7 @@ a {
   transform: translateX(var(--selected-mascot-x));
 }
 
-.selected-works__mascot-video,
-.selected-works__mascot-final {
+.selected-works__mascot-canvas {
   position: absolute;
   top: 0;
   left: var(--selected-video-x);
@@ -1339,6 +1338,9 @@ a {
   object-fit: contain;
   transform: translateX(-50%);
   user-select: none;
+  background: transparent
+    url("/assets/selected-works/selected-work-mascot-first.png?v=steps-2800-crop660")
+    50% 50% / 100% 100% no-repeat;
   /* Shoes end by row 692/720. Fade only the floor from row 700 onward. */
   -webkit-mask-image:
     linear-gradient(to right, transparent 0, #000 18%, #000 82%, transparent 100%),
@@ -1361,28 +1363,22 @@ a {
   z-index: 1;
 }
 
-.selected-works__mascot-video {
+.selected-works__mascot-canvas {
   z-index: 1;
 }
 
-.selected-works__mascot-final {
-  z-index: 2;
-  opacity: 0;
+.selected-works__mascot-video-source {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0.001;
+  pointer-events: none;
 }
 
-.selected-works__mascot-media[data-ended="true"]
-  .selected-works__mascot-final {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .selected-works__mascot-video {
-    visibility: hidden;
-  }
-
-  .selected-works__mascot-final {
-    opacity: 1;
-  }
+.selected-works__mascot-frame-source {
+  display: none;
 }
 
 .selected-works__o {
