@@ -3,9 +3,6 @@ import {
   copyFileSync,
   existsSync,
   mkdirSync,
-  readFileSync,
-  readdirSync,
-  rmSync,
 } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -18,25 +15,6 @@ const hosting = path.join(root, ".openai", "hosting.json");
 
 for (const file of [index, worker, hosting]) {
   if (!existsSync(file)) throw new Error("Missing Sites build input: " + file);
-}
-
-const clientAssets = path.join(dist, "client", "assets");
-const indexMarkup = readFileSync(index, "utf8");
-const referencedBuildAssets = new Set(
-  [...indexMarkup.matchAll(/(?:src|href)="\/assets\/([^"]+)"/g)].map(
-    (match) => match[1],
-  ),
-);
-
-for (const entry of readdirSync(clientAssets, { withFileTypes: true })) {
-  if (!entry.isFile()) continue;
-
-  const isCurrentSceneAsset = /^office-(?:light|dark)-(?:portrait|landscape)\.(?:png|webp|avif)$/.test(
-    entry.name,
-  );
-  if (!isCurrentSceneAsset && !referencedBuildAssets.has(entry.name)) {
-    rmSync(path.join(clientAssets, entry.name), { force: true });
-  }
 }
 
 mkdirSync(path.join(dist, "server"), { recursive: true });
