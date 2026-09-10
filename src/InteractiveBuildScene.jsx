@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useLanguage } from "./LanguageContext";
-import { drawPaperBallFallback } from "./paperBallFallback";
+import { getPaperBallRendererViewport } from "./paperBallRendererViewport";
 
 // The office is a single flattened PNG. These normalized anchors target its
 // intrinsic image area, so every overlay follows the existing responsive image.
@@ -116,7 +116,6 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
   const layerRef = useRef(null);
   const drawingCanvasRef = useRef(null);
   const threeCanvasRef = useRef(null);
-  const fallbackCanvasRef = useRef(null);
   const markerButtonRef = useRef(null);
   const binButtonRef = useRef(null);
   const ballProxyRef = useRef(null);
@@ -132,7 +131,6 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     const image = imageRef.current;
     const drawingCanvas = drawingCanvasRef.current;
     const threeCanvas = threeCanvasRef.current;
-    const fallbackCanvas = fallbackCanvasRef.current;
     const markerButton = markerButtonRef.current;
     const binButton = binButtonRef.current;
     const ballProxy = ballProxyRef.current;
@@ -148,7 +146,6 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       !image ||
       !drawingCanvas ||
       !threeCanvas ||
-      !fallbackCanvas ||
       !markerButton ||
       !binButton ||
       !ballProxy ||
@@ -170,7 +167,6 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     );
     const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
     const drawingContext = drawingCanvas.getContext("2d");
-    const paperFallbackContext = fallbackCanvas.getContext("2d");
     const strokes = [];
     const anchors = {
       board: null,
@@ -192,15 +188,18 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     let paperMesh = null;
     let paperGeometry = null;
     let paperMaterial = null;
-    let paperFallbackActive = false;
     let threeLoadPromise = null;
     let sceneObserver = null;
     let isSceneNearViewport = false;
     let isDisposed = false;
     let hasQueuedBall = false;
+    let rendererRetryTimer = 0;
+    let rendererAttempts = 0;
+    let rendererContextLost = false;
     let rendererWidth = 0;
     let rendererHeight = 0;
     let rendererPixelRatio = 0;
+    let rendererViewportTop = -1;
 
     const world = {
       width: 1,
@@ -274,21 +273,21 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       }
     };
 
-    const renderFallbackPaper = () => {
-      if (!paperFallbackContext || !paperFallbackActive) return;
-      drawPaperBallFallback(paperFallbackContext, ball, world);
-    };
-
     const renderPaper = () => {
-      const hasThreeRenderer = renderer && scene && camera && paperMesh;
-      if (!hasThreeRenderer && !paperFallbackActive) return;
-
-      if (hasThreeRenderer) {
-        paperMesh.visible = ball.exists;
-        paperMesh.position.set(ball.x, ball.y, 0);
-        paperMesh.scale.setScalar(ball.radius * ball.scale);
-        paperMaterial.opacity = ball.opacity;
+      if (
+        rendererContextLost ||
+        !renderer ||
+        !scene ||
+        !camera ||
+        !paperMesh
+      ) {
+        return;
       }
+
+      paperMesh.visible = ball.exists;
+      paperMesh.position.set(ball.x, ball.y, 0);
+      paperMesh.scale.setScalar(ball.radius * ball.scale);
+      paperMaterial.opacity = ball.opacity;
 
       if (ball.exists) {
         const proxySize = Math.max(ball.radius * 2 + 14, 52);
@@ -299,23 +298,29 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         }px, 0)`;
       }
 
-      if (hasThreeRenderer) {
-        renderer.render(scene, camera);
-      } else {
-        renderFallbackPaper();
-      }
+      renderer.render(scene, camera);
     };
 
     const resizeThreeScene = () => {
       const nextWidth = Math.max(1, section.clientWidth);
       const nextHeight = Math.max(1, section.clientHeight);
       const nextPixelRatio = Math.min(window.devicePixelRatio || 1, 1.75);
+      const sectionRect = section.getBoundingClientRect();
+      const viewportHeight = Math.max(
+        window.visualViewport?.height || window.innerHeight,
+        1,
+      );
+      const renderViewport = getPaperBallRendererViewport({
+        sectionTop: sectionRect.top,
+        sectionHeight: nextHeight,
+        viewportHeight,
+      });
       world.width = nextWidth;
       world.height = nextHeight;
       world.pixelRatio = nextPixelRatio;
       const visibleSectionHeight = Math.min(
         world.height,
-        Math.max(window.innerHeight, 1),
+        viewportHeight,
       );
       const imageFloor = anchors.mouth
         ? image.getBoundingClientRect().top - section.getBoundingClientRect().top +
@@ -329,40 +334,29 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
         ),
       );
 
-      if (
-        renderer &&
-        camera &&
-        (rendererWidth !== world.width ||
-          rendererHeight !== world.height ||
-          rendererPixelRatio !== world.pixelRatio)
-      ) {
-        renderer.setPixelRatio(world.pixelRatio);
-        renderer.setSize(world.width, world.height, false);
+      const rendererSizeChanged =
+        rendererWidth !== world.width ||
+        rendererHeight !== renderViewport.height ||
+        rendererPixelRatio !== world.pixelRatio;
+      const rendererViewportChanged =
+        rendererSizeChanged || rendererViewportTop !== renderViewport.top;
+
+      if (renderer && camera && rendererViewportChanged) {
+        threeCanvas.style.top = `${renderViewport.top}px`;
+        threeCanvas.style.height = `${renderViewport.height}px`;
+        if (rendererSizeChanged) {
+          renderer.setPixelRatio(world.pixelRatio);
+          renderer.setSize(world.width, renderViewport.height, false);
+          rendererWidth = world.width;
+          rendererHeight = renderViewport.height;
+          rendererPixelRatio = world.pixelRatio;
+        }
         camera.left = 0;
         camera.right = world.width;
-        camera.top = 0;
-        camera.bottom = world.height;
+        camera.top = renderViewport.top;
+        camera.bottom = renderViewport.bottom;
         camera.updateProjectionMatrix();
-        rendererWidth = world.width;
-        rendererHeight = world.height;
-        rendererPixelRatio = world.pixelRatio;
-      }
-
-      if (
-        paperFallbackContext &&
-        (fallbackCanvas.width !== Math.round(world.width * world.pixelRatio) ||
-          fallbackCanvas.height !== Math.round(world.height * world.pixelRatio))
-      ) {
-        fallbackCanvas.width = Math.max(1, Math.round(world.width * world.pixelRatio));
-        fallbackCanvas.height = Math.max(1, Math.round(world.height * world.pixelRatio));
-        paperFallbackContext.setTransform(
-          world.pixelRatio,
-          0,
-          0,
-          world.pixelRatio,
-          0,
-          0,
-        );
+        rendererViewportTop = renderViewport.top;
       }
 
       if (ball.exists) {
@@ -592,9 +586,9 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       if (ball.exists) return;
       if (!anchors.mouth) updateLayout();
       if (!anchors.mouth) return;
-      if (!renderer && !paperFallbackActive) {
+      if (!renderer || rendererContextLost) {
         hasQueuedBall = true;
-        void initializeThree();
+        if (!rendererContextLost) void initializeThree();
         return;
       }
 
@@ -840,26 +834,33 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       throw lastError ?? new Error("Unable to initialize the paper ball renderer");
     };
 
-    const initializePaperFallback = () => {
-      if (!paperFallbackContext) return false;
-      paperFallbackActive = true;
-      updateLayout();
-      return true;
-    };
-
     const handleWebGLContextLost = (event) => {
       event.preventDefault();
-      if (isDisposed || paperFallbackActive) return;
+      if (isDisposed) return;
+      rendererContextLost = true;
+      if (animationFrame) {
+        window.cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+      }
+    };
 
-      renderer = null;
-      scene = null;
-      camera = null;
-      if (initializePaperFallback()) renderPaper();
+    const handleWebGLContextRestored = () => {
+      if (isDisposed) return;
+      rendererContextLost = false;
+      rendererWidth = 0;
+      rendererHeight = 0;
+      rendererViewportTop = -1;
+      window.requestAnimationFrame(() => {
+        if (isDisposed) return;
+        updateLayout();
+        if (ball.exists) startAnimation();
+      });
     };
 
     const initializeThree = () => {
       if (renderer || threeLoadPromise) return threeLoadPromise;
 
+      rendererAttempts += 1;
       threeLoadPromise = import("three")
         .then((three) => {
           if (isDisposed) return;
@@ -885,6 +886,8 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
           paperMesh = new three.Mesh(paperGeometry, paperMaterial);
           paperMesh.visible = false;
           scene.add(paperMesh);
+          rendererAttempts = 0;
+          rendererContextLost = false;
           updateLayout();
 
           if (hasQueuedBall) {
@@ -906,15 +909,16 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
           camera = null;
           threeLoadPromise = null;
 
-          if (!initializePaperFallback()) {
+          if (!hasQueuedBall || rendererAttempts >= 3) {
             hasQueuedBall = false;
+            rendererAttempts = 0;
             return;
           }
 
-          if (hasQueuedBall) {
-            hasQueuedBall = false;
-            spawnBall();
-          }
+          rendererRetryTimer = window.setTimeout(() => {
+            rendererRetryTimer = 0;
+            void initializeThree();
+          }, rendererAttempts * 180);
         });
 
       return threeLoadPromise;
@@ -924,6 +928,10 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     markerButton.addEventListener("click", handleMarkerClick);
     binButton.addEventListener("click", spawnBall);
     threeCanvas.addEventListener("webglcontextlost", handleWebGLContextLost);
+    threeCanvas.addEventListener(
+      "webglcontextrestored",
+      handleWebGLContextRestored,
+    );
     clearButton.addEventListener("click", clearDrawing);
     focusDismiss.addEventListener("click", closeBoardFocus);
     focusCloseButton.addEventListener("click", closeBoardFocus);
@@ -938,6 +946,12 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", requestLayout, { passive: true });
+    window.visualViewport?.addEventListener("resize", requestLayout, {
+      passive: true,
+    });
+    window.visualViewport?.addEventListener("scroll", requestLayout, {
+      passive: true,
+    });
     image.addEventListener("load", requestLayout);
 
     const resizeObserver = new ResizeObserver(requestLayout);
@@ -968,12 +982,17 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       isDisposed = true;
       if (layoutFrame) window.cancelAnimationFrame(layoutFrame);
       if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      if (rendererRetryTimer) window.clearTimeout(rendererRetryTimer);
       resizeObserver.disconnect();
       sceneObserver?.disconnect();
       markerButton.removeEventListener("pointerup", handleMarkerPointerUp);
       markerButton.removeEventListener("click", handleMarkerClick);
       binButton.removeEventListener("click", spawnBall);
       threeCanvas.removeEventListener("webglcontextlost", handleWebGLContextLost);
+      threeCanvas.removeEventListener(
+        "webglcontextrestored",
+        handleWebGLContextRestored,
+      );
       clearButton.removeEventListener("click", clearDrawing);
       focusDismiss.removeEventListener("click", closeBoardFocus);
       focusCloseButton.removeEventListener("click", closeBoardFocus);
@@ -988,11 +1007,13 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", requestLayout);
+      window.visualViewport?.removeEventListener("resize", requestLayout);
+      window.visualViewport?.removeEventListener("scroll", requestLayout);
       image.removeEventListener("load", requestLayout);
       paperGeometry?.dispose();
       paperMaterial?.dispose();
       renderer?.dispose();
-      paperFallbackContext?.clearRect(0, 0, world.width, world.height);
+      renderer?.forceContextLoss?.();
       delete layer.dataset.drawingActive;
       clearButton.hidden = true;
       focusCloseButton.hidden = true;
@@ -1030,12 +1051,6 @@ export function InteractiveBuildScene({ sectionRef, imageRef }) {
       <canvas
         ref={threeCanvasRef}
         className="paper-ball-three-layer"
-        aria-hidden="true"
-      />
-
-      <canvas
-        ref={fallbackCanvasRef}
-        className="paper-ball-fallback-layer"
         aria-hidden="true"
       />
 
