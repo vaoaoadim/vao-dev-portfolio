@@ -2090,7 +2090,7 @@ a {
   .portfolio-footer__contact,
   .portfolio-footer__details,
   .portfolio-footer__legal {
-    transform: translateY(clamp(-5rem, -9svh, -4rem));
+    transform: translateY(clamp(-12rem, -19svh, -9rem));
   }
 }
 
