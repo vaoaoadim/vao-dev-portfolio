@@ -5,6 +5,7 @@ import {
   ThreadsLogo,
 } from "@phosphor-icons/react";
 import { useEffect, useRef } from "react";
+import { AVATAR_SEQUENCE } from "./footerAvatarSequence";
 import { useLanguage } from "./LanguageContext";
 import { usePortfolioOverlay } from "./PortfolioOverlayContext";
 
@@ -23,8 +24,6 @@ const LEGAL_LINKS = [
   { labelKey: "privacy", overlay: "privacy-policy" },
   { labelKey: "offer", overlay: "public-offer" },
 ];
-const AVATAR_HEADS = Array.from({ length: 8 }, (_, index) => index);
-
 function PlaceholderButton({ children, className = "", label, unavailableLabel, title }) {
   return (
     <button
@@ -136,11 +135,17 @@ export function PortfolioFooter() {
         <div className="portfolio-footer__avatar-track">
           {[0, 1].map((sequence) => (
             <div className="portfolio-footer__avatar-sequence" key={sequence}>
-              {AVATAR_HEADS.map((index) => (
-                <picture className="portfolio-footer__avatar" key={index}>
-                  <source srcSet="/assets/footer/avatar-head-v1.avif" type="image/avif" />
-                  <source srcSet="/assets/footer/avatar-head-v1.webp" type="image/webp" />
-                  <img src="/assets/footer/avatar-head-v1.png" alt="" draggable="false" />
+              {AVATAR_SEQUENCE.map(({ id, sources }, index) => (
+                <picture className="portfolio-footer__avatar" key={`${id}-${index}`}>
+                  <source srcSet={sources.avif} type="image/avif" />
+                  <source srcSet={sources.webp} type="image/webp" />
+                  <img
+                    src={sources.png}
+                    alt=""
+                    width="1254"
+                    height="1254"
+                    draggable="false"
+                  />
                 </picture>
               ))}
             </div>
