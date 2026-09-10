@@ -2095,7 +2095,7 @@ a {
     align-self: center;
     width: min(84vw, calc(100% - (var(--page-gutter) * 2)));
     height: 0;
-    transform: translateY(clamp(-5rem, -6svh, -3.5rem));
+    transform: translateY(clamp(-4rem, -4svh, -2.5rem));
   }
 
   .portfolio-footer__avatar-divider::before {
