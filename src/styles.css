@@ -2087,6 +2087,10 @@ a {
 }
 
 @media (min-width: 981px) {
+  .portfolio-footer__avatar-row {
+    transform: translateY(clamp(-4rem, -6.5svh, -3rem));
+  }
+
   .portfolio-footer__avatar-divider {
     position: relative;
     z-index: 1;
