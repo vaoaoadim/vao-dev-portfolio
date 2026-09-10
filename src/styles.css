@@ -883,6 +883,7 @@ a {
 
 .whiteboard-drawing,
 .paper-ball-three-layer,
+.paper-ball-fallback-layer,
 .scene-hit-zone,
 .paper-ball-hit-proxy,
 .scene-interaction-hint,
@@ -912,7 +913,8 @@ a {
   outline-offset: 2px;
 }
 
-.paper-ball-three-layer {
+.paper-ball-three-layer,
+.paper-ball-fallback-layer {
   z-index: 3;
   inset: 0;
   display: block;
