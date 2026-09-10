@@ -2088,7 +2088,7 @@ a {
 
 @media (min-width: 981px) {
   .portfolio-footer__avatar-row {
-    transform: translateY(clamp(-4rem, -6.5svh, -3rem));
+    transform: translateY(clamp(-2.75rem, -3.6svh, -1.75rem));
   }
 
   .portfolio-footer__avatar-divider {
