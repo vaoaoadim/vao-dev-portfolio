@@ -131,6 +131,8 @@ export function PortfolioFooter() {
         </nav>
       </div>
 
+      <div className="portfolio-footer__avatar-divider" aria-hidden="true" />
+
       <div className="portfolio-footer__avatar-row" aria-hidden="true" ref={avatarRowRef}>
         <div className="portfolio-footer__avatar-track">
           {[0, 1].map((sequence) => (
