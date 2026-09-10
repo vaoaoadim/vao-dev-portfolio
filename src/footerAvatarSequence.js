@@ -46,13 +46,13 @@ const AVATARS = {
 // Every responsive prefix and the duplicated-track seam start and end with different avatars.
 const SEQUENCE_IDS = [
   "base",
-  "graduate",
-  "cyborg",
-  "tropical",
   "sport",
+  "tropical",
   "graduate",
   "cyborg",
+  "sport",
   "tropical",
+  "graduate",
 ];
 
 export const AVATAR_SEQUENCE = Object.freeze(SEQUENCE_IDS.map((id) => AVATARS[id]));

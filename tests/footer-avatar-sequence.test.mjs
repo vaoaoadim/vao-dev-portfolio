@@ -32,13 +32,13 @@ test("uses versioned transparent sources for every footer avatar variant", () =>
     AVATAR_SEQUENCE.map(({ sources }) => sources.png),
     [
       "/assets/footer/avatar-head-v1.png",
-      "/assets/footer/avatar-head-graduate-v1.png",
-      "/assets/footer/avatar-head-cyborg-v1.png",
-      "/assets/footer/avatar-head-tropical-v1.png",
       "/assets/footer/avatar-head-sport-v1.png",
+      "/assets/footer/avatar-head-tropical-v1.png",
       "/assets/footer/avatar-head-graduate-v1.png",
       "/assets/footer/avatar-head-cyborg-v1.png",
+      "/assets/footer/avatar-head-sport-v1.png",
       "/assets/footer/avatar-head-tropical-v1.png",
+      "/assets/footer/avatar-head-graduate-v1.png",
     ],
   );
 });
