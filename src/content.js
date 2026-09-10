@@ -212,8 +212,8 @@ export const copy = {
         eyebrow: "// about me",
         paragraphs: [
           "I create digital products — from expressive interfaces to working systems. I develop websites, web applications, Telegram bots, extensions, and automations, considering both the visual layer and the logic behind them.",
-          "I build projects end to end: frontend, server-side logic, databases, APIs, and third-party integrations. I work with notifications, payment flows, internal tools, content processes, and AI.",
-          "When the project is handed over, you’ll receive a detailed FAQ that covers most common questions, along with initial support.",
+          "I build projects end to end: frontend, server-side logic, databases, APIs, and third-party integrations.",
+          "With every project, you’ll receive support and a detailed FAQ that answers most potential questions. Message me — and we’ll bring any idea you have to life!",
         ],
       },
       stack: {
@@ -546,8 +546,8 @@ export const copy = {
         eyebrow: "// обо мне",
         paragraphs: [
           "Создаю цифровые продукты — от выразительного интерфейса до работающей системы. Разрабатываю сайты, веб‑приложения, Telegram‑боты, расширения и автоматизации, продумываю не только внешний вид, но и логику.",
-          "Собираю проекты целиком: frontend, серверную часть, базы данных, API и интеграции со сторонними сервисами. Работаю с уведомлениями, платёжными сценариями, внутренними инструментами, контентными процессами и AI.",
-          "Вместе с проектом при передаче вы получите подробный FAQ, который закроит большинство возможных вопросов, а также поддержку на первое время.",
+          "Собираю проекты целиком: frontend, серверную часть, базы данных, API и интеграции со сторонними сервисами.",
+          "Вместе с проектом вы получите поддержку, а также подробный FAQ, который закроет большинство потенциальных вопросов. Напиши мне — и мы воплотим любую твою идею!",
         ],
       },
       stack: {
