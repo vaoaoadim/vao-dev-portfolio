@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { getPaperBallRendererViewport } from "../src/paperBallRendererViewport.js";
+import { getPaperBallViewport } from "../src/paperBallViewport.js";
 
-test("limits a tall mobile build scene to one viewport-sized WebGL buffer", () => {
-  const viewport = getPaperBallRendererViewport({
+test("limits a tall mobile build scene to one viewport-sized canvas", () => {
+  const viewport = getPaperBallViewport({
     sectionTop: -1280,
     sectionHeight: 3600,
     viewportHeight: 844,
@@ -19,7 +19,7 @@ test("limits a tall mobile build scene to one viewport-sized WebGL buffer", () =
 
 test("pins the renderer window inside the start and end of the section", () => {
   assert.deepEqual(
-    getPaperBallRendererViewport({
+    getPaperBallViewport({
       sectionTop: 240,
       sectionHeight: 3600,
       viewportHeight: 844,
@@ -28,7 +28,7 @@ test("pins the renderer window inside the start and end of the section", () => {
   );
 
   assert.deepEqual(
-    getPaperBallRendererViewport({
+    getPaperBallViewport({
       sectionTop: -3400,
       sectionHeight: 3600,
       viewportHeight: 844,
@@ -39,7 +39,7 @@ test("pins the renderer window inside the start and end of the section", () => {
 
 test("uses the full height when the section is shorter than the viewport", () => {
   assert.deepEqual(
-    getPaperBallRendererViewport({
+    getPaperBallViewport({
       sectionTop: 0,
       sectionHeight: 620,
       viewportHeight: 844,

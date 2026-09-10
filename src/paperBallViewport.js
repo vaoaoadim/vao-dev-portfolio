@@ -1,7 +1,7 @@
 const clamp = (value, minimum, maximum) =>
   Math.min(maximum, Math.max(minimum, value));
 
-export function getPaperBallRendererViewport({
+export function getPaperBallViewport({
   sectionTop,
   sectionHeight,
   viewportHeight,

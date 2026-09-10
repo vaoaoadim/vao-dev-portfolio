@@ -882,7 +882,7 @@ a {
 }
 
 .whiteboard-drawing,
-.paper-ball-three-layer,
+.paper-ball-model-layer,
 .scene-hit-zone,
 .paper-ball-hit-proxy,
 .scene-interaction-hint,
@@ -912,7 +912,7 @@ a {
   outline-offset: 2px;
 }
 
-.paper-ball-three-layer {
+.paper-ball-model-layer {
   z-index: 3;
   top: 0;
   left: 0;
