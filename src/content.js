@@ -125,9 +125,9 @@ export const copy = {
           coverAlt:
             "Хочеца Telegram bot cover with a blue gift-box mascot and a flowing gift ribbon",
           href: "https://t.me/hochesa_bot",
-          type: "TELEGRAM BOT / 2026",
+          type: "TELEGRAM APP / 2026",
           description:
-            "A solution for anyone who is stuck choosing a gift.",
+            "A Telegram mini app with wishlists for you and your loved ones.",
           color: "green",
         },
         {
@@ -462,9 +462,9 @@ export const copy = {
           coverAlt:
             "Обложка Telegram-бота «Хочеца» с голубым маскотом-подарком и подарочной лентой",
           href: "https://t.me/hochesa_bot",
-          type: "TELEGRAM-БОТ / 2026",
+          type: "TELEGRAM-APP / 2026",
           description:
-            "Решение для тех, кто ломает голову над подарком.",
+            "Мини-приложение в Телеграме с вишлистами для себя и своих близких.",
           color: "green",
         },
         {
