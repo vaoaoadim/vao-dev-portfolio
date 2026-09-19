@@ -23,6 +23,11 @@ const PROJECT_COVERS = {
     webp: "/assets/selected-works/beautybomb-delivery-cover-v1.webp",
     png: "/assets/selected-works/beautybomb-delivery-cover-v1.png",
   },
+  hochetsa: {
+    avif: "/assets/selected-works/hochesa-cover-v1.avif",
+    webp: "/assets/selected-works/hochesa-cover-v1.webp",
+    png: "/assets/selected-works/hochesa-cover-v1.png",
+  },
 };
 
 const SCRAMBLE_SYMBOLS = "[]{}<>/\\|!@#$%^&*+=-~?:;";
@@ -45,6 +50,10 @@ const PORTFOLIO_MEDIA_WARMUP = [
   },
   {
     sources: Object.values(PROJECT_COVERS.beautybomb),
+    priority: "low",
+  },
+  {
+    sources: Object.values(PROJECT_COVERS.hochetsa),
     priority: "low",
   },
   {
@@ -471,7 +480,7 @@ function WorkCasePreview({
       data-cursor="interactive"
       aria-label={
         isExternalProject
-          ? copy.works.openProjectAria
+          ? interpolate(copy.works.openProjectAria, { title: project.title })
           : isEmbeddedGame
             ? interpolate(copy.works.playGame, { title: project.title })
             : interpolate(copy.works.previewSoon, { title: project.title })

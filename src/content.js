@@ -114,16 +114,20 @@ export const copy = {
       previewNote: "COMING SOON",
       openCase: "[ open case ↗ ]",
       openProject: "[ open project ↗ ]",
-      openProjectAria: "Open the Pläner web application in a new tab",
+      openProjectAria: "Open {title} in a new tab",
       previewSoon: "{title}: case preview coming soon",
       playGame: "Open and play {title}",
       cases: [
         {
-          id: "signal",
-          title: "SIGNAL",
-          type: "TELEGRAM AUTOMATION / 2026",
+          id: "hochetsa",
+          title: "ХОЧЕЦА",
+          cover: "hochetsa",
+          coverAlt:
+            "Хочеца Telegram bot cover with a blue gift-box mascot and a flowing gift ribbon",
+          href: "https://t.me/hochesa_bot",
+          type: "TELEGRAM BOT / 2026",
           description:
-            "A Telegram system for requests, notifications, and small-team automation.",
+            "A solution for anyone who is stuck choosing a gift.",
           color: "green",
         },
         {
@@ -447,16 +451,20 @@ export const copy = {
       previewNote: "СКОРО",
       openCase: "[ открыть кейс ↗ ]",
       openProject: "[ открыть проект ↗ ]",
-      openProjectAria: "Открыть веб-приложение Pläner в новой вкладке",
+      openProjectAria: "Открыть {title} в новой вкладке",
       previewSoon: "{title}: превью кейса появится позже",
       playGame: "Открыть и сыграть в {title}",
       cases: [
         {
-          id: "signal",
-          title: "SIGNAL",
-          type: "TELEGRAM-АВТОМАТИЗАЦИЯ / 2026",
+          id: "hochetsa",
+          title: "ХОЧЕЦА",
+          cover: "hochetsa",
+          coverAlt:
+            "Обложка Telegram-бота «Хочеца» с голубым маскотом-подарком и подарочной лентой",
+          href: "https://t.me/hochesa_bot",
+          type: "TELEGRAM-БОТ / 2026",
           description:
-            "Telegram-система для заявок, уведомлений и автоматизации небольших команд.",
+            "Решение для тех, кто ломает голову над подарком.",
           color: "green",
         },
         {
