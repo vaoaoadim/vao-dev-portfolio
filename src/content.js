@@ -334,8 +334,6 @@ export const copy = {
           ],
         ],
       },
-      legalTodo:
-        "LEGAL TODO: before final publication, confirm the actual hosting and email providers, the use of cookies or analytics, data retention periods, storage location, the address for legally significant notices, and payment terms for each service type.",
     },
   },
   ru: {
@@ -551,7 +549,7 @@ export const copy = {
         offer: "публичная оферта",
       },
       about: {
-        eyebrow: "// обо мне",
+        eyebrow: "// краткая информация",
         paragraphs: [
           "Создаю цифровые продукты — от выразительного интерфейса до работающей системы. Разрабатываю сайты, веб‑приложения, Telegram‑боты, расширения и автоматизации, продумываю не только внешний вид, но и логику.",
           "Собираю проекты целиком: frontend, серверную часть, базы данных, API и интеграции со сторонними сервисами.",
@@ -672,8 +670,6 @@ export const copy = {
           ],
         ],
       },
-      legalTodo:
-        "LEGAL_TODO: перед финальной публикацией подтвердить фактических провайдеров хостинга и почты, наличие cookies/аналитики, сроки хранения данных, место хранения, адрес для юридически значимых уведомлений и условия оплаты каждого типа услуг.",
     },
   },
 };

@@ -64,26 +64,20 @@ function InformationContent({ overlay, content }) {
 
   if (overlay === "privacy-policy") {
     return (
-      <>
-        <p className="information-overlay__eyebrow">{content.revision}</p>
-        <div className="information-overlay__copy information-overlay__copy--document">
-          <p className="information-overlay__document-intro">{content.privacy.intro}</p>
-          <DocumentSections sections={content.privacy.sections} />
-          <p className="information-overlay__todo">{content.legalTodo}</p>
-        </div>
-      </>
+      <div className="information-overlay__copy information-overlay__copy--document">
+        <p className="information-overlay__revision">{content.revision}</p>
+        <p className="information-overlay__document-intro">{content.privacy.intro}</p>
+        <DocumentSections sections={content.privacy.sections} />
+      </div>
     );
   }
 
   return (
-    <>
-      <p className="information-overlay__eyebrow">{content.revision}</p>
-      <div className="information-overlay__copy information-overlay__copy--document">
-        <p className="information-overlay__document-intro">{content.offer.intro}</p>
-        <DocumentSections sections={content.offer.sections} />
-        <p className="information-overlay__todo">{content.legalTodo}</p>
-      </div>
-    </>
+    <div className="information-overlay__copy information-overlay__copy--document">
+      <p className="information-overlay__revision">{content.revision}</p>
+      <p className="information-overlay__document-intro">{content.offer.intro}</p>
+      <DocumentSections sections={content.offer.sections} />
+    </div>
   );
 }
 
