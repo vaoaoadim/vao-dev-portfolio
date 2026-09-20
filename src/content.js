@@ -345,7 +345,7 @@ export const copy = {
     },
     header: {
       brandLabel: "v.build — к началу страницы",
-      contact: "Связаться",
+      contact: "связаться",
       openMenu: "Открыть меню",
       close: "Закрыть",
       more: "ещё",
