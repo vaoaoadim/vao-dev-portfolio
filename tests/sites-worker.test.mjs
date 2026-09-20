@@ -51,6 +51,17 @@ test("caches only fingerprinted build assets for repeat visits", async () => {
   assert.equal(response.headers.get("cache-control"), "public, max-age=31536000, immutable");
 });
 
+test("caches versioned selected works video media for repeat visits", async () => {
+  const response = await worker.fetch(
+    new Request("https://example.test/assets/selected-works/selected-work-mascot-v1.mp4"),
+    {
+      ASSETS: { fetch: async () => new Response("video", { status: 200 }) },
+    },
+  );
+
+  assert.equal(response.headers.get("cache-control"), "public, max-age=31536000, immutable");
+});
+
 test("embeds the country language before the application starts rendering", async () => {
   const response = await worker.fetch(
     new Request("https://example.test/", {

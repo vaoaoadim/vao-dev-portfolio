@@ -1,4 +1,5 @@
 const IMMUTABLE_BUILD_ASSET = /^\/assets\/[^/]+-[A-Za-z0-9_-]{8,}\.(?:css|js|mjs|woff2?)$/;
+const VERSIONED_SELECTED_WORKS_MEDIA = /^\/assets\/selected-works\/selected-work-mascot-v\d+(?:-(?:first|last))?\.(?:mp4|png)$/;
 const ENGLISH_COUNTRIES = new Set(["US", "GB", "CA", "AU", "NZ", "IE"]);
 
 function countryFromRequest(request) {
@@ -17,7 +18,11 @@ function languageForCountry(country) {
 }
 
 function withStaticAssetCache(response, pathname) {
-  if (!response.ok || !IMMUTABLE_BUILD_ASSET.test(pathname)) {
+  if (
+    !response.ok ||
+    (!IMMUTABLE_BUILD_ASSET.test(pathname) &&
+      !VERSIONED_SELECTED_WORKS_MEDIA.test(pathname))
+  ) {
     return response;
   }
 

@@ -412,14 +412,14 @@ function SelectedWorksMascot() {
         tabIndex={-1}
       >
         <source
-          src="/assets/selected-works/selected-work-mascot.mp4?v=steps-2800-crop660"
+          src="/assets/selected-works/selected-work-mascot-v1.mp4"
           type="video/mp4"
         />
       </video>
       <img
         ref={firstImageRef}
         className="selected-works__mascot-frame-source"
-        src="/assets/selected-works/selected-work-mascot-first.png?v=steps-2800-crop660"
+        src="/assets/selected-works/selected-work-mascot-v1-first.png"
         alt=""
         aria-hidden="true"
         width="660"
@@ -432,7 +432,7 @@ function SelectedWorksMascot() {
       <img
         ref={finalImageRef}
         className="selected-works__mascot-frame-source"
-        src="/assets/selected-works/selected-work-mascot-last.png?v=steps-2800-crop660"
+        src="/assets/selected-works/selected-work-mascot-v1-last.png"
         alt=""
         width="660"
         height="720"
