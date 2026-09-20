@@ -213,7 +213,7 @@ export const copy = {
         offer: "public offer",
       },
       about: {
-        eyebrow: "// about me",
+        eyebrow: "// brief information",
         paragraphs: [
           "I create digital products — from expressive interfaces to working systems. I develop websites, web applications, Telegram bots, extensions, and automations, considering both the visual layer and the logic behind them.",
           "I build projects end to end: frontend, server-side logic, databases, APIs, and third-party integrations.",
