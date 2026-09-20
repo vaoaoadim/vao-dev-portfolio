@@ -19,7 +19,7 @@ export function BeautyBombGamePopup({ open, onClose, triggerRef }) {
     );
     url.searchParams.set("embed", "portfolio");
     // Bypass cached game HTML that selected its frame only after loading Phaser.
-    url.searchParams.set("embedVersion", "2");
+    url.searchParams.set("embedVersion", "3");
     return url;
   }, []);
 
