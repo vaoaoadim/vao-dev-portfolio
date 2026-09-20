@@ -22,14 +22,19 @@ export function PortfolioHeader() {
   return (
     <>
       <header className={`portfolio-header ${activeOverlay === "menu" ? "is-menu-open" : ""}`}>
-        <a
-          ref={brandRef}
-          className="portfolio-brand"
-          href="#top"
-          aria-label={copy.header.brandLabel}
-        >
-          v.build
-        </a>
+        <div className="portfolio-header__identity">
+          <a
+            ref={brandRef}
+            className="portfolio-brand"
+            href="#top"
+            aria-label={copy.header.brandLabel}
+          >
+            v.build
+          </a>
+          <a className="portfolio-header__contact" href="#contacts">
+            {copy.header.contact}
+          </a>
+        </div>
         <div className="portfolio-header__actions">
           <div
             className="language-switch"

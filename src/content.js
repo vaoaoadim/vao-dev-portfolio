@@ -9,6 +9,7 @@ export const copy = {
     },
     header: {
       brandLabel: "v.build — back to the top",
+      contact: "text me",
       openMenu: "Open menu",
       close: "Close",
       more: "more",
@@ -344,6 +345,7 @@ export const copy = {
     },
     header: {
       brandLabel: "v.build — к началу страницы",
+      contact: "Связаться",
       openMenu: "Открыть меню",
       close: "Закрыть",
       more: "ещё",

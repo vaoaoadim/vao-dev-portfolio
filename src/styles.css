@@ -127,6 +127,7 @@ a {
 }
 
 .portfolio-header {
+  --header-item-gap: clamp(1rem, 2.2vw, 2rem);
   position: fixed;
   z-index: 50;
   top: max(1rem, env(safe-area-inset-top));
@@ -141,9 +142,21 @@ a {
   line-height: 1;
 }
 
+.portfolio-header__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--header-item-gap);
+}
+
 .portfolio-brand {
   padding: 0.25rem 0;
   text-decoration: none;
+}
+
+.portfolio-header__contact {
+  padding: 0.25rem 0;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .portfolio-brand:focus-visible {
@@ -151,10 +164,15 @@ a {
   outline-offset: 4px;
 }
 
+.portfolio-header__contact:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
 .portfolio-header__actions {
   display: flex;
   align-items: center;
-  gap: clamp(1rem, 2.2vw, 2rem);
+  gap: var(--header-item-gap);
 }
 
 .language-switch {
