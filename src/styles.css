@@ -75,6 +75,7 @@ a {
 }
 
 .pixel-cursor {
+  --cursor-hover-size: 0.44rem;
   position: fixed;
   z-index: 60;
   top: 0;
@@ -89,8 +90,28 @@ a {
   will-change: transform, opacity;
 }
 
+.pixel-cursor::before {
+  position: absolute;
+  top: calc(var(--cursor-hover-size) / -2);
+  left: calc(var(--cursor-hover-size) / -2);
+  width: var(--cursor-hover-size);
+  height: var(--cursor-hover-size);
+  border-radius: 999px;
+  background: currentColor;
+  content: "";
+  opacity: 0;
+  transform: scale(0.45);
+  transition: opacity 180ms ease, transform 180ms ease;
+  will-change: opacity, transform;
+}
+
 .pixel-cursor[data-mode="hover"] {
   mix-blend-mode: normal;
+}
+
+.pixel-cursor[data-mode="hover"]::before {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .pixel-cursor[data-tone="solid"] {
@@ -114,10 +135,24 @@ a {
   font-weight: 400;
   line-height: 1;
   letter-spacing: -0.11em;
-  transform: rotate(158deg) scaleY(1.22);
+  opacity: 1;
+  transform: rotate(158deg) scaleY(1.22) scale(1);
   transform-origin: 50% 100%;
   user-select: none;
-  will-change: transform;
+  transition: opacity 180ms ease, transform 180ms ease;
+  will-change: opacity, transform;
+}
+
+.pixel-cursor[data-mode="hover"] .pixel-cursor__glyph {
+  opacity: 0;
+  transform: rotate(158deg) scaleY(1.22) scale(0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-cursor::before,
+  .pixel-cursor__glyph {
+    transition-duration: 0ms;
+  }
 }
 
 @media (hover: none), (pointer: coarse) {
