@@ -75,7 +75,7 @@ a {
 }
 
 .pixel-cursor {
-  --cursor-hover-size: 0.44rem;
+  --cursor-hover-size: 0.68rem;
   position: fixed;
   z-index: 60;
   top: 0;
