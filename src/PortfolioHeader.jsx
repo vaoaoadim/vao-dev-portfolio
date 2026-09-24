@@ -31,7 +31,14 @@ export function PortfolioHeader() {
           >
             v.build
           </a>
-          <a className="portfolio-header__contact" href="#contacts">
+          <a
+            className="portfolio-header__contact"
+            href="#contacts"
+            onClick={(event) => {
+              event.preventDefault();
+              navigateToSection("contacts", event.currentTarget);
+            }}
+          >
             {copy.header.contact}
           </a>
         </div>

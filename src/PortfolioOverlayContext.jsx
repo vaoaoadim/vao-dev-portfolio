@@ -35,7 +35,18 @@ export function PortfolioOverlayProvider({ children }) {
     window.history.pushState(null, "", url);
   }, []);
 
+  const clearContactHash = useCallback(() => {
+    if (window.location.hash !== "#contacts") return;
+
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${window.location.pathname}${window.location.search}`,
+    );
+  }, []);
+
   const openMenu = useCallback((origin) => {
+    clearContactHash();
     originRef.current = origin ?? menuTriggerRef.current;
     pendingNavigationRef.current = null;
     returnToMenuRef.current = false;
@@ -43,7 +54,7 @@ export function PortfolioOverlayProvider({ children }) {
     setMenuUnderlayActive(true);
     setIsClosing(false);
     setActiveOverlay("menu");
-  }, []);
+  }, [clearContactHash]);
 
   const openInfo = useCallback(
     (overlay, origin) => {
@@ -62,12 +73,17 @@ export function PortfolioOverlayProvider({ children }) {
     const target = document.getElementById(targetId);
     if (!target) return;
 
+    clearContactHash();
+    if (!activeOverlay) {
+      target.scrollIntoView({ block: "start" });
+      return;
+    }
+
     originRef.current = origin ?? menuTriggerRef.current;
     pendingNavigationRef.current =
       target.getBoundingClientRect().top + lockedScrollPositionRef.current.y;
-    writeHash(targetId);
     setIsClosing(true);
-  }, [writeHash]);
+  }, [activeOverlay, clearContactHash]);
 
   const requestClose = useCallback(() => {
     if (!activeOverlay || isClosing) return;
@@ -162,6 +178,46 @@ export function PortfolioOverlayProvider({ children }) {
   }, [isOverlayOpen]);
 
   useEffect(() => {
+    const target = document.getElementById("contacts");
+    if (!target) return undefined;
+
+    let hasReachedContact = false;
+    let initialFrame = 0;
+    let settledFrame = 0;
+    const isContactVisible = () => {
+      const bounds = target.getBoundingClientRect();
+      return bounds.top < window.innerHeight && bounds.bottom > 0;
+    };
+    const handleScroll = () => {
+      if (window.location.hash !== "#contacts") {
+        hasReachedContact = false;
+        return;
+      }
+
+      if (isContactVisible()) {
+        hasReachedContact = true;
+        return;
+      }
+
+      if (hasReachedContact) clearContactHash();
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    if (window.location.hash === "#contacts") {
+      initialFrame = window.requestAnimationFrame(() => {
+        target.scrollIntoView({ block: "start" });
+        settledFrame = window.requestAnimationFrame(handleScroll);
+      });
+    }
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.cancelAnimationFrame(initialFrame);
+      window.cancelAnimationFrame(settledFrame);
+    };
+  }, [clearContactHash]);
+
+  useEffect(() => {
     const syncHash = () => {
       const overlay = getHashOverlay();
       if (overlay) {
@@ -189,9 +245,6 @@ export function PortfolioOverlayProvider({ children }) {
 
     window.addEventListener("popstate", syncHash);
     window.addEventListener("hashchange", syncHash);
-    if (window.location.hash === "#contacts") {
-      window.requestAnimationFrame(() => document.getElementById("contacts")?.scrollIntoView());
-    }
 
     return () => {
       window.removeEventListener("popstate", syncHash);
