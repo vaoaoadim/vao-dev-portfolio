@@ -228,15 +228,15 @@ export const copy = {
         items: [
           [
             "FRONTEND",
-            "React, TypeScript, JavaScript, Vite, HTML, CSS, responsive layout, GSAP, and scroll-driven interfaces.",
+            "React, TypeScript, JavaScript, Vite, HTML, CSS, and responsive layout.",
           ],
           [
             "BACKEND & DATA",
-            "Node.js, REST APIs, webhooks, PostgreSQL, Supabase, Firebase, authentication, server-side logic, and databases.",
+            "Node.js, Python, REST APIs, webhooks, PostgreSQL, Supabase, Firebase, authentication, server-side logic, and databases.",
           ],
           [
             "INTEGRATIONS",
-            "Telegram Bot API, CRM and external APIs, payment APIs, email automation, notifications, analytics, and internal services.",
+            "Telegram Bot API, external APIs, payment APIs, email automation, notifications, analytics, and internal services.",
           ],
           [
             "INFRASTRUCTURE",
@@ -244,7 +244,7 @@ export const copy = {
           ],
           [
             "AI",
-            "OpenAI API and other model APIs, AI automation, prompt design, product AI features, RAG, and data workflows.",
+            "OpenAI API, Anthropic API, Gemini API, LangChain, LangGraph, LlamaIndex, Hugging Face, Vercel AI SDK, pgvector, MCP.",
           ],
         ],
       },
@@ -565,15 +565,15 @@ export const copy = {
         items: [
           [
             "FRONTEND",
-            "React, TypeScript, JavaScript, Vite, HTML, CSS, адаптивная вёрстка, GSAP и scroll-driven interfaces.",
+            "React, TypeScript, JavaScript, Vite, HTML, CSS, адаптивная вёрстка.",
           ],
           [
             "BACKEND & DATA",
-            "Node.js, REST API, вебхуки, PostgreSQL, Supabase, Firebase, авторизация, серверная логика и базы данных.",
+            "Node.js, Python, REST API, вебхуки, PostgreSQL, Supabase, Firebase, авторизация, серверная логика и базы данных.",
           ],
           [
             "INTEGRATIONS",
-            "Telegram Bot API, CRM и внешние API, платёжные API, email-автоматизация, уведомления, аналитика и внутренние сервисы.",
+            "Telegram Bot API, внешние API, платёжные API, email-автоматизация, уведомления, аналитика и внутренние сервисы.",
           ],
           [
             "INFRASTRUCTURE",
@@ -581,7 +581,7 @@ export const copy = {
           ],
           [
             "AI",
-            "OpenAI API и другие model APIs, AI-автоматизация, prompt design, AI-функции в продуктах, RAG и работа с данными.",
+            "OpenAI API, Anthropic API, Gemini API, LangChain, LangGraph, LlamaIndex, Hugging Face, Vercel AI SDK, pgvector, MCP.",
           ],
         ],
       },
