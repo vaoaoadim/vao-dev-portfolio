@@ -132,9 +132,15 @@ export const copy = {
           color: "green",
         },
         {
-          id: "reserved-02",
+          id: "rec",
+          title: "REC",
+          cover: "rec",
+          interaction: "preview-only",
+          coverAlt: "REC screen recorder cover with a smiling camera mascot on a lime background",
+          type: "CHROME EXTENSION / 2026",
+          description:
+            "A Chrome extension for screen, webcam, voice, and tab audio recording, with a built-in editor and local storage. Built with React, TypeScript, WXT, and Mediabunny.",
           color: "yellow",
-          empty: true,
         },
         {
           id: "cache",
@@ -468,9 +474,15 @@ export const copy = {
           color: "green",
         },
         {
-          id: "reserved-02",
+          id: "rec",
+          title: "REC",
+          cover: "rec",
+          interaction: "preview-only",
+          coverAlt: "Обложка расширения REC с улыбающимся маскотом-камерой на лаймовом фоне",
+          type: "РАСШИРЕНИЕ ДЛЯ CHROME / 2026",
+          description:
+            "Расширение Chrome для записи экрана, камеры, голоса и звука вкладки со встроенным редактором и локальным хранением. Создано на React, TypeScript, WXT и Mediabunny.",
           color: "yellow",
-          empty: true,
         },
         {
           id: "cache",

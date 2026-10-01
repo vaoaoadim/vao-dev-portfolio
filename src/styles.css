@@ -1624,6 +1624,11 @@ a {
   transform: scale(1.015);
 }
 
+.work-case__preview[data-preview-only] {
+  cursor: default;
+  transform: none;
+}
+
 .work-case__preview-canvas {
   position: absolute;
   inset: 0;

@@ -12,6 +12,11 @@ const CASE_COUNT = 8;
 const GAME_TAP_TOLERANCE = 10;
 
 const PROJECT_COVERS = {
+  rec: {
+    avif: "/assets/selected-works/rec-cover-v1.avif",
+    webp: "/assets/selected-works/rec-cover-v1.webp",
+    png: "/assets/selected-works/rec-cover-v1.png",
+  },
   planer: {
     avif: "/assets/selected-works/planer-cover-v2.avif",
     webp: "/assets/selected-works/planer-cover-v2.webp",
@@ -44,6 +49,10 @@ function previewLabel(index) {
 }
 
 const PORTFOLIO_MEDIA_WARMUP = [
+  {
+    sources: Object.values(PROJECT_COVERS.rec),
+    priority: "low",
+  },
   {
     sources: Object.values(PROJECT_COVERS.planer),
     priority: "low",
@@ -456,34 +465,40 @@ function WorkCasePreview({
   handleGamePointerCancel,
 }) {
   const isEmbeddedGame = project.interaction === "embedded-game";
+  const isPreviewOnly = project.interaction === "preview-only";
   const isExternalProject = Boolean(project.href);
   const cover = project.cover ? PROJECT_COVERS[project.cover] : null;
-  const PreviewTag = isExternalProject ? "a" : "button";
-  const previewProps = isExternalProject
-    ? {
-        href: project.href,
-        target: "_blank",
-        rel: "noopener noreferrer",
-      }
-    : {
-        type: "button",
-        onClick: isEmbeddedGame ? openGame : undefined,
-        onPointerDown: isEmbeddedGame ? handleGamePointerDown : undefined,
-        onPointerUp: isEmbeddedGame ? handleGamePointerUp : undefined,
-        onPointerCancel: isEmbeddedGame ? handleGamePointerCancel : undefined,
-      };
+  const PreviewTag = isPreviewOnly ? "div" : isExternalProject ? "a" : "button";
+  const previewProps = isPreviewOnly
+    ? {}
+    : isExternalProject
+      ? {
+          href: project.href,
+          target: "_blank",
+          rel: "noopener noreferrer",
+        }
+      : {
+          type: "button",
+          onClick: isEmbeddedGame ? openGame : undefined,
+          onPointerDown: isEmbeddedGame ? handleGamePointerDown : undefined,
+          onPointerUp: isEmbeddedGame ? handleGamePointerUp : undefined,
+          onPointerCancel: isEmbeddedGame ? handleGamePointerCancel : undefined,
+        };
 
   return (
     <PreviewTag
       ref={isEmbeddedGame ? gameTriggerRef : undefined}
       className="work-case__preview"
-      data-cursor="interactive"
+      data-cursor={isPreviewOnly ? undefined : "interactive"}
+      data-preview-only={isPreviewOnly || undefined}
       aria-label={
-        isExternalProject
-          ? interpolate(copy.works.openProjectAria, { title: project.title })
-          : isEmbeddedGame
-            ? interpolate(copy.works.playGame, { title: project.title })
-            : interpolate(copy.works.previewSoon, { title: project.title })
+        isPreviewOnly
+          ? undefined
+          : isExternalProject
+            ? interpolate(copy.works.openProjectAria, { title: project.title })
+            : isEmbeddedGame
+              ? interpolate(copy.works.playGame, { title: project.title })
+              : interpolate(copy.works.previewSoon, { title: project.title })
       }
       {...previewProps}
     >
@@ -532,9 +547,11 @@ function WorkCasePreview({
           </span>
         ) : null}
       </span>
-      <span className="work-case__open-label" aria-hidden="true">
-        {isExternalProject ? copy.works.openProject : copy.works.openCase}
-      </span>
+      {!isPreviewOnly ? (
+        <span className="work-case__open-label" aria-hidden="true">
+          {isExternalProject ? copy.works.openProject : copy.works.openCase}
+        </span>
+      ) : null}
     </PreviewTag>
   );
 }
