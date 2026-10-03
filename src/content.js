@@ -135,7 +135,7 @@ export const copy = {
           id: "rec",
           title: "REC",
           cover: "rec",
-          interaction: "preview-only",
+          href: "https://chromewebstore.google.com/detail/gffocdahpnfhpnmgmjhbflpeebhogjil?utm_source=item-share-cb",
           coverAlt: "REC screen recorder cover with a smiling camera mascot on a lime background",
           type: "CHROME EXTENSION / 2026",
           description:
@@ -477,7 +477,7 @@ export const copy = {
           id: "rec",
           title: "REC",
           cover: "rec",
-          interaction: "preview-only",
+          href: "https://chromewebstore.google.com/detail/gffocdahpnfhpnmgmjhbflpeebhogjil?utm_source=item-share-cb",
           coverAlt: "Обложка расширения REC с улыбающимся маскотом-камерой на лаймовом фоне",
           type: "РАСШИРЕНИЕ ДЛЯ CHROME / 2026",
           description:
