@@ -11,7 +11,7 @@ function isCloseRequest(message) {
   );
 }
 
-export function BeautyBombGamePopup({ open, onClose, triggerRef }) {
+export function BeautyBombGamePopup({ open, onClose, triggerRef, closeLabel }) {
   const iframeRef = useRef(null);
   const gameUrl = useMemo(() => {
     const url = new URL(
@@ -65,6 +65,9 @@ export function BeautyBombGamePopup({ open, onClose, triggerRef }) {
 
     const previousOverflow = document.body.style.overflow;
     const previousFocus = document.activeElement;
+    const background = document.querySelector("main.portfolio");
+    const previousInert = background?.inert;
+    if (background) background.inert = true;
 
     document.documentElement.classList.add("has-beautybomb-game-open");
     window.dispatchEvent(new Event("portfolio:hide-cursor"));
@@ -96,20 +99,29 @@ export function BeautyBombGamePopup({ open, onClose, triggerRef }) {
     const handleVisibilityChange = () => {
       postGameActiveState(document.visibilityState === "visible");
     };
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+      }
+    };
 
     document.body.style.overflow = "hidden";
     window.addEventListener("message", handleMessage);
+    window.addEventListener("keydown", handleKeyDown);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       postGameActiveState(false);
       window.removeEventListener("message", handleMessage);
+      window.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       document.body.style.overflow = previousOverflow;
       document.documentElement.classList.remove("has-beautybomb-game-open");
+      if (background) background.inert = previousInert;
 
       const focusTarget = triggerRef?.current || previousFocus;
-      window.requestAnimationFrame(() => focusTarget?.focus?.());
+      window.requestAnimationFrame(() => focusTarget?.focus?.({ preventScroll: true }));
     };
   }, [gameUrl, onClose, open, triggerRef]);
 
@@ -135,6 +147,7 @@ export function BeautyBombGamePopup({ open, onClose, triggerRef }) {
       aria-modal="true"
       aria-label="BeautyBomb Delivery"
     >
+      {closeLabel && <button className="beautybomb-game-popup__close" type="button" aria-label={closeLabel} onClick={onClose}>×</button>}
       <iframe
         ref={iframeRef}
         className="beautybomb-game-popup__frame"

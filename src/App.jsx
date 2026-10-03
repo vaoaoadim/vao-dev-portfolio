@@ -1,29 +1,37 @@
-import { HeroIntro } from "./HeroIntro";
-import { MascotScrollScene } from "./MascotScrollScene";
+import { lazy, Suspense, useState } from "react";
 import { PixelCursor } from "./PixelCursor";
-import { PortfolioFooter } from "./PortfolioFooter";
 import { PortfolioHeader } from "./PortfolioHeader";
 import { PortfolioInformationOverlay } from "./PortfolioInformationOverlay";
 import { PortfolioOverlayProvider } from "./PortfolioOverlayContext";
-import { SelectedWorks } from "./SelectedWorks";
-import { WhatIBuild } from "./WhatIBuild";
+import { PortfolioRouteProvider, usePortfolioRoute } from "./PortfolioRouteContext";
+import { isCasePath } from "./caseStudyRoutes";
+const PortfolioHome = lazy(() => import("./PortfolioHome"));
+const CaseStudyPage = lazy(() => import("./CaseStudyPage"));
 
 export function App() {
   return (
-    <PortfolioOverlayProvider>
-      <main className="portfolio" id="top">
+    <PortfolioRouteProvider>
+      <PortfolioOverlayProvider><PortfolioPages /></PortfolioOverlayProvider>
+    </PortfolioRouteProvider>
+  );
+}
+
+function PortfolioPages() {
+  const { route } = usePortfolioRoute();
+  const isCase = isCasePath(route.path);
+  const [homeVisited, setHomeVisited] = useState(!isCase);
+  if (!isCase && !homeVisited) setHomeVisited(true);
+  return (
+      <main className={`portfolio${isCase ? " portfolio--case" : ""}`} id="top">
         <PixelCursor />
         <PortfolioHeader />
         <div className="portfolio-content">
-          <MascotScrollScene>
-            <HeroIntro />
-            <WhatIBuild />
-          </MascotScrollScene>
-          <SelectedWorks />
-          <PortfolioFooter />
+          <Suspense fallback={<div className="case-loading" aria-busy="true">v.build / …</div>}>
+            {homeVisited && <PortfolioHome active={!isCase} restore={route.state} />}
+            {isCase && <CaseStudyPage key={route.path} path={route.path} />}
+          </Suspense>
         </div>
         <PortfolioInformationOverlay />
       </main>
-    </PortfolioOverlayProvider>
   );
 }

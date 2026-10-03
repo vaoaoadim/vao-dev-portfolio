@@ -1,8 +1,11 @@
 import { PortfolioMenu } from "./PortfolioMenu";
 import { useLanguage } from "./LanguageContext";
 import { usePortfolioOverlay } from "./PortfolioOverlayContext";
+import { usePortfolioRoute } from "./PortfolioRouteContext";
+import { isCasePath } from "./caseStudyRoutes";
 
 export function PortfolioHeader() {
+  const { route } = usePortfolioRoute();
   const { language, copy, selectLanguage } = useLanguage();
   const {
     activeOverlay,
@@ -26,7 +29,12 @@ export function PortfolioHeader() {
           <a
             ref={brandRef}
             className="portfolio-brand"
-            href="#top"
+            href={isCasePath(route.path) ? "/#top" : "#top"}
+            onClick={isCasePath(route.path) ? (event) => {
+              if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+              event.preventDefault();
+              navigateToSection("top", event.currentTarget);
+            } : undefined}
             aria-label={copy.header.brandLabel}
           >
             v.build

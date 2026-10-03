@@ -1,4 +1,6 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { usePortfolioRoute } from "./PortfolioRouteContext";
+import { isCasePath } from "./caseStudyRoutes";
 
 const INFO_OVERLAYS = new Set([
   "about",
@@ -15,6 +17,9 @@ function getHashOverlay() {
 }
 
 export function PortfolioOverlayProvider({ children }) {
+  const { route, goHome } = usePortfolioRoute();
+  const previousPath = useRef(route.path);
+  const pendingSectionRef = useRef(null);
   const [activeOverlay, setActiveOverlay] = useState(getHashOverlay);
   const [isClosing, setIsClosing] = useState(false);
   const [menuUnderlayActive, setMenuUnderlayActive] = useState(false);
@@ -32,7 +37,7 @@ export function PortfolioOverlayProvider({ children }) {
     const url = hash
       ? `${window.location.pathname}${window.location.search}#${hash}`
       : `${window.location.pathname}${window.location.search}`;
-    window.history.pushState(null, "", url);
+    window.history.pushState(window.history.state, "", url);
   }, []);
 
   const clearContactHash = useCallback(() => {
@@ -70,6 +75,14 @@ export function PortfolioOverlayProvider({ children }) {
   );
 
   const navigateToSection = useCallback((targetId, origin) => {
+    if (isCasePath(route.path)) {
+      if (!activeOverlay) goHome(targetId);
+      else {
+        pendingSectionRef.current = targetId;
+        setIsClosing(true);
+      }
+      return;
+    }
     const target = document.getElementById(targetId);
     if (!target) return;
 
@@ -83,7 +96,7 @@ export function PortfolioOverlayProvider({ children }) {
     pendingNavigationRef.current =
       target.getBoundingClientRect().top + lockedScrollPositionRef.current.y;
     setIsClosing(true);
-  }, [activeOverlay, clearContactHash]);
+  }, [activeOverlay, clearContactHash, route.path, goHome]);
 
   const requestClose = useCallback(() => {
     if (!activeOverlay || isClosing) return;
@@ -93,7 +106,7 @@ export function PortfolioOverlayProvider({ children }) {
   const completeClose = useCallback(() => {
     const focusTarget = originRef.current ?? menuTriggerRef.current;
     const hadInfoOverlay = INFO_OVERLAYS.has(activeOverlay);
-    const hasPendingNavigation = pendingNavigationRef.current !== null;
+    const hasPendingNavigation = pendingNavigationRef.current !== null || pendingSectionRef.current !== null;
 
     if (hadInfoOverlay && returnToMenuRef.current && !hasPendingNavigation) {
       returnToMenuRef.current = false;
@@ -112,15 +125,27 @@ export function PortfolioOverlayProvider({ children }) {
     if (hadInfoOverlay) writeHash("");
 
     if (!hasPendingNavigation) {
-      window.requestAnimationFrame(() => focusTarget?.focus());
+      window.requestAnimationFrame(() => focusTarget?.focus({ preventScroll: true }));
     }
   }, [activeOverlay, writeHash]);
+
+  // A browser history transition must not keep the previous page's scroll lock.
+  useLayoutEffect(() => {
+    if (previousPath.current === route.path) return;
+    previousPath.current = route.path;
+    setActiveOverlay(null);
+    setIsClosing(false);
+    setMenuUnderlayActive(false);
+    menuUnderlayRef.current = false;
+    returnToMenuRef.current = false;
+  }, [route.path]);
 
   useEffect(() => {
     if (!isOverlayOpen) return undefined;
 
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
+    const lockedPath = window.location.pathname;
     const root = document.documentElement;
     const body = document.body;
     const content = document.querySelector(".portfolio-content");
@@ -173,9 +198,14 @@ export function PortfolioOverlayProvider({ children }) {
 
       const destinationY = pendingNavigationRef.current ?? scrollY;
       pendingNavigationRef.current = null;
-      window.requestAnimationFrame(() => window.scrollTo(scrollX, destinationY));
+      const targetSection = pendingSectionRef.current;
+      pendingSectionRef.current = null;
+      window.requestAnimationFrame(() => {
+        if (targetSection) goHome(targetSection);
+        else if (window.location.pathname === lockedPath) window.scrollTo(scrollX, destinationY);
+      });
     };
-  }, [isOverlayOpen]);
+  }, [isOverlayOpen, goHome]);
 
   useEffect(() => {
     const target = document.getElementById("contacts");

@@ -15,7 +15,7 @@ async function listFiles(directory, relativeTo = directory) {
       const absolutePath = path.join(directory, entry.name);
       return entry.isDirectory()
         ? listFiles(absolutePath, relativeTo)
-        : [path.relative(relativeTo, absolutePath)];
+        : [path.relative(relativeTo, absolutePath).split(path.sep).join("/")];
     }),
   );
   return files.flat();

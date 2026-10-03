@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { BeautyBombGamePopup } from "./BeautyBombGamePopup";
 import { useLanguage } from "./LanguageContext";
+import { casePath } from "./caseStudyRoutes";
+import { usePortfolioRoute } from "./PortfolioRouteContext";
 import { setupSelectedWorksMascot } from "./selectedWorksMascotPlayback";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const CASE_COUNT = 8;
-const GAME_TAP_TOLERANCE = 10;
 
 const PROJECT_COVERS = {
   rec: {
@@ -458,47 +458,33 @@ function WorkCasePreview({
   index,
   copy,
   interpolate,
-  gameTriggerRef,
-  openGame,
-  handleGamePointerDown,
-  handleGamePointerUp,
-  handleGamePointerCancel,
 }) {
-  const isEmbeddedGame = project.interaction === "embedded-game";
+  const { openCase } = usePortfolioRoute();
   const isPreviewOnly = project.interaction === "preview-only";
-  const isExternalProject = Boolean(project.href);
+  const path = casePath(project.id);
   const cover = project.cover ? PROJECT_COVERS[project.cover] : null;
-  const PreviewTag = isPreviewOnly ? "div" : isExternalProject ? "a" : "button";
+  const PreviewTag = isPreviewOnly ? "div" : path ? "a" : "button";
   const previewProps = isPreviewOnly
     ? {}
-    : isExternalProject
+    : path
       ? {
-          href: project.href,
-          target: "_blank",
-          rel: "noopener noreferrer",
+          href: path,
+          onClick: (event) => openCase(event, project.id),
         }
       : {
           type: "button",
-          onClick: isEmbeddedGame ? openGame : undefined,
-          onPointerDown: isEmbeddedGame ? handleGamePointerDown : undefined,
-          onPointerUp: isEmbeddedGame ? handleGamePointerUp : undefined,
-          onPointerCancel: isEmbeddedGame ? handleGamePointerCancel : undefined,
         };
 
   return (
     <PreviewTag
-      ref={isEmbeddedGame ? gameTriggerRef : undefined}
       className="work-case__preview"
+      data-case-id={path ? project.id : undefined}
       data-cursor={isPreviewOnly ? undefined : "interactive"}
       data-preview-only={isPreviewOnly || undefined}
       aria-label={
         isPreviewOnly
           ? undefined
-          : isExternalProject
-            ? interpolate(copy.works.openProjectAria, { title: project.title })
-            : isEmbeddedGame
-              ? interpolate(copy.works.playGame, { title: project.title })
-              : interpolate(copy.works.previewSoon, { title: project.title })
+          : interpolate(path ? copy.works.openCaseAria : copy.works.previewSoon, { title: project.title })
       }
       {...previewProps}
     >
@@ -549,7 +535,7 @@ function WorkCasePreview({
       </span>
       {!isPreviewOnly ? (
         <span className="work-case__open-label" aria-hidden="true">
-          {isExternalProject ? copy.works.openProject : copy.works.openCase}
+          {copy.works.openCase}
         </span>
       ) : null}
     </PreviewTag>
@@ -558,9 +544,6 @@ function WorkCasePreview({
 
 export function SelectedWorks() {
   const { copy, interpolate } = useLanguage();
-  const [isGameOpen, setIsGameOpen] = useState(false);
-  const gameTriggerRef = useRef(null);
-  const gameTapRef = useRef(null);
   const sectionRef = useRef(null);
   const galleryRef = useRef(null);
   const viewportRef = useRef(null);
@@ -579,47 +562,6 @@ export function SelectedWorks() {
     return () => {
       if (frame) window.cancelAnimationFrame(frame);
     };
-  }, []);
-
-  const openGame = useCallback(() => setIsGameOpen(true), []);
-  const closeGame = useCallback(() => setIsGameOpen(false), []);
-
-  const handleGamePointerDown = useCallback((event) => {
-    if (
-      !event.isPrimary ||
-      (event.pointerType === "mouse" && event.button !== 0)
-    ) {
-      return;
-    }
-
-    gameTapRef.current = {
-      pointerId: event.pointerId,
-      x: event.clientX,
-      y: event.clientY,
-    };
-  }, []);
-
-  const handleGamePointerUp = useCallback(
-    (event) => {
-      const tap = gameTapRef.current;
-      gameTapRef.current = null;
-
-      if (!tap || tap.pointerId !== event.pointerId) return;
-
-      const distance = Math.hypot(
-        event.clientX - tap.x,
-        event.clientY - tap.y,
-      );
-
-      if (distance <= GAME_TAP_TOLERANCE) openGame();
-    },
-    [openGame],
-  );
-
-  const handleGamePointerCancel = useCallback((event) => {
-    if (gameTapRef.current?.pointerId === event.pointerId) {
-      gameTapRef.current = null;
-    }
   }, []);
 
   const handleNativeScroll = (event) => {
@@ -1026,11 +968,6 @@ export function SelectedWorks() {
                         index={index}
                         copy={copy}
                         interpolate={interpolate}
-                        gameTriggerRef={gameTriggerRef}
-                        openGame={openGame}
-                        handleGamePointerDown={handleGamePointerDown}
-                        handleGamePointerUp={handleGamePointerUp}
-                        handleGamePointerCancel={handleGamePointerCancel}
                       />
                     </div>
 
@@ -1057,11 +994,6 @@ export function SelectedWorks() {
         </div>
       </div>
 
-      <BeautyBombGamePopup
-        open={isGameOpen}
-        onClose={closeGame}
-        triggerRef={gameTriggerRef}
-      />
     </section>
   );
 }
