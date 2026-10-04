@@ -43,6 +43,7 @@
   outline: none;
 }
 .case-hero__title--long { font-size: clamp(2.2rem, 8.6vw, 9.5rem); max-width: 12ch; }
+.case-hero__launch { margin-top: clamp(1.5rem, 3vw, 3rem); }
 .case-hero__details {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
