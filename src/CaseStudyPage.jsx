@@ -6,6 +6,7 @@ import { useLanguage } from "./LanguageContext";
 import { usePortfolioRoute } from "./PortfolioRouteContext";
 import { caseStudyCopy, getCaseStudy } from "./caseStudies";
 import "./caseStudy.css";
+import { sitePath } from "./sitePath";
 
 function ProjectCTA({ project, labels, triggerRef, onPlay }) {
   const bounds = useRef(null);
@@ -68,9 +69,9 @@ function Paragraphs({ items }) {
 function CaseMedia({ media }) {
   return media?.map((item) => <figure className="case-media" key={item.src}>
     <picture>
-      {item.avif && <source srcSet={item.avif} type="image/avif" />}
-      {item.webp && <source srcSet={item.webp} type="image/webp" />}
-      <img src={item.src} alt={item.alt} width={item.width} height={item.height} loading="lazy" decoding="async" />
+      {item.avif && <source srcSet={sitePath(item.avif)} type="image/avif" />}
+      {item.webp && <source srcSet={sitePath(item.webp)} type="image/webp" />}
+      <img src={sitePath(item.src)} alt={item.alt} width={item.width} height={item.height} loading="lazy" decoding="async" />
     </picture>
     {item.caption && <figcaption>{item.caption}</figcaption>}
   </figure>);
@@ -147,7 +148,7 @@ export default function CaseStudyPage({ path }) {
   let number = 1;
   return <article ref={article} className="case-study" aria-labelledby="case-title">
     <nav className="case-nav" aria-label={labels.back}>
-      <a href="/#work" onClick={returnHome} data-cursor="interactive">{labels.back}</a>
+      <a href={sitePath("/#work")} onClick={returnHome} data-cursor="interactive">{labels.back}</a>
       <span>{labels.caseLabel}{project ? ` / ${String(project.index).padStart(2, "0")}` : ""}</span>
     </nav>
     {!project ? <header className="case-hero">
@@ -192,7 +193,7 @@ export default function CaseStudyPage({ path }) {
         {project.outcome?.length > 0 && <CaseSection number={number++} title={labels.outcome}><Paragraphs items={project.outcome} /></CaseSection>}
       </div>
       <div className="case-launch">
-        <a className="case-launch__back" href="/#work" onClick={returnHome}>{labels.back}</a>
+        <a className="case-launch__back" href={sitePath("/#work")} onClick={returnHome}>{labels.back}</a>
       </div>
       {project.interaction === "embedded-game" && <BeautyBombGamePopup open={gameOpen} onClose={closeGame} triggerRef={trigger} closeLabel={labels.closeGame} />}
     </>}

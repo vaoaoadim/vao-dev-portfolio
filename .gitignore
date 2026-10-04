@@ -13,3 +13,15 @@
 /.codex/
 /.cursor/
 /.openai/
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+
+# Local design source material
+/file for 4 case/
+/баннер для гитхаб/

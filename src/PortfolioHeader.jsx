@@ -3,6 +3,7 @@ import { useLanguage } from "./LanguageContext";
 import { usePortfolioOverlay } from "./PortfolioOverlayContext";
 import { usePortfolioRoute } from "./PortfolioRouteContext";
 import { isCasePath } from "./caseStudyRoutes";
+import { sitePath } from "./sitePath";
 
 export function PortfolioHeader() {
   const { route } = usePortfolioRoute();
@@ -29,7 +30,7 @@ export function PortfolioHeader() {
           <a
             ref={brandRef}
             className="portfolio-brand"
-            href={isCasePath(route.path) ? "/#top" : "#top"}
+            href={isCasePath(route.path) ? sitePath("/#top") : "#top"}
             onClick={isCasePath(route.path) ? (event) => {
               if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               event.preventDefault();

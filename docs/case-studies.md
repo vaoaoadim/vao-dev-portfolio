@@ -2,6 +2,8 @@
 
 Finished gallery cards open `/work/:slug`. The existing Sites worker falls back to the SPA shell for HTML requests, so these routes support direct access and refresh without hosting changes.
 
+On GitHub Pages, `npm run build:pages` creates an `index.html` for each published case route. Asset and navigation URLs include Vite's base path. The static build uses browser language instead of the Sites-only country endpoint; manual language selection works on both hosts.
+
 ## Editing content
 
 - `src/content.js` remains the source of project titles, gallery summaries and destinations in RU/EN.

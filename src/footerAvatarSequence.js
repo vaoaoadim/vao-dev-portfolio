@@ -1,4 +1,6 @@
-const ASSET_ROOT = "/assets/footer";
+import { sitePath } from "./sitePath.js";
+
+const ASSET_ROOT = sitePath("/assets/footer");
 
 const AVATARS = {
   base: {

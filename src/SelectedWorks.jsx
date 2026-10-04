@@ -6,6 +6,7 @@ import { useLanguage } from "./LanguageContext";
 import { casePath } from "./caseStudyRoutes";
 import { usePortfolioRoute } from "./PortfolioRouteContext";
 import { setupSelectedWorksMascot } from "./selectedWorksMascotPlayback";
+import { sitePath } from "./sitePath";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -84,6 +85,7 @@ const PORTFOLIO_MEDIA_WARMUP = [
 const warmedPortfolioMedia = new Map();
 
 function warmupPortfolioImage({ sources, priority }) {
+  sources = sources.map(sitePath);
   const key = sources.join("|");
   const cached = warmedPortfolioMedia.get(key);
 
@@ -320,10 +322,10 @@ function WorkPendants() {
       >
         <span className="work-pendant__wire" />
         <picture>
-          <source srcSet="/assets/work-pendants/floppy-disk.webp" type="image/webp" />
+          <source srcSet={sitePath("/assets/work-pendants/floppy-disk.webp")} type="image/webp" />
           <img
             className="work-pendant__object"
-            src="/assets/work-pendants/floppy-disk.png"
+            src={sitePath("/assets/work-pendants/floppy-disk.png")}
             alt=""
             draggable="false"
             width="880"
@@ -337,10 +339,10 @@ function WorkPendants() {
       <span ref={mouseRef} className="work-pendant work-pendant--mouse">
         <span className="work-pendant__wire" />
         <picture>
-          <source srcSet="/assets/work-pendants/ball-mouse.webp" type="image/webp" />
+          <source srcSet={sitePath("/assets/work-pendants/ball-mouse.webp")} type="image/webp" />
           <img
             className="work-pendant__object"
-            src="/assets/work-pendants/ball-mouse.png"
+            src={sitePath("/assets/work-pendants/ball-mouse.png")}
             alt=""
             draggable="false"
             width="533"
@@ -421,14 +423,14 @@ function SelectedWorksMascot() {
         tabIndex={-1}
       >
         <source
-          src="/assets/selected-works/selected-work-mascot-v1.mp4"
+          src={sitePath("/assets/selected-works/selected-work-mascot-v1.mp4")}
           type="video/mp4"
         />
       </video>
       <img
         ref={firstImageRef}
         className="selected-works__mascot-frame-source"
-        src="/assets/selected-works/selected-work-mascot-v1-first.png"
+        src={sitePath("/assets/selected-works/selected-work-mascot-v1-first.png")}
         alt=""
         aria-hidden="true"
         width="660"
@@ -441,7 +443,7 @@ function SelectedWorksMascot() {
       <img
         ref={finalImageRef}
         className="selected-works__mascot-frame-source"
-        src="/assets/selected-works/selected-work-mascot-v1-last.png"
+        src={sitePath("/assets/selected-works/selected-work-mascot-v1-last.png")}
         alt=""
         width="660"
         height="720"
@@ -501,11 +503,11 @@ function WorkCasePreview({
       >
         {cover ? (
           <picture className="work-case__cover-picture">
-            <source srcSet={cover.avif} type="image/avif" />
-            <source srcSet={cover.webp} type="image/webp" />
+            <source srcSet={sitePath(cover.avif)} type="image/avif" />
+            <source srcSet={sitePath(cover.webp)} type="image/webp" />
             <img
               className="work-case__cover-image"
-              src={cover.png}
+              src={sitePath(cover.png)}
               alt={project.coverAlt}
               width="1584"
               height="990"

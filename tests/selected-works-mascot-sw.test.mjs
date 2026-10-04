@@ -11,7 +11,9 @@ const keyPath = (key) => {
   return new URL(key.url).pathname;
 };
 
-test("pre-caches mascot media and serves cached MP4 range requests", async () => {
+for (const basePath of ["/", "/vao-dev-portfolio/"]) {
+test(`pre-caches mascot media and serves cached MP4 ranges at ${basePath}`, async () => {
+  const scopedAssetPath = `${basePath}${assetPath.slice(1)}`;
   const handlers = new Map();
   const cachedResponses = new Map();
   const cache = {
@@ -26,7 +28,7 @@ test("pre-caches mascot media and serves cached MP4 range requests", async () =>
     delete: async () => true,
   };
   const self = {
-    location: { origin },
+    location: { origin, href: `${origin}${basePath}selected-works-mascot-sw.js` },
     addEventListener: (name, handler) => handlers.set(name, handler),
     skipWaiting: async () => {},
     clients: { claim: async () => {} },
@@ -60,11 +62,11 @@ test("pre-caches mascot media and serves cached MP4 range requests", async () =>
   await installPromise;
 
   assert.equal(cachedResponses.size, 3);
-  assert.ok(cachedResponses.has(assetPath));
+  assert.ok(cachedResponses.has(scopedAssetPath));
 
   let responsePromise;
   handlers.get("fetch")({
-    request: new Request(origin + assetPath, {
+    request: new Request(origin + scopedAssetPath, {
       headers: { range: "bytes=0-31" },
     }),
     respondWith: (promise) => {
@@ -78,4 +80,11 @@ test("pre-caches mascot media and serves cached MP4 range requests", async () =>
   assert.equal(response.headers.get("content-length"), "32");
   assert.equal(response.headers.get("accept-ranges"), "bytes");
   assert.equal((await response.arrayBuffer()).byteLength, 32);
+  let interceptedOtherSite = false;
+  handlers.get("fetch")({
+    request: new Request(origin + "/another-site" + assetPath),
+    respondWith: () => { interceptedOtherSite = true; },
+  });
+  assert.equal(interceptedOtherSite, false);
 });
+}

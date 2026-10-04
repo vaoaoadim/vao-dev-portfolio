@@ -1,10 +1,11 @@
-const CACHE_PREFIX = "selected-works-mascot-media-";
+const BASE_PATH = new URL("./", self.location.href).pathname;
+const CACHE_PREFIX = `selected-works-mascot-media-${BASE_PATH}-`;
 const CACHE_NAME = `${CACHE_PREFIX}v1`;
 const MEDIA_ASSETS = [
   "/assets/selected-works/selected-work-mascot-v1.mp4",
   "/assets/selected-works/selected-work-mascot-v1-first.png",
   "/assets/selected-works/selected-work-mascot-v1-last.png",
-];
+].map((asset) => `${BASE_PATH}${asset.slice(1)}`);
 
 const isSelectedWorksMedia = (url) =>
   url.origin === self.location.origin && MEDIA_ASSETS.includes(url.pathname);

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { useLanguage } from "./LanguageContext";
+import { sitePath } from "./sitePath";
 
 const HERO_MEDIA = [
   "hero-crt-monitor-v1",
@@ -138,10 +139,10 @@ export function HeroIntro() {
                     data-hero-media-index={index}
                     data-hero-media-asset={asset}
                   >
-                    <source srcSet={`/assets/hero/${asset}.avif`} type="image/avif" />
-                    <source srcSet={`/assets/hero/${asset}.webp`} type="image/webp" />
+                    <source srcSet={sitePath(`/assets/hero/${asset}.avif`)} type="image/avif" />
+                    <source srcSet={sitePath(`/assets/hero/${asset}.webp`)} type="image/webp" />
                     <img
-                      src={`/assets/hero/${asset}.png`}
+                      src={sitePath(`/assets/hero/${asset}.png`)}
                       alt=""
                       width="1448"
                       height="1086"

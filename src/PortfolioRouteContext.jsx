@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { casePath, isPlainNavigation } from "./caseStudyRoutes";
+import { sitePath } from "./sitePath";
 
 const RouteContext = createContext(null);
 const readRoute = () => ({ path: window.location.pathname, state: window.history.state?.vbuild ?? {} });
@@ -20,7 +21,7 @@ export function PortfolioRouteProvider({ children }) {
   const goHome = useCallback((target) => {
     const saved = window.history.state?.vbuild?.home;
     const state = { ...saved, target: target || (saved ? undefined : "work") };
-    window.history.pushState({ vbuild: state }, "", "/");
+    window.history.pushState({ vbuild: state }, "", sitePath("/"));
     setRoute(readRoute());
   }, []);
 

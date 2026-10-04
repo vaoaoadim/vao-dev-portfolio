@@ -3,6 +3,7 @@ import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { InteractiveBuildScene } from "./InteractiveBuildScene";
 import { useLanguage } from "./LanguageContext";
+import { sitePath } from "./sitePath";
 
 const BUILD_SYMBOLS = ["{ play }", "// tg", "<> tools", "< / >", "=> mail", "[ ext ]", "ai()"];
 
@@ -129,12 +130,12 @@ export function WhatIBuild() {
         <div className="mascot-scroll-sticky">
           <div className="mascot-scroll-motion">
             <picture>
-              <source srcSet="/assets/mascot/scroll-mascot.avif" type="image/avif" />
-              <source srcSet="/assets/mascot/scroll-mascot.webp" type="image/webp" />
+              <source srcSet={sitePath("/assets/mascot/scroll-mascot.avif")} type="image/avif" />
+              <source srcSet={sitePath("/assets/mascot/scroll-mascot.webp")} type="image/webp" />
               <img
                 ref={mascotImageRef}
                 className="mascot-scroll-image"
-                src="/assets/mascot/scroll-mascot.png"
+                src={sitePath("/assets/mascot/scroll-mascot.png")}
                 alt=""
                 width="1117"
                 height="941"

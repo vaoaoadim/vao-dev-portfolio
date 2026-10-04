@@ -73,7 +73,7 @@ export function LanguageProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (savedLanguage || import.meta.env.DEV) {
+    if (savedLanguage || import.meta.env.DEV || import.meta.env.VITE_STATIC_HOST) {
       return undefined;
     }
 

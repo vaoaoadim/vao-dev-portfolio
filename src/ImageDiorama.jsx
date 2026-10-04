@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { sectionOrder } from "./content.js";
+import { sitePath } from "./sitePath";
 
 gsap.registerPlugin(useGSAP);
 
@@ -25,7 +26,7 @@ export function ImageDiorama({
 }) {
   const rootRef = useRef(null);
   const frameRef = useRef(null);
-  const sceneAsset = `/assets/diorama-controls-${locale}`;
+  const sceneAsset = sitePath(`/assets/diorama-controls-${locale}`);
 
   useGSAP(
     () => {
