@@ -156,9 +156,6 @@ export default function CaseStudyPage({ path }) {
     </header> : <>
       <header className="case-hero">
         <h1 ref={heading} id="case-title" tabIndex="-1" className={`case-hero__title${project.title.length > 12 ? " case-hero__title--long" : ""}`}>{project.title}</h1>
-        <div className="case-hero__launch">
-          <ProjectCTA project={project} labels={labels} triggerRef={trigger} onPlay={() => setGameOpen(true)} />
-        </div>
         <div className="case-hero__details">
           <dl className="case-hero__metadata">
             <div><dt>{labels.type}</dt><dd>{project.category}</dd></div>
@@ -166,6 +163,9 @@ export default function CaseStudyPage({ path }) {
             <div><dt className="visually-hidden">{language === "ru" ? "Статус" : "Status"}</dt><dd>{project.concept ? labels.concept : labels.live}</dd></div>
           </dl>
           <p className="case-hero__summary">{project.description}</p>
+        </div>
+        <div className="case-hero__launch">
+          <ProjectCTA project={project} labels={labels} triggerRef={trigger} onPlay={() => setGameOpen(true)} />
         </div>
         <a className="case-hero__read" href="#case-story">{labels.read}</a>
       </header>
