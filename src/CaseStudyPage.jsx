@@ -93,6 +93,41 @@ export default function CaseStudyPage({ path }) {
   }, [path]);
 
   useEffect(() => {
+    const portfolio = article.current?.closest(".portfolio");
+    const header = portfolio?.querySelector(".portfolio-header");
+    const darkSections = article.current?.querySelectorAll(".case-section--dark, .case-project-cta");
+    if (!portfolio || !header || !darkSections?.length) return;
+    let observer;
+    const observe = () => {
+      observer?.disconnect();
+      const bounds = header.getBoundingClientRect();
+      const center = Math.max(0, Math.min(window.innerHeight - 1, (bounds.top + bounds.bottom) / 2));
+      const visible = new Set();
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) visible.add(entry.target);
+          else visible.delete(entry.target);
+        });
+        const section = [...visible][0];
+        portfolio.dataset.caseHeaderTone = section
+          ? section.classList.contains("case-project-cta") ? "cta" : "dark"
+          : "light";
+      }, { rootMargin: `-${center}px 0px -${window.innerHeight - center - 1}px 0px` });
+      darkSections.forEach((section) => observer.observe(section));
+    };
+    observe();
+    const resize = new ResizeObserver(observe);
+    resize.observe(header);
+    window.addEventListener("resize", observe);
+    return () => {
+      observer?.disconnect();
+      resize.disconnect();
+      window.removeEventListener("resize", observe);
+      delete portfolio.dataset.caseHeaderTone;
+    };
+  }, [path]);
+
+  useEffect(() => {
     document.title = `${project?.title || labels.notFoundTitle} | v.build`;
     const description = document.querySelector('meta[name="description"]');
     description?.setAttribute("content", project?.description || labels.notFound);

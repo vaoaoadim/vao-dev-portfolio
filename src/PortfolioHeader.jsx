@@ -24,7 +24,7 @@ export function PortfolioHeader() {
 
   return (
     <>
-      <header className={`portfolio-header ${activeOverlay === "menu" ? "is-menu-open" : ""}`}>
+      <header className={`portfolio-header ${activeOverlay === "menu" ? "is-menu-open" : ""}`} data-overlay-open={isOverlayOpen || undefined}>
         <div className="portfolio-header__identity">
           <a
             ref={brandRef}

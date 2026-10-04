@@ -26,7 +26,7 @@ function PortfolioPages() {
         <PixelCursor />
         <PortfolioHeader />
         <div className="portfolio-content">
-          <Suspense fallback={<div className="case-loading" aria-busy="true">v.build / …</div>}>
+          <Suspense fallback={<div className="portfolio-page-loading" aria-busy="true" />}>
             {homeVisited && <PortfolioHome active={!isCase} restore={route.state} />}
             {isCase && <CaseStudyPage key={route.path} path={route.path} />}
           </Suspense>

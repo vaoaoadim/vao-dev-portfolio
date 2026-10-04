@@ -1,11 +1,10 @@
 .portfolio-home[hidden] { display: none !important; }
-.portfolio--case .portfolio-header:not(.is-menu-open) { color: #fff; mix-blend-mode: difference; }
-
-.case-loading {
-  min-height: 100svh;
-  display: grid;
-  place-items: center;
-  font-family: var(--font-meta);
+.portfolio--case .portfolio-header:not(.is-menu-open) { color: var(--color-ink); }
+.portfolio--case[data-case-header-tone="dark"] .portfolio-header:not([data-overlay-open]),
+.portfolio--case[data-case-header-tone="cta"] .portfolio-header:not([data-overlay-open]) { color: #fff; }
+.portfolio--case[data-case-header-tone="cta"]:has(.case-project-cta:active) .portfolio-header:not([data-overlay-open]) { color: var(--color-ink); }
+@media (hover: hover) and (pointer: fine) {
+  .portfolio--case[data-case-header-tone="cta"]:has(.case-project-cta:hover) .portfolio-header:not([data-overlay-open]) { color: var(--color-ink); }
 }
 
 .case-study {

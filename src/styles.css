@@ -74,6 +74,10 @@ a {
   overflow-x: clip;
 }
 
+.portfolio-page-loading {
+  min-height: 100svh;
+}
+
 .pixel-cursor {
   --cursor-hover-size: 0.68rem;
   position: fixed;
