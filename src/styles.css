@@ -1574,6 +1574,20 @@ a {
   background: var(--work-case-orange);
 }
 
+.work-case--soon {
+  grid-template-rows: 1fr;
+  place-items: center;
+}
+
+.work-case__soon {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 12.5vw, 12rem);
+  font-weight: 400;
+  letter-spacing: var(--tracking-display);
+  line-height: 0.9;
+}
+
 .works-gallery__status {
   position: absolute;
   z-index: 4;

@@ -168,35 +168,10 @@ export const copy = {
           color: "orange",
         },
         {
-          id: "trace",
-          title: "TRACE",
-          type: "AI WORKFLOW TOOL / 2026",
-          description: "A tool for building and controlling multi-step AI workflows.",
+          id: "soon",
+          title: "SOON...",
+          empty: true,
           color: "green",
-        },
-        {
-          id: "patch",
-          title: "PATCH",
-          type: "DESKTOP UTILITY / 2026",
-          description:
-            "A minimalist desktop utility for automating repetitive actions.",
-          color: "yellow",
-        },
-        {
-          id: "ping",
-          title: "PING",
-          type: "NOTIFICATION SYSTEM / 2026",
-          description:
-            "An event and notification system for small digital products.",
-          color: "red",
-        },
-        {
-          id: "frame",
-          title: "FRAME",
-          type: "INTERACTIVE WEBSITE / 2026",
-          description:
-            "An experimental promotional website with responsive motion and interactive graphics.",
-          color: "orange",
         },
       ],
     },
@@ -511,36 +486,10 @@ export const copy = {
           color: "orange",
         },
         {
-          id: "trace",
-          title: "TRACE",
-          type: "ИНСТРУМЕНТ ДЛЯ ИИ-ПРОЦЕССОВ / 2026",
-          description:
-            "Инструмент для сборки и контроля многошаговых ИИ-процессов.",
+          id: "soon",
+          title: "СКОРО...",
+          empty: true,
           color: "green",
-        },
-        {
-          id: "patch",
-          title: "PATCH",
-          type: "DESKTOP-УТИЛИТА / 2026",
-          description:
-            "Минималистичная desktop-утилита для автоматизации повторяющихся действий.",
-          color: "yellow",
-        },
-        {
-          id: "ping",
-          title: "PING",
-          type: "СИСТЕМА УВЕДОМЛЕНИЙ / 2026",
-          description:
-            "Система уведомлений и событий для небольших digital-продуктов.",
-          color: "red",
-        },
-        {
-          id: "frame",
-          title: "FRAME",
-          type: "ИНТЕРАКТИВНЫЙ САЙТ / 2026",
-          description:
-            "Экспериментальный промосайт с responsive motion и интерактивной графикой.",
-          color: "orange",
         },
       ],
     },

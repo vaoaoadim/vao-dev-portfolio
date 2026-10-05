@@ -10,8 +10,6 @@ import { sitePath } from "./sitePath";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const CASE_COUNT = 8;
-
 const PROJECT_COVERS = {
   rec: {
     avif: "/assets/selected-works/rec-cover-v1.avif",
@@ -546,6 +544,7 @@ function WorkCasePreview({
 
 export function SelectedWorks() {
   const { copy, interpolate } = useLanguage();
+  const caseCount = copy.works.cases.length;
   const sectionRef = useRef(null);
   const galleryRef = useRef(null);
   const viewportRef = useRef(null);
@@ -589,7 +588,7 @@ export function SelectedWorks() {
         viewport.scrollWidth - viewport.clientWidth,
       );
       const progress = viewport.scrollLeft / maximumScroll;
-      const index = Math.round(progress * (CASE_COUNT - 1));
+      const index = Math.round(progress * (caseCount - 1));
 
       sectionRef.current?.style.setProperty(
         "--works-progress",
@@ -630,7 +629,7 @@ export function SelectedWorks() {
       };
 
       const setCaseLabel = (index, shouldScramble = false) => {
-        const nextIndex = clamp(index, 0, CASE_COUNT - 1);
+        const nextIndex = clamp(index, 0, caseCount - 1);
         const nextLabel = formatCase(nextIndex, casePrefixRef.current);
 
         if (activeCaseRef.current === nextIndex && caseLabel.textContent === nextLabel) {
@@ -714,7 +713,7 @@ export function SelectedWorks() {
             const visual = panel.querySelector(".work-case__visual");
             const direction = index % 2 === 0 ? 1 : -1;
 
-            gsap.fromTo(
+            if (visual) gsap.fromTo(
               visual,
               {
                 x: direction * 28,
@@ -955,12 +954,8 @@ export function SelectedWorks() {
             {copy.works.cases.map((project, index) => (
               <article
                 key={project.id}
-                className={`work-case work-case--${project.color}`}
-                aria-label={
-                  project.empty
-                    ? formatCase(index, copy.works.casePrefix)
-                    : `${formatCase(index, copy.works.casePrefix)}: ${project.title}`
-                }
+                className={`work-case work-case--${project.color}${project.empty ? " work-case--soon" : ""}`}
+                aria-label={`${formatCase(index, copy.works.casePrefix)}: ${project.title}`}
               >
                 {!project.empty ? (
                   <>
@@ -981,7 +976,7 @@ export function SelectedWorks() {
                       <p className="work-case__description">{project.description}</p>
                     </div>
                   </>
-                ) : null}
+                ) : <h3 className="work-case__soon">{project.title}</h3>}
               </article>
             ))}
           </div>
@@ -992,7 +987,7 @@ export function SelectedWorks() {
           <div className="works-gallery__progress-line">
             <i />
           </div>
-          <span>08</span>
+          <span>{String(caseCount).padStart(2, "0")}</span>
         </div>
       </div>
 
