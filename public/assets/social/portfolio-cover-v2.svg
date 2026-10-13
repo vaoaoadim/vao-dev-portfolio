@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <title>v.build — Vadim Bednov. From idea to a working product.</title>
-  <desc>Websites, web apps, Telegram Mini Apps, bots and automation. Discuss your project on Telegram: @vaoaoadim.</desc>
+  <desc>Websites, web apps, Telegram Mini Apps, bots and automation. Open to projects.</desc>
   <rect width="1200" height="630" fill="#fff"/>
   <g fill="#111315" font-family="Liberation Sans, Arial, sans-serif">
     <text x="64" y="78" font-family="Liberation Mono, monospace" font-size="23" font-weight="700">VADIM BEDNOV / DEVELOPER</text>
@@ -15,7 +15,7 @@
     <text x="64" y="487" font-size="29" font-weight="700">Websites &amp; web apps</text>
     <text x="64" y="527" font-size="27">Telegram Mini Apps · Bots · Automation</text>
     <rect x="64" y="552" width="412" height="42" rx="21" fill="#111315"/>
-    <text x="85" y="580" font-size="23" font-weight="700" fill="#fff">Let's talk → @vaoaoadim</text>
+    <text x="270" y="580" text-anchor="middle" font-size="23" font-weight="700" fill="#fff">Open to projects</text>
     <text x="1136" y="580" text-anchor="end" font-family="Liberation Mono, monospace" font-size="18" fill="#666c70">DESIGN + DEVELOPMENT</text>
   </g>
 </svg>

@@ -2,7 +2,7 @@
 
 ## Summary
 
-The shared GitHub Pages URL had no Open Graph or Twitter image metadata, allowing crawlers to select an office-scene image from the page. The new dedicated card adapts the visual direction of `vaoaoadim/vaoaoadim/assets/banner-v1.png`: v.build, the existing character, a white background and green/yellow/red accents. Services and Telegram make the preview useful to prospective development clients.
+The shared GitHub Pages URL had no Open Graph or Twitter image metadata, allowing crawlers to select an office-scene image from the page. The new dedicated card adapts the visual direction of `vaoaoadim/vaoaoadim/assets/banner-v1.png`: v.build, the existing character, a white background and green/yellow/red accents. Services and the “Open to projects” availability message make the preview useful to prospective development clients.
 
 ## Implementation brief
 
@@ -17,9 +17,9 @@ The shared GitHub Pages URL had no Open Graph or Twitter image metadata, allowin
 
 ## Maintenance
 
-- Preview: `public/assets/social/portfolio-cover-v1.png` (1200×630).
-- Editable layout: `public/assets/social/portfolio-cover-v1.svg`.
+- Preview: `public/assets/social/portfolio-cover-v2.png` (1200×630).
+- Editable layout: `public/assets/social/portfolio-cover-v2.svg`.
 - Render: `node scripts/render-social-cover.mjs` (requires project dependencies and the listed fonts).
 - The office-scene assets remain available for existing site behavior; they are no longer the designated social preview.
-- When changing the cover, increment the filename and update both Open Graph and Twitter image URLs. Social networks may keep cached cards for already shared links.
+- When changing the cover, increment the filename and update both Open Graph and Twitter image URLs. Social networks may keep cached cards for already shared links. The v1 PNG remains available for previously cached image URLs.
 - These metadata describe the GitHub Pages portfolio, not the GitHub repository's separate social card. Repository social-preview settings are independent.
