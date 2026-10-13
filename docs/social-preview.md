@@ -17,9 +17,9 @@ The shared GitHub Pages URL had no Open Graph or Twitter image metadata, allowin
 
 ## Maintenance
 
-- Preview: `public/assets/social/portfolio-cover-v2.png` (1200×630).
-- Editable layout: `public/assets/social/portfolio-cover-v2.svg`.
+- Preview: `public/assets/social/portfolio-cover-v3.png` (1200×630).
+- Editable layout: `public/assets/social/portfolio-cover-v3.svg`.
 - Render: `node scripts/render-social-cover.mjs` (requires project dependencies and the listed fonts).
-- The office-scene assets remain available for existing site behavior; they are no longer the designated social preview.
-- When changing the cover, increment the filename and update both Open Graph and Twitter image URLs. Social networks may keep cached cards for already shared links. The v1 PNG remains available for previously cached image URLs.
+- All 12 legacy office-scene files (light/dark, landscape/portrait, PNG/WebP/AVIF) and their obsolete generation helpers are deleted. The no-JavaScript page uses the same banner as the social metadata.
+- When changing the cover, increment the filename and update both Open Graph and Twitter image URLs. Social networks may keep cached cards for already shared links. The earlier banner PNGs remain available for previously cached image URLs; they do not contain the deleted office scene.
 - These metadata describe the GitHub Pages portfolio, not the GitHub repository's separate social card. Repository social-preview settings are independent.

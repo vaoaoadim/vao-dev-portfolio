@@ -4,8 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "assets:optimize": "node scripts/optimize-assets.mjs",
-    "assets:adopt-generated-dark": "node scripts/adopt-generated-dark.mjs",
     "dev": "vite",
     "build": "node scripts/clean-sites-dist.mjs && vite build && node scripts/prepare-sites-build.mjs",
     "build:pages": "vite build --mode github-pages && node scripts/prepare-pages-build.mjs",

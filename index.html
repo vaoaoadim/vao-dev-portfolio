@@ -16,8 +16,8 @@
     <meta property="og:title" content="v.build — Websites, apps &amp; automation" />
     <meta property="og:description" content="From idea to a working product. Websites, web apps, Telegram Mini Apps, bots and automation by Vadim Bednov. Discuss your project: @vaoaoadim." />
     <meta property="og:url" content="https://vaoaoadim.github.io/vao-dev-portfolio/" />
-    <meta property="og:image" content="https://vaoaoadim.github.io/vao-dev-portfolio/assets/social/portfolio-cover-v2.png" />
-    <meta property="og:image:secure_url" content="https://vaoaoadim.github.io/vao-dev-portfolio/assets/social/portfolio-cover-v2.png" />
+    <meta property="og:image" content="https://vaoaoadim.github.io/vao-dev-portfolio/assets/social/portfolio-cover-v3.png" />
+    <meta property="og:image:secure_url" content="https://vaoaoadim.github.io/vao-dev-portfolio/assets/social/portfolio-cover-v3.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -25,7 +25,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="v.build — Websites, apps &amp; automation" />
     <meta name="twitter:description" content="From idea to a working product. Websites, web apps, Telegram Mini Apps, bots and automation by Vadim Bednov. Telegram: @vaoaoadim." />
-    <meta name="twitter:image" content="https://vaoaoadim.github.io/vao-dev-portfolio/assets/social/portfolio-cover-v2.png" />
+    <meta name="twitter:image" content="https://vaoaoadim.github.io/vao-dev-portfolio/assets/social/portfolio-cover-v3.png" />
     <meta name="twitter:image:alt" content="v.build — Vadim Bednov. Websites, apps and automation. Open to projects." />
     <link
       rel="icon"
@@ -75,40 +75,35 @@
     <div id="root"></div>
     <noscript>
       <style>
-        html,
         body {
           min-width: 320px;
-          min-height: 100%;
           margin: 0;
-          overflow: hidden;
-          background: #fcfcfc;
+          background: #fff;
         }
 
-        .noscript-scene,
-        .noscript-scene img {
-          position: fixed;
-          inset: 0;
+        .noscript-preview {
+          display: grid;
+          place-items: center;
+          min-height: 100svh;
+          padding: 24px;
+          box-sizing: border-box;
+        }
+
+        .noscript-preview img {
           display: block;
           width: 100%;
-          height: 100%;
-        }
-
-        .noscript-scene img {
-          object-fit: contain;
+          max-width: 1200px;
+          height: auto;
         }
       </style>
-      <picture class="noscript-scene">
-        <source
-          media="(orientation: portrait)"
-          srcset="/assets/office-light-portrait.png"
-        />
+      <main class="noscript-preview">
         <img
-          src="/assets/office-light-landscape.png"
-          width="1672"
-          height="941"
-          alt=""
+          src="/assets/social/portfolio-cover-v3.png"
+          width="1200"
+          height="630"
+          alt="v.build — Vadim Bednov. Websites, web apps, Telegram Mini Apps, bots and automation. Open to projects."
         />
-      </picture>
+      </main>
     </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>

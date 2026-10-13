@@ -7,7 +7,7 @@ import {
 } from "./paperBallModelRenderer";
 import { getPaperBallViewport } from "./paperBallViewport";
 
-// The office is a single flattened PNG. These normalized anchors target its
+// The build scene is a single flattened PNG. These normalized anchors target its
 // intrinsic image area, so every overlay follows the existing responsive image.
 export const BUILD_SCENE_ANCHORS = {
   boardSurface: { x: 0.5846, y: 0.1668, width: 0.359, height: 0.269 },
