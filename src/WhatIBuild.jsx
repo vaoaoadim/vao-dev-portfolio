@@ -164,7 +164,6 @@ export function WhatIBuild() {
           <br />
           {copy.build.titleSecond}
         </h2>
-        <p>{copy.build.subtitle}</p>
       </div>
 
       <ol className="build-list">

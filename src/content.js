@@ -23,7 +23,7 @@ export const copy = {
       thirdLine: "MY DEVELOPMENT",
       fourthLine: "PORTFOLIO",
       statusLabel: "Portfolio status",
-      status: "// portfolio",
+      status: "// open to projects",
       scroll: "scroll down ↓",
       mediaTitles: [
         "CRT monitor",
@@ -54,7 +54,6 @@ export const copy = {
       kicker: "// services",
       titleFirst: "WHAT I",
       titleSecond: "BUILD",
-      subtitle: "From idea to a working product.",
       items: [
         {
           title: "MINI APPS & GAMES",
@@ -341,7 +340,7 @@ export const copy = {
       thirdLine: "МОЁ ПОРТФОЛИО",
       fourthLine: "РАЗРАБОТЧИКА",
       statusLabel: "Статус портфолио",
-      status: "// портфолио",
+      status: "// открыт к проектам",
       scroll: "листайте вниз ↓",
       mediaTitles: [
         "ЭЛТ-монитор",
@@ -372,7 +371,6 @@ export const copy = {
       kicker: "// спектр услуг",
       titleFirst: "ЧТО Я",
       titleSecond: "СОЗДАЮ",
-      subtitle: "Из идеи — в работающий продукт.",
       items: [
         {
           title: "МИНИ-ПРИЛОЖЕНИЯ И ИГРЫ",

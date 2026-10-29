@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import "./beautyBombLoading.css";
+import { sitePath } from "./sitePath";
 
-const DEFAULT_GAME_URL = "https://beautybomb-delivery.vercel.app";
+const DEFAULT_GAME_URL = sitePath("/games/beautybomb/index.html");
 
 function isCloseRequest(message) {
   return (
@@ -20,10 +21,9 @@ export function BeautyBombGamePopup({ open, onClose, triggerRef, closeLabel }) {
   const gameUrl = useMemo(() => {
     const url = new URL(
       import.meta.env.VITE_BEAUTYBOMB_GAME_URL || DEFAULT_GAME_URL,
+      window.location.origin,
     );
     url.searchParams.set("embed", "portfolio");
-    // Request the game version with an inline shell and independent startup.
-    url.searchParams.set("embedVersion", "4");
     return url;
   }, []);
 
@@ -53,7 +53,7 @@ export function BeautyBombGamePopup({ open, onClose, triggerRef, closeLabel }) {
   useEffect(() => {
     const trigger = triggerRef?.current;
 
-    if (!trigger) return undefined;
+    if (!trigger || gameUrl.origin === window.location.origin) return undefined;
 
     let connectionLink = null;
     let observer = null;

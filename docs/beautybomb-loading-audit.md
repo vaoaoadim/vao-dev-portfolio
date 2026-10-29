@@ -1,5 +1,24 @@
 # BeautyBomb loading audit — 2026-10-14
 
+## Self-hosted update — 2026-10-29
+
+The portfolio now builds the current game source alongside its own Pages build.
+The iframe loads `games/beautybomb/index.html?embed=portfolio` under the portfolio's
+base path. The game document, engine, images and optional music share the same
+origin; viewing BeautyBomb no longer needs a Vercel connection. The previous audit
+below records the loading improvements retained in this version.
+
+The vendored source and runtime assets live in `embedded/beautybomb/`; its README
+records the upstream revision and the two integration adaptations. The existing
+popup, frame, renderer, gameplay, delayed audio and retry behavior are retained.
+Parent messages default to the same origin and still validate the source window.
+
+Verification: Pages build and static-asset checks, game TypeScript check, responsive
+RU/EN checks at 320, 360, 390, 768, 1440 and 1920 px, game loading and closing at
+320, 390, 768 and 1440 px, source/origin rejection, retry after engine failure, and
+reduced-motion keyboard close passed. Actual access from every Russian ISP has
+not been measured; this removes the reported external hosting dependency.
+
 Scope: the GitHub Pages portfolio and its existing BeautyBomb Vercel iframe.
 Case navigation, popup dimensions and appearance, artwork, logical viewport,
 renderer resolution, game rules and host-origin restrictions are preserved.

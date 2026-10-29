@@ -1,0 +1,43 @@
+{
+  "version": "v3",
+  "finishRoadDurationMs": 1500,
+  "arrivalDecelerationMs": 600,
+  "arrivalRevealMs": 700,
+  "rewardPromptDelayMs": 250,
+  "productFlightDurationMs": 900,
+  "productDisappearDurationMs": 180,
+  "reducedMotion": {
+    "finishRoadDurationMs": 900,
+    "confettiCount": 18
+  },
+  "confetti": {
+    "count": 42,
+    "durationMs": 1550,
+    "colors": [16707420, 16732075, 5562623, 9972445, 16777215]
+  },
+  "anchors": {
+    "girl": { "originX": 0.5, "originY": 1 },
+    "character": {
+      "doorwayStart": { "x": 243, "y": 276 },
+      "doorstepEnd": { "x": 255, "y": 284 },
+      "productTarget": { "x": 255, "y": 262 }
+    },
+    "vehicleStop": { "x": 74, "y": 322 },
+    "callout": { "x": 14, "y": 338 },
+    "cta": { "x": 180, "y": 466 },
+    "productStartOffset": { "x": -4, "y": -64 }
+  },
+  "runtime": {
+    "girlScale": 1,
+    "productScale": 0.5,
+    "destinationCityStartOffsetTexturePx": 526,
+    "destinationCityReducedMotionOffsetTexturePx": 701
+  },
+  "depth": {
+    "girl": 17,
+    "confetti": 32,
+    "product": 70,
+    "callout": 80,
+    "cta": 81
+  }
+}

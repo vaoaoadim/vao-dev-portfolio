@@ -15,6 +15,28 @@ test("Pages serves every case directly with the same application shell", async (
   }
 });
 
+test("embedded game ships its shell, engine and every referenced runtime asset on Pages", async () => {
+  const gameOutput = new URL("games/beautybomb/", output);
+  const shell = await readFile(new URL("index.html", gameOutput), "utf8");
+  assert.match(shell, /<style>[^]*\.portfolio-embed/);
+  assert.match(shell, /src="\.\/assets\/[^\"]+\.js"/);
+  assert.doesNotMatch(shell, /https?:\/\/(?!www\.w3\.org)/);
+  const sourceRoot = new URL("../embedded/beautybomb/src/", import.meta.url);
+  const scan = async (directory) => {
+    for (const entry of await readdir(directory, { withFileTypes: true })) {
+      const file = new URL(entry.name + (entry.isDirectory() ? "/" : ""), directory);
+      if (entry.isDirectory()) await scan(file);
+      else {
+        const source = await readFile(file, "utf8");
+        for (const [asset] of source.matchAll(/\bassets\/[^"'`)\s]+/g)) {
+          await access(new URL(asset, gameOutput));
+        }
+      }
+    }
+  };
+  await scan(sourceRoot);
+});
+
 test("Pages HTML, CSS and chunks resolve their static asset references", async () => {
   const walk = async (directory) => {
     const entries = await readdir(directory, { withFileTypes: true });
@@ -34,7 +56,9 @@ test("Pages HTML, CSS and chunks resolve their static asset references", async (
         assert.ok(url.startsWith(base), `Asset escapes Pages base: ${url}`);
         await access(new URL(url.slice(base.length).split("?")[0], output));
       } else if (url.startsWith("assets/")) {
-        await access(new URL(url.split("?")[0], output));
+        const assetRoot = file.pathname.includes("/games/beautybomb/")
+          ? new URL("games/beautybomb/", output) : output;
+        await access(new URL(url.split("?")[0], assetRoot));
       } else if (url.startsWith("./") || /-[\w-]{8,}\.(?:css|js|woff2?)$/.test(url)) {
         await access(new URL(url.split("?")[0], file));
       } else continue;
